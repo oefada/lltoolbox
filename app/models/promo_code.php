@@ -191,15 +191,14 @@ class PromoCode extends AppModel {
             );
         }
 
-        if (intval($this->offerId) > 0) {
+        if (intval($offerId) > 0) {
 
-            $promoFront = Loader::loadModel('UserPromoFrontModel');
-            $result = $promoFront->getClientDetailsByOffer($this->offerId);
+            $result = $this->getClientDetailsByOffer($offerId);
             $offerClientId = $result['clientId'];
             $offerClientTypeId = $result['clientTypeId'];
 
             // theme restrictions
-            $themeCheck = $promoFront->getThemeRestrictions($this->promoData['promoId']);
+            $themeCheck = $this->getThemeRestrictions($this->promoData['promoId']);
             if (sizeof($themeCheck) > 0) {
                 $themeListIds = array();
                 $themeListDescs = array();
@@ -208,7 +207,7 @@ class PromoCode extends AppModel {
                     $themeListDescs[] = $theme['themeName'];
                 }
 
-                if (!$promoFront->isClientInTheme($offerClientId, $themeListIds)) {
+                if (!$this->isClientInTheme($offerClientId, $themeListIds)) {
                     return $this->isInvalidPromoCode(
                         'display|Please note there is a theme restriction on this promotion.'
                     );
@@ -216,16 +215,16 @@ class PromoCode extends AppModel {
             }
 
             // destination restrictions
-            $destCheck = $promoFront->getDestinationRestrictions($this->promoData['promoId']);
+            $destCheck = $this->getDestinationRestrictions($this->promoData['promoId']);
             if (sizeof($destCheck) > 0) {
                 $destListIds = array();
                 $destListDescs = array();
                 foreach ($destCheck as $dest) {
-                    $destListIds[] = $dest['destinationId'];
-                    $destListDescs[] = $dest['destinationName'];
+                    $destListIds[] = $dest['d']['destinationId'];
+                    $destListDescs[] = $dest['d']['destinationName'];
                 }
 
-                if (!$promoFront->isClientInDestination($offerClientId, $destListIds)) {
+                if (!$this->isClientInDestination($offerClientId, $destListIds)) {
                     return $this->isInvalidPromoCode(
                         'display|Please note there is a destination restriction on this promotion.'
                     );
@@ -233,13 +232,13 @@ class PromoCode extends AppModel {
             }
 
             // client restrictions
-            $clientCheck = $promoFront->getClientRestrictions($this->promoData['promoId']);
+            $clientCheck = $this->getClientRestrictions($this->promoData['promoId']);
             if (sizeof($clientCheck) > 0) {
                 $clientListIds = array();
                 $clientListDescs = array();
                 foreach ($clientCheck as $client) {
-                    $clientListIds[] = $client['clientId'];
-                    $clientListDescs[] = $client['name'];
+                    $clientListIds[] = $client['0']['clientId'];
+                    $clientListDescs[] = $client['c']['name'];
                 }
 
                 if (!in_array($offerClientId, $clientListIds)) {
@@ -250,7 +249,7 @@ class PromoCode extends AppModel {
             }
 
             // client type restrictions
-            $clientTypeCheck = $promoFront->getClientTypeRestrictions($this->promoData['promoId']);
+            $clientTypeCheck = $this->getClientTypeRestrictions($this->promoData['promoId']);
             if (sizeof($clientTypeCheck) > 0) {
                 $clientTypeListIds = array();
                 $clientTypeListDescs = array();
@@ -385,5 +384,87 @@ class PromoCode extends AppModel {
         }
         return (!empty($result)) ? $result[0]['promoCode'] : false;
     }
+    public function getClientDetailsByOffer($offerId)
+    {
+        $sql = "SELECT c.clientId, c.clientTypeId FROM offerLuxuryLink o INNER JOIN client c USING(clientId) ";
+        $sql .= " where o.offerid = ".$offerId;
+
+        $result = $this->query($sql);
+
+        return $result[0]['c'];
+    }
+
+    public function getThemeRestrictions($promoId)
+    {
+        $sql = "SELECT t.themeId, t.themeName FROM toolbox.promoRestrictionTheme rt ";
+        $sql .= "INNER JOIN theme t USING(themeId) ";
+        $sql .= "WHERE rt.promoId = ".$promoId;
+
+        $result = $this->query($sql);
+
+        return $result[0];
+    }
+
+    public function isClientInTheme($client, $themes)
+    {
+        $sql = "SELECT COUNT(*) AS nbr FROM clientThemeRel ";
+        $sql .= "WHERE clientId = ".$client. " AND themeId IN (" . implode(
+                ',',
+                $themes
+            ) . ")";
+
+        $themeExists = $this->query($sql);
+        if ($themeExists[0]['0']['nbr'] == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getDestinationRestrictions($promoId)
+    {
+        $sql = "SELECT d.destinationId, d.destinationName FROM toolbox.promoRestrictionDestination rd ";
+        $sql .= "INNER JOIN destination d USING(destinationId) ";
+        $sql .= " WHERE rd.promoId = ".$promoId;
+
+        return $this->query($sql);
+    }
+
+    public function isClientInDestination($client, $destinations)
+    {
+        $sql = "SELECT COUNT(*) AS nbr FROM clientDestinationRel WHERE clientId = $client AND destinationId IN (" . implode(
+                ',',
+                $destinations
+            ) . ")";
+        $destExists = $this->query($sql);
+        if ($destExists[0]['nbr'] == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getClientRestrictions($promoId)
+    {
+        $sql = "SELECT IFNULL(c.clientId, 0) AS clientId, c.name FROM toolbox.promoRestrictionClient rc ";
+        $sql .= " LEFT JOIN client c USING(clientId) ";
+        $sql .= "WHERE promoId = ".$promoId;
+
+        return $this->query($sql);
+
+    }
+
+    public function getClientTypeRestrictions($promoId)
+    {
+        $sql = "SELECT IFNULL(c.clientTypeId, 0) AS clientTypeId, c.clientTypeName FROM toolbox.promoRestrictionClientType rc ";
+        $sql .= " INNER JOIN clientType c USING(clientTypeId) ";
+        $sql .= " WHERE promoId = ".$promoId;
+
+        return $this->query($sql);
+    }
+
+    protected static function getEntityColumnsMap()
+    {
+        return false;
+    }
+
 }
 ?>
