@@ -436,7 +436,7 @@ class PromoCode extends AppModel {
                 $destinations
             ) . ")";
         $destExists = $this->query($sql);
-        if ($destExists[0]['nbr'] == 0) {
+        if ($destExists[0][0]['nbr'] > 0) {
             return true;
         }
         return false;
