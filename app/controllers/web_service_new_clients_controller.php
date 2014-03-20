@@ -58,17 +58,7 @@ class WebServiceNewClientsController extends WebServicesController
 
             $sugarClientName= $this->prepClientNameForImport($decoded_request['client']['client_name']);
 
-            if (isset($client_data_save['name'])){
-                try {
-                    //If name exists, run subroutine to check if it has changed against SugarCRM/LightboxName.
-                    $this->Client->checkClientNameChange($sugarClientName, $client_data_save['name'],$client_id);
-                } catch (Exception $e) {
-                    $ErrorMsgClientNameChange = "Suagar Name:\t".print_r($sugarClientName,true)."\n".
-                        "ToolboxName:\t".print_r($client['Client']['name'],true)."\n".
-                        "Error Message:\t".$e->getMessage();
-                    @mail('devmail@luxurylink.com','Client NameChange Error',$ErrorMsgClientNameChange);
-                }
-            }
+            //moved clientNameChange check to beforeSave.
 
             if (!empty($client_data_save['sites']) && is_array($client_data_save['sites'])) {
                 $client_data_save['sites'] = implode(',', $client_data_save['sites']);

@@ -84,7 +84,7 @@ foreach ($this->data['Client']['sites'] as $site) {
     if (in_array('luxurylink', $this->data['Client']['sites'])) {
         echo $html->link('<span>Preview on LuxuryLink</span>', "http://www.luxurylink.com/luxury-hotels/preview.html?clid={$this->data['Client']['clientId']}&preview=client", array('target' => '_blank', 'class' => 'button'), null, false);
         # View the Client PDP
-        echo $html->link('<span>View PDP on LuxuryLink</span>', "http://www.luxurylink.com/5star/{$this->data['Client']['clientTypeSeoName']}/{$this->data['Client']['seoLocation']}/{$this->data['Client']['seoName']}", array('target' => '_blank', 'class' => 'button'), null, false);
+        echo $html->link('<span>View PDP on LuxuryLink</span>', "http://www.luxurylink.com/5star/".!empty($this->data['Client']['clientTypeSeoName'])?$this->data['Client']['clientTypeSeoName']:''."/{$this->data['Client']['seoLocation']}/{$this->data['Client']['seoName']}", array('target' => '_blank', 'class' => 'button'), null, false);
     }
     ?>
 </div>
