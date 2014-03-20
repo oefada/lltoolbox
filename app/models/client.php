@@ -103,12 +103,14 @@ class Client extends AppModel
         $this->data['Client']['nameNormalized'] = $this->normalize($this->data['Client']['name'], 1);
 
         if (!empty($this->data['Client'])) {
-
-
             //sanitize toll free tracking #
             $this->data['Client']['estaraPhoneLocal'] = str_replace('-', '', $this->data['Client']['estaraPhoneLocal']);
         }
+        $this->old = $this->find(array($this->primaryKey => $this->id));
 
+        if (empty($this->old)) return true;
+        //clientId exists
+        $this->checkForDataChanges();
         return true;
     }
 
@@ -1188,5 +1190,78 @@ class Client extends AppModel
         return $result;
     }
 
+    public function checkForDataChanges()
+    {
+        $fieldsToCompare = array('name', 'locationDisplay', 'clientTypeSeoName');
 
+        //Build html
+        App::import('Helper', 'Html'); // loadHelper('Html'); in CakePHP 1.1.x.x
+        $html = new HtmlHelper();
+
+        $tbl = "<table cellpadding='2' cellspacing='1' width='640'>";
+        $tbl .= $html->tableHeaders(
+            array(
+                '<b>Field</b>',
+                '<b>Old Value</b>',
+                '<b>New Value</b>',
+                '<b>Change Date</b>',
+            ),
+            // array('class' => 'product_table'),
+            array('style' => 'background-color:#CCC')
+        );
+
+        $changedFields = false;
+        foreach ($fieldsToCompare as $fieldName) {
+            if ($this->old['Client'][$fieldName] !== $this->data['Client'][$fieldName]) {
+                $changedFields = true;
+                $tbl .= $html->tableCells(
+                    array(
+                        $fieldName,
+                        $this->old['Client'][$fieldName],
+                        $this->data['Client'][$fieldName],
+                        date("m-d-Y H:i:s")
+                    )
+                );
+            }
+        }
+        $tbl .= "</table><br />\n";
+
+        if (false == $changedFields) {
+            //faster
+            return false;
+        }
+        $urlBase = 'http://www.luxurylink.com/5star';
+        if ($_SERVER['ENV'] == 'development') {
+            $urlBase = 'http://dev-luxurylink.luxurylink.com/5star';
+        }
+        if (ISSTAGE == true) {
+            $urlBase = 'http://stage-luxurylink.luxurylink.com/5star';
+        }
+        $pdpUrl = $urlBase . '/' . $this->data['Client']['clientTypeSeoName'] . '/' . $this->data['Client']['seoLocation'] . '/' . $this->data['Client']['seoName'];
+        $link = "<p>New PDP URL: $pdpUrl</p>\n";
+
+        App::import('Vendor', 'PHPMailer', array('file' => 'phpmailer' . DS . 'class.phpmailer.php'));
+
+        $subj = 'PDP URL Change - ' . $this->old['Client']['name'] . ' - CID ' . $this->old['Client']['clientId'];
+        $body = "<h2>" . $subj . "</h2>\n" .$tbl. $link;
+
+        $mail = new PHPMailer();
+        $mail->From = 'no-reply@toolbox.luxurylink.com';
+        $mail->FromName = 'no-reply@toolbox.luxurylink.com';
+        $mail->IsHTML(true);
+
+        if ($_SERVER['ENV'] == 'development' || ISSTAGE == true) {
+            $mail->AddAddress('devmail@luxurylink.com');
+            $mail->AddBCC('oefada@luxurylink.com');
+            $subj .= ' [TESTING - IGNORE]';
+        } else {
+            $mail->AddAddress('clientnamechange@luxurylink.com');
+            $mail->AddBCC('oefada@luxurylink.com');
+        }
+        $mail->Subject = $subj;
+        $mail->Body = $body;
+        $result = $mail->Send();
+
+        return true;
+    }
 }
