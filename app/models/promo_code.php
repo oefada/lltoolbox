@@ -202,11 +202,14 @@ class PromoCode extends AppModel {
             if (sizeof($themeCheck) > 0) {
                 $themeListIds = array();
                 $themeListDescs = array();
+                $themeListIds[] = $themeCheck['themeId'];
+                $themeListDescs[] = $themeCheck['themeName'];
+                /*
                 foreach ($themeCheck as $theme) {
                     $themeListIds[] = $theme['themeId'];
                     $themeListDescs[] = $theme['themeName'];
                 }
-
+*/
                 if (!$this->isClientInTheme($offerClientId, $themeListIds)) {
                     return $this->isInvalidPromoCode(
                         'display|Please note there is a theme restriction on this promotion.'
@@ -402,7 +405,7 @@ class PromoCode extends AppModel {
 
         $result = $this->query($sql);
 
-        return $result[0];
+        return $result[0]['t'];
     }
 
     public function isClientInTheme($client, $themes)
@@ -414,7 +417,7 @@ class PromoCode extends AppModel {
             ) . ")";
 
         $themeExists = $this->query($sql);
-        if ($themeExists[0]['0']['nbr'] == 0) {
+        if ($themeExists[0]['0']['nbr'] > 0) {
             return true;
         }
         return false;
