@@ -94,6 +94,8 @@ class Client extends AppModel
     public $loaId;
     public $cacheQueries = false;
     public $containable = false;
+    public $changedFields;
+    public $old;
 
     function beforeSave()
     {
@@ -108,9 +110,31 @@ class Client extends AppModel
         }
         $this->old = $this->find(array($this->primaryKey => $this->id));
 
-        if (empty($this->old)) return true;
+        if (empty($this->old)) {
+            return true;
+        }
         //clientId exists
         $this->checkForDataChanges();
+
+        if (false !== $this->changedFields) {
+            /**
+             * This will ensure that old PDP URls continue to work
+             * Copied Brandon's code for changed field's
+             **/
+            $conditions = array(
+                'ClientPdpRedirects' => array(
+                    'clientId' => $this->id,
+                    'clientName' => $this->old['Client']['name'],
+                    'clientTypeId' => $this->old['Client']['clientTypeId'],
+                    'clientLocation' => $this->old['Client']['locationNormalized'],
+                    'seoType' => $this->old['Client']['clientTypeSeoName'],
+                    'seoLocation' => $this->old['Client']['seoLocation'],
+                    'seoName' => $this->convertToSeoName($this->old['Client']['name']),
+                    'dateModified' => DboSource::expression('NOW()')
+                )
+            );
+            $this->ClientPdpRedirects->save($conditions);
+        }
         return true;
     }
 
@@ -1210,10 +1234,10 @@ class Client extends AppModel
             array('style' => 'background-color:#CCC')
         );
 
-        $changedFields = false;
+        $this->changedFields = false;
         foreach ($fieldsToCompare as $fieldName) {
             if ($this->old['Client'][$fieldName] !== $this->data['Client'][$fieldName]) {
-                $changedFields = true;
+                $this->changedFields = true;
                 $tbl .= $html->tableCells(
                     array(
                         $fieldName,
@@ -1226,7 +1250,7 @@ class Client extends AppModel
         }
         $tbl .= "</table><br />\n";
 
-        if (false == $changedFields) {
+        if (false == $this->changedFields) {
             //faster
             return false;
         }
