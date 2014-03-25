@@ -53,8 +53,10 @@ class WebServiceNewClientsController extends WebServicesController
 		$date_now = date('Y-m-d H:i:s', strtotime('now'));
 
 		if ($client_id) {
+            $this->Client->recursive = -1;
 			$client = $this->Client->findByClientId($client_id);
 			$client_data_save = $client['Client'];
+            $client_data_existing = $client;
 
             $sugarClientName= $this->prepClientNameForImport($decoded_request['client']['client_name']);
 
@@ -89,7 +91,7 @@ class WebServiceNewClientsController extends WebServicesController
 
 		if ($client_id && is_numeric($client_id)) {
 			// ======= EXISTING CLIENT UPDATE ========
-
+            //exit($client_data_save['name'] );
 			// *** check first by doing a manual update ***
 			$result = $this->Client->query("UPDATE client SET modified = NOW() WHERE clientId = $client_id LIMIT 1");
 			if ($this->Client->getAffectedRows()) {
@@ -106,6 +108,7 @@ class WebServiceNewClientsController extends WebServicesController
                         @mail('devmail@luxurylink.com', 'SUGAR BUS -- EXISTING CLIENT NOT SAVED',$errMsg );
                     }
 				} else {
+                    @$this->Client->handlePdpUrlDataChanges($client_data_existing,$client_cake_save);
                     // Save succeeded. Also saving to LuxuryLink Database
                     // LuxuryLink DB/Client Table also needs to be updated RE TICKET4270
                     $llquery = "UPDATE luxurylink.client SET ";
@@ -206,7 +209,7 @@ class WebServiceNewClientsController extends WebServicesController
                     }
                 }
                 $client_data_save['clientId'] = $client_id;
-                @$this->Client->save($client_data_save);
+                @$this->Client->save($client_data_save, array('callbacks' => false));
 
 		    $contacts = $decoded_request['contacts'];
 			if (!empty($contacts)) {
@@ -266,7 +269,6 @@ class WebServiceNewClientsController extends WebServicesController
 		    		$this->ClientContact->save($newClientContact, array('callbacks'=>false));
 		    	}
 		    }
-
         //clientID exists, begin LOA workflow. Ensure LOA workflow fails gracefully.
            if (isset($decoded_request['loas'])){
                try{
@@ -275,6 +277,11 @@ class WebServiceNewClientsController extends WebServicesController
                    if(isset($newLoaId) && is_numeric($newLoaId)){
                        $decoded_request['loaSugarId'] = $decoded_request['loas'][0]['id'];
                        $decoded_request['newLoaId'] = $newLoaId;
+
+                       $reconcileLoaProposals = @$this->Loa->updateLastSugarLoaProposalWithClientId($client_id, $newLoaId, $decoded_request['loaSugarId']);
+                       if($reconcileLoaProposals !== false){
+                           $decoded_request['LoaProposalsReconciled'] = 1;
+                       }
                    }
 
                }catch(Exception $e){

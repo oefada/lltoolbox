@@ -575,6 +575,28 @@ class Loa extends AppModel
         @$this->changeEmail($loa_data_save,'New LOA Created in Toolbox - '.$emailPostfix,'new@luxurylink.com');
         return $newLoaId;
     }
+    /*
+     * Updates last Sugar LoA Proposal with ClientId
+     * once the prospect becomes a client and After the LOA is imported
+     */
+
+    public function updateLastSugarLoaProposalWithClientId($clientId, $loaId, $sugarLoaId)
+    {
+        if (!isset($sugarLoaId, $clientId)) return false;
+        $sql = "
+                UPDATE loaDocument
+                SET
+                clientId = ?,
+                loaId  = ?,
+                modified = NOW()
+                WHERE (clientId IS NULL OR clientId = '')
+                AND sugarLoaId = ?
+                ORDER BY loaDocumentId DESC
+                LIMIT 1;
+                ";
+        $result =  $this->query($sql, array($clientId, $loaId, $sugarLoaId));
+        return $result;
+    }
 }
 
 ?>
