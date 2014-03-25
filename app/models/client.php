@@ -97,9 +97,9 @@ class Client extends AppModel
     public $changedFields = array();
     public $old;
 
-    function __construct() {
-        call_user_func_array(array('parent', '__construct'), func_get_args());
-
+    public function __construct($id = false, $table = null, $ds = null)
+    {
+        parent::__construct($id, $table, $ds);
 
         App::import('Helper', 'Html'); // loadHelper('Html'); in CakePHP 1.1.x.x
         $this->html = new HtmlHelper();
