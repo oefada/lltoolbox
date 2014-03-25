@@ -94,8 +94,19 @@ class Client extends AppModel
     public $loaId;
     public $cacheQueries = false;
     public $containable = false;
-    public $changedFields;
+    public $changedFields = array();
     public $old;
+
+    function __construct() {
+        call_user_func_array(array('parent', '__construct'), func_get_args());
+
+
+        App::import('Helper', 'Html'); // loadHelper('Html'); in CakePHP 1.1.x.x
+        $this->html = new HtmlHelper();
+
+        App::import('Vendor', 'PHPMailer', array('file' => 'phpmailer' . DS . 'class.phpmailer.php'));
+        $this->mail = new PHPMailer();
+    }
 
     function beforeSave()
     {
@@ -104,6 +115,9 @@ class Client extends AppModel
         $this->data['Client']['locationNormalized'] = $this->normalize($this->data['Client']['locationDisplay'], 1);
         $this->data['Client']['nameNormalized'] = $this->normalize($this->data['Client']['name'], 1);
 
+        if (!empty($this->data['Client']['clientTypeId'])){
+            $this->data['Client']['clientTypeSeoName'] = $this->getClientTypeSeoNameByClientTypeId($this->data['Client']['clientTypeId']);
+        }
         if (!empty($this->data['Client'])) {
             //sanitize toll free tracking #
             $this->data['Client']['estaraPhoneLocal'] = str_replace('-', '', $this->data['Client']['estaraPhoneLocal']);
@@ -114,27 +128,8 @@ class Client extends AppModel
             return true;
         }
         //clientId exists
-        $this->checkForDataChanges();
+        $this->handlePdpUrlDataChanges($this->old,$this->data);
 
-        if (false !== $this->changedFields) {
-            /**
-             * This will ensure that old PDP URls continue to work
-             * Copied Brandon's code for changed field's
-             **/
-            $conditions = array(
-                'ClientPdpRedirects' => array(
-                    'clientId' => $this->id,
-                    'clientName' => $this->old['Client']['name'],
-                    'clientTypeId' => $this->old['Client']['clientTypeId'],
-                    'clientLocation' => $this->old['Client']['locationNormalized'],
-                    'seoType' => $this->old['Client']['clientTypeSeoName'],
-                    'seoLocation' => $this->old['Client']['seoLocation'],
-                    'seoName' => $this->convertToSeoName($this->old['Client']['name']),
-                    'dateModified' => DboSource::expression('NOW()')
-                )
-            );
-            $this->ClientPdpRedirects->save($conditions);
-        }
         return true;
     }
 
@@ -741,7 +736,7 @@ class Client extends AppModel
     public function getClientContactDetails($client_id)
     {
         $sql = "
-			SELECT 
+			SELECT
 				Client.`name` AS property_name,
 				ClientContact.`name` AS contact_name,
 				ClientContact.`emailAddress` AS contact_email,
@@ -1214,16 +1209,33 @@ class Client extends AppModel
         return $result;
     }
 
-    public function checkForDataChanges()
+    public function checkForClientDataChanges($oldDataArray, $newDataArray)
     {
+        if (!isset($oldDataArray)) {
+            return false;
+        }
+        if (!isset($newDataArray)) {
+            $newDataArray = $this->data;
+        }
         $fieldsToCompare = array('name', 'locationDisplay', 'clientTypeSeoName');
 
-        //Build html
-        App::import('Helper', 'Html'); // loadHelper('Html'); in CakePHP 1.1.x.x
-        $html = new HtmlHelper();
+        foreach ($fieldsToCompare as $fieldName) {
+            if ($oldDataArray['Client'][$fieldName] !== $newDataArray['Client'][$fieldName]) {
+                $this->changedFields[] = $fieldName;
+            }
+        }
+        if (!empty($this->changedFields)) {
+            //faster
+            $this->sendPDPUrlChangeEmail($oldDataArray, $newDataArray);
+            return true;
+        }
+        return false;
+    }
 
+    public function sendPDPUrlChangeEmail($oldDataArray, $newDataArray)
+    {
         $tbl = "<table cellpadding='2' cellspacing='1' width='640'>";
-        $tbl .= $html->tableHeaders(
+        $tbl .= $this->html->tableHeaders(
             array(
                 '<b>Field</b>',
                 '<b>Old Value</b>',
@@ -1234,26 +1246,54 @@ class Client extends AppModel
             array('style' => 'background-color:#CCC')
         );
 
-        $this->changedFields = false;
-        foreach ($fieldsToCompare as $fieldName) {
-            if ($this->old['Client'][$fieldName] !== $this->data['Client'][$fieldName]) {
-                $this->changedFields = true;
-                $tbl .= $html->tableCells(
-                    array(
-                        $fieldName,
-                        $this->old['Client'][$fieldName],
-                        $this->data['Client'][$fieldName],
-                        date("m-d-Y H:i:s")
-                    )
-                );
-            }
-        }
-        $tbl .= "</table><br />\n";
-
-        if (false == $this->changedFields) {
-            //faster
+        if (empty($this->changedFields)) {
             return false;
         }
+        foreach ($this->changedFields as $fieldName) {
+            //build table of change fields in email
+            $tbl .= $this->html->tableCells(
+                array(
+                    $fieldName,
+                    $oldDataArray['Client'][$fieldName],
+                    $newDataArray['Client'][$fieldName],
+                    date("m-d-Y H:i:s")
+                )
+            );
+        }
+        //close table
+        $tbl .= "</table><br />\n";
+        $pdpUrl = $this->buildClientPDPUrl(
+            $newDataArray['Client']['clientTypeSeoName'],
+            $newDataArray['Client']['seoLocation'],
+            $newDataArray['Client']['seoName']
+        );
+
+        $link = "<p>New PDP URL: <a href='$pdpUrl'>$pdpUrl</a></p>\n";
+        $link .= "<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>***auto-generated by toolbox***";
+
+        $subj = 'PDP URL Change - ' . $oldDataArray['Client']['name'] . ' - CID ' . $oldDataArray['Client']['clientId'];
+        $body = "<h2>" . $subj . "</h2>\n" . $tbl . $link;
+
+        $this->mail->From = 'no-reply@toolbox.luxurylink.com';
+        $this->mail->FromName = 'no-reply@toolbox.luxurylink.com';
+        $this->mail->IsHTML(true);
+
+        if ($_SERVER['ENV'] == 'development' || ISSTAGE == true) {
+            $this->mail->AddAddress('devmail@luxurylink.com');
+            $this->mail->AddBCC('oefada@luxurylink.com');
+            $subj .= ' [TESTING - IGNORE]';
+        } else {
+            $this->mail->AddAddress('clientnamechange@luxurylink.com');
+            $this->mail->AddBCC('oefada@luxurylink.com');
+        }
+        $this->mail->Subject = $subj;
+        $this->mail->Body = $body;
+        $result = $this->mail->Send();
+        return true;
+    }
+
+    public function buildClientPDPUrl($clientTypeSeoName, $clientSeoLocation, $clientSeoName)
+    {
         $urlBase = 'http://www.luxurylink.com/5star';
         if ($_SERVER['ENV'] == 'development') {
             $urlBase = 'http://dev-luxurylink.luxurylink.com/5star';
@@ -1261,31 +1301,45 @@ class Client extends AppModel
         if (ISSTAGE == true) {
             $urlBase = 'http://stage-luxurylink.luxurylink.com/5star';
         }
-        $pdpUrl = $urlBase . '/' . $this->data['Client']['clientTypeSeoName'] . '/' . $this->data['Client']['seoLocation'] . '/' . $this->data['Client']['seoName'];
-        $link = "<p>New PDP URL: $pdpUrl</p>\n";
+        //@ToDo- refactor for conditional path parts
+        $path = $clientTypeSeoName . DS . $clientSeoLocation . DS . $clientSeoName;
+        return $urlBase.DS.$path;
+    }
 
-        App::import('Vendor', 'PHPMailer', array('file' => 'phpmailer' . DS . 'class.phpmailer.php'));
+    public function getClientTypeSeoNameByClientTypeId($id){
+        if (!isset($id)) return null;
+        $this->ClientType->recursive = -1;
+        $result = $this->ClientType->field('clientTypeSeoName', array('ClientType.clientTypeId' => $id));
+        return $result;
+    }
 
-        $subj = 'PDP URL Change - ' . $this->old['Client']['name'] . ' - CID ' . $this->old['Client']['clientId'];
-        $body = "<h2>" . $subj . "</h2>\n" .$tbl. $link;
+    public function handlePdpUrlDataChanges($currentData,$newData)
+    {
+        //clientId exists
+        $this->checkForClientDataChanges($currentData,$newData);
 
-        $mail = new PHPMailer();
-        $mail->From = 'no-reply@toolbox.luxurylink.com';
-        $mail->FromName = 'no-reply@toolbox.luxurylink.com';
-        $mail->IsHTML(true);
+        if (!empty($this->changedFields)) {
 
-        if ($_SERVER['ENV'] == 'development' || ISSTAGE == true) {
-            $mail->AddAddress('devmail@luxurylink.com');
-            $mail->AddBCC('oefada@luxurylink.com');
-            $subj .= ' [TESTING - IGNORE]';
-        } else {
-            $mail->AddAddress('clientnamechange@luxurylink.com');
-            $mail->AddBCC('oefada@luxurylink.com');
+            /**
+             * This will ensure that old PDP URls continue to work
+             * Copied Brandon's code for changed field's
+             **/
+            $conditions = array(
+                'ClientPdpRedirects' => array(
+                    'clientId' => $currentData['Client']['clientId'],
+                    'clientName' => $currentData['Client']['name'],
+                    'clientTypeId' => $currentData['Client']['clientTypeId'],
+                    'clientLocation' => $currentData['Client']['locationNormalized'],
+                    'seoType' => $currentData['Client']['clientTypeSeoName'],
+                    'seoLocation' => $currentData['Client']['seoLocation'],
+                    'seoName' => $this->convertToSeoName($currentData['Client']['name']),
+                    'dateModified' => DboSource::expression('NOW()')
+                )
+            );
+            //@TODO, we should really only save these if they do not exist, otherwise we fill up the table w/ duplicates
+            $this->ClientPdpRedirects->save($conditions);
+            return true;
         }
-        $mail->Subject = $subj;
-        $mail->Body = $body;
-        $result = $mail->Send();
-
         return true;
     }
 }
