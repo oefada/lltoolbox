@@ -1,36 +1,36 @@
-<!DOCTYPE html 
+<!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-<head> 
-<meta property="og:title" content="Luxury Link's Newest Travel Deals"/> 
-<meta 
-    property="og:description" 
-    content="Explore our collection of the world's finest properties and find your dream vacation."/> 
-<meta property="og:image" content="http://ui.llsrv.us/images/ads/insertions/share_image_a.jpg"/> 
+<head>
+<meta property="og:title" content="Luxury Link's Newest Travel Deals"/>
+<meta
+    property="og:description"
+    content="Explore our collection of the world's finest properties and find your dream vacation."/>
+<meta property="og:image" content="http://ui.llsrv.us/images/ads/insertions/share_image_a.jpg"/>
 <style type="text/css">.yshortcuts{color:inherit;}html{-webkit-text-size-adjust:none;}</style>
-</head>  
+</head>
 
 <body bgcolor="#e9e9e9" marginwidth="0" marginheight="0" leftmargin="0" topmargin="0"><CENTER><FONT SIZE="1" FACE="ARIAL">Viewing email on a mobile device? Shop our <a href="http://www.luxurylink.com?utm_medium=news&utm_source=insider&utm_campaign=<?= $utmArr['utm_campaign']; ?>&utm_content=top-top&utm_term=go-to-mobile-site" target="_blank" name="mobile-site">mobile-optimized site</a> &nbsp; | &nbsp; View <a href="%%viewonline%%">online</a></FONT></CENTER>
 
 <?=$mailing->displayHiddenClientIds($rows);?>
 
-<!-- open table D --> 
-<table cellspacing="0" cellpadding="0" border="0" width="100%" bgcolor="#e9e9e9"> 
-<tr> 
+<!-- open table D -->
+<table cellspacing="0" cellpadding="0" border="0" width="100%" bgcolor="#e9e9e9">
+<tr>
 <td bgcolor="#e9e9e9">
 
-    <!-- open table C -->  
-    <table valign="top" cellspacing="0" cellpadding="0" border="0" align="center" width="800" id="Header"> 
-    <tr> 
-    <td style="padding: 0px 0px 0px 0px"><img height="12" width="800"  src="http://ui.llsrv.us/images/insider/new/header5_02.jpg" alt="" /></td> 
-    </tr>  
+    <!-- open table C -->
+    <table valign="top" cellspacing="0" cellpadding="0" border="0" align="center" width="800" id="Header">
+    <tr>
+    <td style="padding: 0px 0px 0px 0px"><img height="12" width="800"  src="http://ui.llsrv.us/images/insider/new/header5_02.jpg" alt="" /></td>
+    </tr>
     <tr>
     <td bgcolor="#e9e9e9" height="18" width="700" valign="bottom" style="font-family:Arial,Verdana,sans-serif;font-size:12px;line-height:15px;color:#999999;text-align:right;padding: 0px 4px 0px 0px"><?= date('F j, Y'); ?></td>
-    </tr>  
+    </tr>
     <tr>
         <td style="padding: 0px 0px 15px 0px"><a name="LL-logo" target="_blank" href="<?=$mailing->genUrl('header', '/', 'logo');?>"><img border="0" align="left" height="109" width="800" src="http://www.luxurylink.com/images/email/Insider/header_logo-2013-NEW.jpg" alt="Luxury Link Insider Header" style="display: block" /></a>
         </td>
-        
+
     </tr>
     </table>
 <table cellspacing="0" cellpadding="0" border="0" align="center" width="800">
@@ -43,28 +43,28 @@
     </tr>
     <tr>
     <td bgcolor="#ffffff" align="left" height="50" width="620" style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:15px;color:#666666; text-transform: uppercase; font-weight: bold; text-align: left;">
-    
-        <a 
-        name="destinations_header" 
-        style="color:#666666;text-decoration:none" 
-        target="_blank"  
+
+        <a
+        name="destinations_header"
+        style="color:#666666;text-decoration:none"
+        target="_blank"
         href="<?=$mailing->genUrl('nav', '/fivestar/', 'nav_destinations');?>">&nbsp;&nbsp;&nbsp;&nbsp;Destinations</a>
-    &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
-    <a 
-        name="all_inclusive_header" 
-        style="color:#666666;text-decoration:none" 
-        target="_blank"  
+    &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+    <a
+        name="all_inclusive_header"
+        style="color:#666666;text-decoration:none"
+        target="_blank"
         href="<?=$mailing->genUrl('nav', '/fivestar/all-inclusive-resorts/deals', 'nav_all-inclusive');?>"
     >All-Inclusive</a>
-    &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
-    <a 
-        name="weekend-getaways_header" 
-        style="color:#666666;text-decoration:none" 
-        target="_blank"  
-        href="<?=$mailing->genUrl('nav', '/vacation-ideas/weekend-getaways/deals', 'nav_weekend-getaways');?>">Weekend Getaways</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 
-    
-    <a  style="color:#666666;text-decoration:none" target="_blank" href="<?=$mailing->genUrl('nav', '/5star/hotel-deals/holiday_availability', 'nav_holiday-specials');?>">Holiday Specials</a>&nbsp;&nbsp;&nbsp;</td> 
-    
+    &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+    <a
+        name="weekend-getaways_header"
+        style="color:#666666;text-decoration:none"
+        target="_blank"
+        href="<?=$mailing->genUrl('nav', '/vacation-ideas/weekend-getaways/deals', 'nav_weekend-getaways');?>">Weekend Getaways</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+
+    <a  style="color:#666666;text-decoration:none" target="_blank" href="<?=$mailing->genUrl('nav', '/5star/hotel-deals/holiday_availability', 'nav_holiday-specials');?>">Holiday Specials</a>&nbsp;&nbsp;&nbsp;</td>
+
     <td align="right">
                     <table align="right" width="130" border="0" cellpadding="0" cellspacing="0"><tr>
                     <td colspan="2" align="right" width="130" valign="middle" style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height:14px;color:#666; text-transform: uppercase; font-weight: bold; text-align: right;">Call Now To Book &nbsp; </td></tr>
@@ -82,7 +82,7 @@
 </table><!--end of header-->
 
 
-    
+
 <!--Newest Additions-->
 <table align="center" width="800" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff" style="padding: 0px 0 0px 0">
 
@@ -91,18 +91,18 @@
     <img src="http://ui.llsrv.us/images/insider/new/spacer.gif" width="20" height="40" border="0" />
 
 </td>
-<td 
-    align="left" 
-    width="780" 
-    height="40" 
-    valign="bottom" 
-    bgcolor="#ffffff" 
+<td
+    align="left"
+    width="780"
+    height="40"
+    valign="bottom"
+    bgcolor="#ffffff"
     style="font-family: Georgia, Garamond, Times New Roman, serif; text-align: left; font-size: 24px; line-height: 30px; color: #444444;">
-    <a 
-         
-        name="new-add" 
-        style="color:#444444; text-decoration: none;" 
-        target="_blank" 
+    <a
+
+        name="new-add"
+        style="color:#444444; text-decoration: none;"
+        target="_blank"
         href="<?=$mailing->genUrl('newest_additions','/fivestar/new-hotels/deals', 'new additions');?>"
     >Newest Additions</a>
 </td>
@@ -226,27 +226,27 @@
 <table align="center" width="800" border="0" bgcolor="#2e2f33" cellpadding="0" cellspacing="0"  style="padding: 0px 0 0px 0">
 <tr colspan="2">
 <td colspan="2"width="800" height="3" bgcolor="#2e2f33"
-    ><img 
-        src="http://ui.llsrv.us/images/insider/new/SPACER_2e2f33_800x1.jpg" 
-        width="800" 
-        height="3" 
+    ><img
+        src="http://ui.llsrv.us/images/insider/new/SPACER_2e2f33_800x1.jpg"
+        width="800"
+        height="3"
         border="0"
     />
 </td>
 </tr>
 <tr colspan="2">
-<td 
-    width="800" 
-    height="24" 
-    bgcolor="#2e2f33" 
-    valign="middle" 
+<td
+    width="800"
+    height="24"
+    bgcolor="#2e2f33"
+    valign="middle"
     style="font-family:Arial,Verdana, sans-serif;font-size:12px;line-height: 25px; color:#3ca9d5; font-weight: bold; text-align: right;padding-bottom: 5px;"
-><a 
-    name="0.1_logo" 
-    target="_blank" 
-     
+><a
+    name="0.1_logo"
+    target="_blank"
+
     href="<?=$mailing->genUrl('view-all', '/fivestar/new-hotels/deals', 'new-additions');?>"
-    style="color: #3ca9d5; text-decoration: none;" 
+    style="color: #3ca9d5; text-decoration: none;"
 >View All Newest Additions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
 </td>
 </tr>
@@ -275,16 +275,16 @@
 
 </td>
 <td colspan="6"
-    align="left" 
-    width="780" 
-    height="40" 
-    valign="bottom" 
-    bgcolor="#ffffff" 
+    align="left"
+    width="780"
+    height="40"
+    valign="bottom"
+    bgcolor="#ffffff"
     style="font-family: Georgia, Garamond, Times New Roman, serif; text-align: left; font-size: 24px; line-height: 30px; color: #444444;background-color:#ffffff">
-    <a 
-        name="new-featured-title" 
-        style="color:#444444; text-decoration: none;" 
-        target="_blank" 
+    <a
+        name="new-featured-title"
+        style="color:#444444; text-decoration: none;"
+        target="_blank"
         href="<?=$mailing->genUrl('view-all','/vacation-ideas/presidents-picks', 'editor-choice');?>"
     >Featured Properties</a>
 
@@ -374,7 +374,7 @@
     </td>
 
     </tr>
-    
+
     <tr>
     <td><img src="http://ui.llsrv.us/images/insider/new/SPACER_20x1.jpg" width="1" height="40" alt=""/></td>
     </tr>
@@ -421,11 +421,11 @@
     </td>
 
     </tr>
-    
+
     <tr>
     <td><img src="http://ui.llsrv.us/images/insider/new/SPACER_20x1.jpg" width="1" height="30" alt=""/></td>
-    </tr>    
-    
+    </tr>
+
 
 </table>
 <!--editors picks first row end-->
@@ -468,7 +468,7 @@
     </td>
 
     </tr>
-    
+
     <tr>
     <td><img src="http://ui.llsrv.us/images/insider/new/SPACER_20x1.jpg" width="1" height="40" alt=""/></td>
     </tr>
@@ -631,7 +631,7 @@
 
 <td valign="top" colspan="2" align="left" style="padding: 0px 0px 0px 20px;">
 
-<!--start anchor ad section-->   
+<!--start anchor ad section-->
  <table width="300" cellspacing="0" cellpadding="0" border="0" valign="top">
 <tr>
     <td valign="top" align="left" style="padding: 0px 20px 0px 20px; vertical-align:top;">
@@ -641,7 +641,7 @@
     <td valign="top" align="center" style="font-size:9px; font-family: Arial,Sans-Serif;color:#666666;line-height:11px;padding: 2px 0px 5px 20px">Advertisement</td>
 </tr>
 </table>
-<!--end anchor ad section-->                    
+<!--end anchor ad section-->
 
 </td>
 </tr>
@@ -652,7 +652,7 @@
 </tr></table>
 
     <!-- FOOTER -->
-    <table id="footer" align="center" width="800" height="61" border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff">
+    <table id="footer" align="center" width="800" height="61" border="0" cellpadding="0" cellspacing="0” bgcolor="#ffffff">
 
         <tr>
             <td align="center"  valign="top" style="padding:10px 0px 0px 0px;">
@@ -695,7 +695,7 @@
                         </td>
                         <td align="center" height="80" style="padding: 15px 20px 15px 10px;"><img border="0" name="line" src="http://www.luxurylink.com/images/email/new/ph-icon_49x49.jpg" width="49" height="49" style="display:block;" /><br />
                             <span style="font-family:Times, Serif;font-size:15px;color:#333;line-height:21px;">CONCIERGE: (888) 297-3299</span><br />
-                            <span style="font-family:Arial, sans-serif;font-size:11px;color:#555;">Mon - Fri: 24hrs &nbsp;|&nbsp; Sat &amp; Sun: 9am - 4pm Pacific</span>
+                            <span style="font-family:Arial, sans-serif;font-size:11px;color:#555;">24 Hours / 7 Days a Week</span>
                         </td>
                     </tr>
                 </table>
