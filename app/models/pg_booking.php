@@ -7,6 +7,8 @@ class PgBooking extends AppModel
     var $belongsTo = array(
         'Client' => array('foreignKey' => 'clientId'),
         'User' => array('foreignKey' => 'userId'),
+        'UserPaymentSetting' => array('foreignKey' => 'userPaymentSettingId'),
+        'PromoCode' => array('foreignKey' => 'promoCodeId'),
     );
 
     public $hasMany = array(
@@ -26,5 +28,9 @@ class PgBooking extends AppModel
 			50 => 'Canceled'
 		);
 	}
+    public function isValidPurchaseStatus($purchaseStatus)
+    {
+
+    }
 
 }
