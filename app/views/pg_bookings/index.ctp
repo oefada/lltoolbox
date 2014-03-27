@@ -21,12 +21,12 @@ $this->set('hideSidebar', true);
 		<tr>
 		<td style="width:350px;">
 
-		<table cellpadding="0" cellspacing="0" style="width:300px;"> 
+		<table cellpadding="0" cellspacing="0" style="width:330px;">
 			<tr>
 				<td width="150">
 					Start Date
 				</td>
-				<td>
+				<td width="170">
 					<select name="s_start_y">
 						<?php 
 						for ($i = date('Y'); $i > 2005; $i--) { 
@@ -105,6 +105,8 @@ $this->set('hideSidebar', true);
 				<td>
 					<select name="s_booking_status_id"> 
 						<option value="0">All</option>
+                        <option value="1" <? if ($s_tld_id == 1) { echo 'selected="selected"'; } ?>>Booked</option>
+                        <option value="2" <? if ($s_tld_id == 2) { echo 'selected="selected"'; } ?>>Canceled</option>
 					</select>
 				</td>
 			</tr>
@@ -161,9 +163,20 @@ $this->set('hideSidebar', true);
 			</table>
 
 		</td>
-		<td style="border-left:1px solid silver;width:300px;padding-left:15px;">
-			<table cellspacing="0" cellpadding="0" style="width:285px;">
-			<tr><td><strong>Quick Links</strong></td></tr>
+		<td style="width:370px; border-left:1px solid silver; padding-left: 15px;">
+
+			<table cellspacing="0" cellpadding="0" style="width:355px;">
+			<tr>
+				<td style="width:120px;">
+   			        <strong>Quick Links</strong>
+   			    </td>
+   			</tr>
+			<tr>
+				<td><a href="/tickets">Search Auction and Buy Now Tickets</a></td>
+			</tr>
+			<tr>
+				<td><a href="<?=$csv_link_string;?>">Export <?=$this->params['paging']['PgBooking']['count']>10000?'10,000 of ':'';?><?=number_format($this->params['paging']['PgBooking']['count']);?> records to CSV</a><br/></td>
+			</tr>
 			</table>
 		</td>
 		<td>&nbsp;</td>
@@ -195,8 +208,13 @@ $this->set('hideSidebar', true);
 	<th width="220" style="color:#FFF;">Client</th>
 	<th width="220" style="color:#FFF;">User</th>
     <th width="220"  style="color:#FFF;">Traveler</th>
+    <th width="220"  style="color:#FFF;">Sale Price</th>
+    <th width="220"  style="color:#FFF;"># of Nights</th>
+    <th width="220"  style="color:#FFF;">Check-In</th>
+    <th width="220"  style="color:#FFF;">CC</th>
     <th width="220"  style="color:#FFF;">Status</th>
 	<th width="220" style="color:#FFF;">Notes</th>
+	<th width="220" style="color:#FFF;">Promo</th>
 	<th class="actions" style="color:#FFF;"><?php __('Actions');?></th>
 </tr>
 <?php
@@ -212,10 +230,45 @@ foreach ($bookings as $booking):
         <td><?php echo $booking['PgBooking']['pgBookingId']; ?></td>
         <td><?php echo ($booking['PgBooking']['tldId'] == 2) ? '.CO.UK' : '.COM'; ?></td>
         <td><?php echo $booking['PgBooking']['dateCreated'];?></td>
-        <td><?php echo $booking['Client']['name'];?></td>
-        <td><?php echo $booking['User']['firstName'];?> <?php echo $booking['User']['lastName'];?></td>
+		<td>
+			<?php foreach ($booking['Client'] as $client) : ?>
+			<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?pid=<?php echo $client['client']['clientId'];?>" target="_BLANK"><?php echo $client['client']['clientId'];?></a> - <?php echo $client['client']['name'];?>
+			<br /><br />
+			<?php endforeach; ?>
+		</td>
+		<td>
+			<a href="/users/view/<?php echo $booking['PgBooking']['userId'];?>" target="_BLANK"><?php echo $booking['PgBooking']['userId'];?></a> - <?php echo $booking['PgBooking']['travelerFirstName']; ?> <?php echo $booking['PgBooking']['travelerLastName']; ?>
+		</td>
         <td><?php echo $booking['PgBooking']['travelerFirstName'];?> <?php echo $booking['PgBooking']['travelerLastName'];?></td>
+		<td>
+			<?php
+                if ($booking['PgBooking']['tldId'] == 1) {
+                    echo $number->currency($booking['PgBooking']['grandTotalUSD']);
+                } else {
+                    echo $number->currency($booking['PgBooking']['grandTotalUSD'], 'GBP');
+                }
+            ?>
+		</td>
+		<td><?php echo round((strtotime($booking['PgBooking']['dateOut']) - strtotime($booking['PgBooking']['dateIn'])) / (86400)); ?></td>
+		<td><?php echo $booking['PgBooking']['dateIn'];?></td>
+		<td><?php echo $booking['PgBooking']['validCard']; ?></td>
         <td><?php echo $bookingStatusDisplay[$booking['PgBooking']['pgBookingStatusId']];?></td>
+		<td></td>
+		<td><?php if (!empty($booking['Promo'])) :?>
+			<?php foreach ($booking['Promo'] as $t_promo) : ?>
+			<h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code [<?=$t_promo['pc']['promoCode'];?>] **</h3>
+			<h3 style="margin:0px;padding:0px;padding-bottom:5px;">
+				<?php if ($t_promo['p']['amountOff']) : ?>
+				Amount Off: <?php echo $number->currency($t_promo['p']['amountOff']);?>
+				<?php endif; ?>
+				<?php if ($t_promo['p']['percentOff']) : ?>
+				Percent Off: <?php echo $number->currency($t_promo['p']['percentOff']);?>
+				<?php endif; ?>
+			</h3>
+
+			<?php endforeach; ?>
+			<?php endif; ?>
+		</td>
         <td></td>
 		<td class="actions">
 			<?php echo $html->link(__('View Details', true), array('controller' => 'pg_bookings', 'action'=>'view', $booking['PgBooking']['pgBookingId'])); ?>

@@ -27,5 +27,21 @@ class PgBooking extends AppModel
 			50 => 'Canceled'
 		);
 	}
-
+    function getTicketPromoData($promoCodeId)
+    {
+        $sql = "SELECT pc.*, pcr.promoCodeId, pcr.promoId, p.promoName, p.amountOff, p.percentOff FROM promoCode pc ";
+     //   $sql .= "INNER JOIN promoCode pc ON pc.promoCodeId = ptr.promoCodeId ";
+        $sql .= "INNER JOIN promoCodeRel pcr ON pcr.promoCodeId = pc.promoCodeId ";
+        $sql .= "INNER JOIN promo p on p.promoId = pcr.promoId ";
+        $sql .= "WHERE pc.promoCodeId = ".$promoCodeId;
+        $result = $this->query($sql);
+        return $result;
+    }
+    function getClientsFromClientId($clientId)
+    {
+        $sql = "SELECT clientId, name, clientTypeId, parentClientId FROM client ";
+        $sql .= "WHERE clientId = " . $clientId;
+        $clients = $this->query($sql);
+        return $clients;
+    }
 }

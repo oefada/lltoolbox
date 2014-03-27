@@ -272,6 +272,9 @@ $this->set('hideSidebar', true);
 			<table cellspacing="0" cellpadding="0" style="width:285px;">
 			<tr><td><strong>Quick Links</strong></td></tr>
 			<tr>
+				<td><a href="/pg_bookings">Pegasus Tickets</a></td>
+			</tr>
+			<tr>
 				<td><a href="/tickets/index/?s_ticket_status_id=3&s_format_id=1&s_quick_link=1">Auction Res. Requests by Most Recent Date</a></td>
 			</tr>
 			<tr>

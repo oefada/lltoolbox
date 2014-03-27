@@ -6,15 +6,39 @@ class PgBookingsController extends AppController
     var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
 
 
+    var $uses = array(
+        'PgBooking',
+        'OfferType',
+        'Format',
+        'User',
+        'ClientLoaPackageRel',
+        'Track',
+        'TrackDetail',
+        'Offer',
+        'Loa',
+        'Client',
+        'OfferLuxuryLink',
+        'OfferFamily',
+        'Reservation',
+        'PromoTicketRel',
+        'Promo',
+        'PromoCode',
+        'PaymentType',
+        'Readonly',
+        'ReservationPreferDate',
+        'ReservationPreferDateFromHotel'
+    );
+
+
     function index()
     {
         // Readonly db config
-        /*
-        $this->Ticket->useReadonlyDb();
-        $this->Ticket->TicketStatus->useReadonlyDb();
-        $this->Ticket->PromoTicketRel->useReadonlyDb();
-        $this->Ticket->Reservation->useReadonlyDb();
-        */
+
+        $this->PgBooking->useReadonlyDb();
+       // $this->PgBooking->useReadonlyDb();
+       // $this->PgBooking->PromoTicketRel->useReadonlyDb();
+        //$this->Ticket->Reservation->useReadonlyDb();
+
 
         // set search criteria from form post or set defaults
         $form = $this->params['form'];
@@ -25,7 +49,6 @@ class PgBookingsController extends AppController
             $form = $named;
             $this->params['form'] = $this->params['named'];
         }
-
         // export take out limit
         $csv_export = isset($this->params['named']['csv_export']) ? $this->params['named']['csv_export'] : false;
 
@@ -33,6 +56,7 @@ class PgBookingsController extends AppController
         $s_booking_id = isset($form['s_booking_id']) ? $form['s_booking_id'] : '';
         $s_user_id = isset($form['s_user_id']) ? $form['s_user_id'] : '';
         $s_tld_id = isset($form['s_tld_id']) ? $form['s_tld_id'] : '';
+        $s_booking_status_id = isset($form['s_booking_status_id']) ? $form['s_booking_status_id'] : '';
         $s_client_id = isset($form['s_client_id']) ? $form['s_client_id'] : '';
         $s_quick_link = isset($form['s_quick_link']) ? $form['s_quick_link'] : '';
         $s_package_id = isset($form['s_package_id']) ? $form['s_package_id'] : '';
@@ -83,13 +107,17 @@ class PgBookingsController extends AppController
                 'PgBooking.clientId',
                 'PgBooking.userId',
                 'PgBooking.clientId',
+                'PgBooking.dateIn',
+                'PgBooking.dateOut',
                 'PgBooking.pgBookingStatusId',
-                'Client.name',
+                'PgBooking.promoCodeId',
+               // 'Client.name',
                 'PgBooking.travelerFirstName',
                 'PgBooking.travelerLastName',
-                'User.firstName',
-                'User.lastName',
-                'User.email',
+                'PgBooking.grandTotalUSD',
+                //'User.firstName',
+                //'User.lastName',
+                //'User.email',
             ),
             'order' => array(
                 'PgBooking.pgBookingId' => 'desc'
@@ -128,6 +156,10 @@ class PgBookingsController extends AppController
             if ($s_tld_id) {
                 $this->paginate['conditions']['PgBooking.tldId'] = $s_tld_id;
             }
+            if ($s_booking_status_id) {
+                $this->paginate['conditions']['PgBooking.pgBookingStatusId'] = $s_booking_status_id;
+            }
+
         }
 
         // allow package/client/user/pricePoint to use date and status
@@ -140,9 +172,11 @@ class PgBookingsController extends AppController
 
         if (!$single_search) {
             $s_ticket_id = null;
+            $s_booking_status_id = null;
         } else {
             if (!$single_search_override) {
                 $s_tld_id = null;
+                $s_booking_status_id = null;
             }
             $s_start_y = $s_end_y = date('Y');
             $s_start_m = $s_end_m = date('m');
@@ -163,12 +197,44 @@ class PgBookingsController extends AppController
         $this->set('s_end_d', $s_end_d);
 
         $bookings_index = $this->paginate();
-
+var_dump($bookings_index);
         if ($s_booking_id) {
-            if (sizeof($tickets_index) == 1) {
+            if (sizeof($bookings_index) == 1) {
                 header("location: /pg_bookings/view/" . $bookings_index[0]['PgBooking']['bookingId']);
                 exit;
             }
+        }
+
+        foreach ($bookings_index as $k => $v) {
+            $bookings_index[$k]['PgBooking']['validCard'] = $this->getValidCcOnFile(
+                $v['PgBooking']['userId']
+            );
+
+            $clients = $this->PgBooking->getClientsFromClientId($v['PgBooking']['clientId']);
+            if ($v['PgBooking']['promoCodeId']) {
+                $bookings_index[$k]['Promo'] = $this->PgBooking->getTicketPromoData($v['PgBooking']['promoCodeId']);
+            }
+            $bookings_index[$k]['Client'] = $clients;
+        /*
+            $bookings_index[$k]['ResPreferDate'] = array();
+            if (in_array(
+                    $v['Ticket']['offerTypeId'],
+                    array(1, 2, 6)
+                ) && !empty($v[0]['arrivalDate']) && !empty($v[0]['departureDate'])
+            ) {
+                $bookings_index[$k]['ResPreferDate']['arrival'] = $v[0]['arrivalDate'];
+                $bookings_index[$k]['ResPreferDate']['departure'] = $v[0]['departureDate'];
+                $bookings_index[$k]['ResPreferDate']['flagged'] = (strtotime(
+                        $bookings_index[$k]['ResPreferDate']['arrival']
+                    ) - strtotime('NOW') <= 604800) ? 1 : 0;
+            } elseif ($v['Ticket']['formatId'] == 2) {
+                $bookings_index[$k]['ResPreferDate']['arrival'] = $v['Ticket']['requestArrival'];
+                $bookings_index[$k]['ResPreferDate']['departure'] = $v['Ticket']['requestDeparture'];
+                $bookings_index[$k]['ResPreferDate']['flagged'] = (strtotime(
+                        $bookings_index[$k]['ResPreferDate']['arrival']
+                    ) - strtotime('NOW') <= 604800) ? 1 : 0;
+            }
+            */
         }
 
         $csv_link_string = '/pg_bookings/index/csv_export:1/';
@@ -181,7 +247,32 @@ class PgBookingsController extends AppController
         $this->set('bookings', $bookings_index);
         $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
     }
+    function getValidCcOnFile($userId)
+    {
+        $ups = $this->Readonly->query(
+            "select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc"
+        );
 
+        $year_now = date('Y');
+        $month_now = date('m');
+        if (empty($ups)) {
+            return 'NONE';
+        }
+        $found_valid_cc = false;
+        foreach ($ups as $k => $v) {
+            if (($v['UserPaymentSetting']['expYear'] < $year_now) || ($v['UserPaymentSetting']['expYear'] == $year_now && $v['UserPaymentSetting']['expMonth'] < $month_now)) {
+                continue;
+            } else {
+                $found_valid_cc = true;
+                break;
+            }
+        }
+        return ($found_valid_cc) ? $v['UserPaymentSetting']['ccType'] . '-' . substr(
+                $v['UserPaymentSetting']['ccToken'],
+                -4,
+                4
+            ) : 'EXPIRED';
+    }
 
     function view($id = null)
     {

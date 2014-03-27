@@ -74,7 +74,8 @@ foreach ($users as $user):
 <?php $this->pageTitle = 'Users' ?>
 <div class="userTools">
 	<ul class="treed">
-		<li class="file"><a href="/tickets">Search Tickets</a></li>
+		<li class="file"><a href="/pg_bookings">Search Pegasus Tickets</a></li>
+		<li class="file"><a href="/tickets">Search Auction and Buy Now Tickets</a></li>
 		<li class="file"><a href="/bids">Search Bids</a></li>
 		<li class="file"><a href="/credit_trackings">Credit On File</a></li>
 		<li class="file"><a href="/gift_cert_balances">Gift Certificates</a></li>
