@@ -23,7 +23,6 @@ class PgBooking extends AppModel
 		return array(
 			 0 => 'New',
 			 1 => 'Booked',
-			 2 => 'Processed',
 			50 => 'Canceled'
 		);
 	}
