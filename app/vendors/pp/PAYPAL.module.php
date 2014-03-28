@@ -55,7 +55,6 @@ class PAYPAL extends PaymentModuleAbstract implements PaymentModuleInterface
     }
 
     /**
-     * @param $response
      * @return bool
      */
     public function chargeSuccess()
@@ -73,7 +72,6 @@ class PAYPAL extends PaymentModuleAbstract implements PaymentModuleInterface
     }
 
     /**
-     * @param $response
      * @return array
      */
     public function getMappedResponse()
@@ -95,7 +93,6 @@ class PAYPAL extends PaymentModuleAbstract implements PaymentModuleInterface
     }
 
     /**
-     * @param $response
      * @return bool
      */
     public function getResponseTxt()
@@ -109,7 +106,6 @@ class PAYPAL extends PaymentModuleAbstract implements PaymentModuleInterface
     }
 
     /**
-     * @param $response
      * @param $valid_param
      * @return bool
      */
@@ -130,8 +126,8 @@ class PAYPAL extends PaymentModuleAbstract implements PaymentModuleInterface
     public function processResponse($raw_response)
     {
         $processed = array();
-        $tmp_array = split('&', strval($raw_response));
-        foreach ($tmp_array as $k => $v) {
+        $tmp_array = explode('&', strval($raw_response));
+        foreach ($tmp_array as $v) {
             $tmp = explode('=', $v);
             $processed[$tmp[0]] = $tmp[1];
         }
