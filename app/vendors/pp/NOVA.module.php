@@ -21,7 +21,6 @@ class NOVA extends PaymentModuleAbstract implements PaymentModuleInterface
     private $merchantId = 506345;
     private $userId = 'webpage';
     private $pin = 277516;
-    private $valid_avs_codes = array("F", "D", "M", "P", "W", "X", "Y", "Z");
 
     /**
      * @param bool $test_param
@@ -148,7 +147,7 @@ class NOVA extends PaymentModuleAbstract implements PaymentModuleInterface
     {
         $processed = array();
         $tmp_array = explode("\n", strval($raw_response));
-        foreach ($tmp_array as $k => $v) {
+        foreach ($tmp_array as $v) {
             $tmp = explode('=', $v);
             $processed[$tmp[0]] = (isset($tmp[1])) ? $tmp[1] : 0;
         }
