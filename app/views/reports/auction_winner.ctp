@@ -1,5 +1,20 @@
 <?php $this->pageTitle = "Daily Auction Payment (Auction Winner)" ?>
 
+<div style="float:right;">
+    <?if (!empty($results)): ?>
+        <?=$html->link('<span><b class="icon"></b>Export Report</span>', array(
+                'controller' => 'reports',
+                'action' => $this->action.'/filter:'.urlencode($serializedFormInput),
+                'ext' => 'csv',
+                'format'=>'csv',
+            ), array(
+                'escape' => false,
+                'class' => 'button excel',
+            ));
+        ?>
+    <?endif;?>
+</div>
+
 <div class='advancedSearch' style="width: 800px">
 	<?php echo $form->create('', array('action' => 'auction_winner'))?>
 <fieldset>
@@ -91,9 +106,23 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r[0]['endDate']?></td>
 		<td><?=$r['PaymentDetailFull'][0]['pd']['ppResponseDate']?></td>
 		<td>
-            <?php echo $html->link($r['Ticket']['ticketId'],
+            <?php
+            if (
+                isset($r['isPegasus']) &&
+                $r['isPegasus'] == 1
+            ){
+                //pagasus ticket link
+                echo $html->link($r['Ticket']['ticketId'],
+                    array('controller'=>'PgBookings', 'action'=>'view',$r['Ticket']['ticketId']),
+                    array('class' => '', 'target' => '_blank'));
+
+            }else{
+            echo $html->link($r['Ticket']['ticketId'],
                     array('controller'=>'tickets', 'action'=>'view',$r['Ticket']['ticketId']),
-                    array('class' => '', 'target' => '_blank')); ?>
+                    array('class' => '', 'target' => '_blank'));
+
+            }
+            ?>
         </td>
 		<td><?=$r[0]['clientIds']?></td>
 		<td><?=$r[0]['clientNames']?></td>

@@ -1,4 +1,10 @@
 <?php
+/**
+error_reporting(0);
+@ini_set('display_errors', 0);
+**/
+ini_set('default_charset', 'utf-8');
+Configure::write('debug', 0);
 echo "Site,isFamily,Locale,Booking Date,Payment Date,Booking,Vendor ID,Old Product Id,Accounting Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Paid Search Id,Ref Url,Promo Description\n";
 foreach ($results as $r):
 	switch($r['OfferType']['offerTypeName']) {
@@ -93,8 +99,8 @@ foreach ($results as $r):
 	$r['PaymentProcessor']['paymentProcessorName'],
 	$remit,
 	$r['Promo']['amountOff'],
-	date('M d Y h:i:s A', strtotime($r['PricePoint']['validityStart'])),
-	date('M d Y h:i:s A', strtotime($r['PricePoint']['validityEnd'])),
+        $r['PricePoint']['validityStart']?date('M d Y h:i:s A', strtotime($r['PricePoint']['validityStart'])):' ',
+        $r['PricePoint']['validityEnd']?date('M d Y h:i:s A', strtotime($r['PricePoint']['validityEnd'])):' ',
 	'',
 	'',
 	$promoCode
@@ -104,54 +110,5 @@ foreach ($results as $r):
 endforeach;
 
 
-foreach ($eventRegistryData as $r):
 
-	$line = array(
-    $r['s']['siteName'],
-    '',
-    $r['d']['bookingDate'],
-    $r['d']['paymentDate'],
-    $r['d']['booking'],
-    $r['r']['vendorId'] . 'ER',
-    'N/A',
-    'N/A',
-    $r['r']['vendor'],
-    $r['u']['guestFirstName'],
-    $r['u']['guestLastName'],
-    $r['d']['address1'],
-    $r['d']['address2'],
-    $r['d']['city'],
-    $r['d']['state'],
-    $r['d']['zip'],
-    $r['d']['country'],
-    $r['u']['phone'],
-    $r['u']['email'],
-    $r['d']['ccType'],
-    'xxxx' . $r['d']['ccDigits'],
-    'N/A',
-    'N/A',
-    'Event Registry',
-    $r['d']['revenue'],
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '0',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    ''
-    );
-	
-	echo implode(',', $line)."\r\n";
-	
-endforeach;
  ?>
