@@ -10,7 +10,9 @@ class ReportsController extends AppController
         'Reporting',
         'Readonly',
         'EventRegistry',
-        'Package'
+        'Package',
+        'PgBooking',
+        'PromoCodeRel'
     );
     public $helpers = array(
         'Pagination',
@@ -18,7 +20,9 @@ class ReportsController extends AppController
     );
     public $components = array(
         'CarDataImporter',
-        'ArraySorter'
+        'ArraySorter',
+        'LltgServiceHelper',
+
     );
     //TODO: Add sorting, speed up the sql by adding indexes or a loading splash page,
     // double check accuracy of data
@@ -1637,23 +1641,34 @@ class ReportsController extends AppController
 
             $sql = "SELECT COUNT(DISTINCT Ticket.ticketId) as numRecords
                         FROM ticket AS Ticket
-                               INNER JOIN offer AS Offer USING(offerId)
-                               LEFT JOIN offerType AS OfferType USING(offerTypeId)
-                               INNER JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
-                               INNER JOIN schedulingMaster AS SchedulingMaster ON SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId
-                               INNER JOIN schedulingMasterTrackRel as SchedulingMasterTrackRel ON SchedulingMasterTrackRel.schedulingMasterId = SchedulingMaster.schedulingMasterId
-                               LEFT JOIN track AS Track ON Track.trackId = SchedulingMasterTrackRel.trackId
-                               LEFT JOIN paymentDetail AS PaymentDetail USING (ticketId)
-                               LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
-                               LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
-                               INNER JOIN package AS Package ON Package.packageId = Ticket.packageId
-                               INNER JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
-                               INNER JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
-                        WHERE $conditions";
+                          INNER JOIN tld AS Tld ON (Ticket.tldId = Tld.tldId)
+                          INNER JOIN i18nLocales AS Locale ON (Tld.localeId = Locale.localeId)
+                          INNER JOIN offer AS Offer USING(offerId)
+                          LEFT JOIN offerType AS OfferType ON (Ticket.offerTypeId = OfferType.offerTypeId)
+                          LEFT JOIN schedulingInstance AS SchedulingInstance USING(schedulingInstanceId)
+                          INNER JOIN schedulingMaster AS SchedulingMaster ON SchedulingMaster.schedulingMasterId = SchedulingInstance.schedulingMasterId
+                          INNER JOIN schedulingMasterTrackRel as SchedulingMasterTrackRel ON SchedulingMasterTrackRel.schedulingMasterId = SchedulingMaster.schedulingMasterId
+                          LEFT JOIN track AS Track ON Track.trackId = SchedulingMasterTrackRel.trackId
+                          LEFT JOIN paymentDetail AS PaymentDetail ON (PaymentDetail.ticketId = Ticket.ticketId AND PaymentDetail.isSuccessfulCharge <> 0)
+                          LEFT JOIN paymentProcessor AS PaymentProcessor USING (paymentProcessorId)
+                          LEFT JOIN userPaymentSetting AS UserPaymentSetting ON (UserPaymentSetting.userPaymentSettingId = PaymentDetail.userPaymentSettingId)
+                          LEFT JOIN package AS Package ON Package.packageId = Ticket.packageId
+                          LEFT JOIN clientLoaPackageRel AS ClientLoaPackageRel ON (ClientLoaPackageRel.packageId = Ticket.packageId)
+                          LEFT JOIN client as Client ON(Client.clientId = ClientLoaPackageRel.clientId)
+                          LEFT JOIN expirationCriteria AS ExpirationCriteria USING(expirationCriteriaId)
+                          LEFT JOIN reservation r ON Ticket.ticketId = r.ticketId
+                          LEFT JOIN promoTicketRel ptr ON Ticket.ticketId = ptr.ticketId
+                          LEFT JOIN promoCode PromoCode ON ptr.promoCodeId = PromoCode.promoCodeId
+                          LEFT JOIN promoCodeRel pcr ON PromoCode.promoCodeId = pcr.promoCodeId
+                          LEFT JOIN promo Promo ON pcr.promoId = Promo.promoId
+                          LEFT JOIN offerLuxuryLink USING(offerId)
+                          LEFT JOIN offerFamily USING(offerId)
+                        WHERE $conditions
+                        ";
 
             $results = $this->OfferType->query($sql);
             $numRecords = $results[0][0]['numRecords'];
-            $numPages = ceil($numRecords / $this->perPage);
+
 
             $sql = "
               SELECT
@@ -1805,6 +1820,102 @@ class ReportsController extends AppController
                 }
                 $results[$key]['OfferLookup']['guaranteeAmount'] = $guaranteeAmount;
             }
+            //
+            $pegasusResults = $this->PgBooking->find(
+                'all',
+                array(
+                    'conditions' =>
+                        array(
+                            'PgBooking.dateCreated BETWEEN ? AND ?' =>
+                                array(
+                                    $this->data['condition1']['value']['between'][0]
+                                ,
+                                    $this->data['condition1']['value']['between'][1]
+                                )
+                        )
+                )
+            );
+
+            $transformedPegasusArray = array();
+            $pegasusCount = 0;
+            if(!empty($pegasusResults)){
+                //map Pegasus fields to Results
+                foreach ($pegasusResults as $pgKey => $pgValue) {
+
+                    $transformedPegasusArray[$pgKey]['isPegasus'] = 1;
+                    $transformedPegasusArray[$pgKey]['Ticket']['isFamily'] = false;
+                    $transformedPegasusArray[$pgKey]['Ticket']['siteId'] = 1;
+                    //en_us?
+                    $transformedPegasusArray[$pgKey]['Locale']['code'] = $this->LltgServiceHelper->getServiceBuilderFromTldId($pgValue['PgBooking']['tldId'])->getContext()->getLocaleCode();
+                    $transformedPegasusArray[$pgKey][0]['endDate'] = $pgValue['PgBooking']['dateOut'];
+                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppResponseDate'] = $pgValue['PgBooking']['dateIn'];
+
+                    $transformedPegasusArray[$pgKey]['Ticket']['ticketId'] = $pgValue['PgBooking']['pgBookingId'];
+
+                    $transformedPegasusArray[$pgKey][0]['clientIds']= $pgValue['Client']['clientId'];
+                    $transformedPegasusArray[$pgKey][0]['clientNames'] = $pgValue['Client']['name'];
+
+                    $transformedPegasusArray[$pgKey]['Ticket']['userId'] = $pgValue['PgBooking']['userId'];
+                    $transformedPegasusArray[$pgKey]['Ticket']['userFirstName'] = $pgValue['PgBooking']['travelerFirstName'];
+                    $transformedPegasusArray[$pgKey]['Ticket']['userLastName'] = $pgValue['PgBooking']['travelerLastName'];
+
+                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingAddress1'] = $pgValue['PgBooking']['billingAddress'];
+                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingCity'] = $pgValue['PgBooking']['billingCity'];
+                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingState'] = $pgValue['PgBooking']['billingState'];
+                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingZip'] = $pgValue['PgBooking']['billingZip'];
+                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingCountry'] = $pgValue['PgBooking']['billingCountry'];
+                    $transformedPegasusArray[$pgKey]['Ticket']['userHomePhone'] = $pgValue['User']['homePhone'];
+                    $transformedPegasusArray[$pgKey]['Ticket']['userEmail1'] = $pgValue['User']['email'];
+
+                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ccType'] = $pgValue['UserPaymentSetting']['ccType'];
+
+                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppCardNumLastFour'] = substr($pgValue['UserPaymentSetting']['ccToken'],-4);
+                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppExpMonth'] = $pgValue['UserPaymentSetting']['expMonth'];
+                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppExpYear'] = $pgValue['UserPaymentSetting']['expYear'];
+
+                    //TOTAL CHARGED ON THE CREDIT CARD ONLY
+                    $transformedPegasusArray[$pgKey][0]['revenue'] = $pgValue['PgPayment'][0]['paymentUSD'];
+
+                    $transformedPegasusArray[$pgKey]['Ticket']['numNights'] = $this->PgBooking->dateDiff(
+                        $pgValue['PgBooking']['dateIn'],
+                        $pgValue['PgBooking']['dateOut']
+                    );
+                    $transformedPegasusArray[$pgKey]['Package']['numRooms'] = 1;
+                    $transformedPegasusArray[$pgKey]['OfferType']['offerTypeName'] = 'Best Buy';
+                    $transformedPegasusArray[$pgKey][0]['percentOfRetail'] = '';
+                    $transformedPegasusArray[$pgKey]['ExpirationCriteria']['expirationCriteriaId'] = 1; //keep
+                    $transformedPegasusArray[$pgKey]['PricePoint']['validityStart'] = "";
+                    $transformedPegasusArray[$pgKey]['PricePoint']['validityEnd'] = "";
+
+                    if ($pgValue['PgBooking']['tldId'] == 1){
+                        $transformedPegasusArray[$pgKey]['PaymentProcessor']['paymentProcessorName'] = 'NOVA';
+                    }
+                    if ($pgValue['PgBooking']['tldId'] == 2){
+                        $transformedPegasusArray[$pgKey]['PaymentProcessor']['paymentProcessorName']= 'PAYPAL_i18n';
+                    }
+                    $transformedPegasusArray[$pgKey]['Promo']['amountOff'] = ' ';
+                    $transformedPegasusArray[$pgKey]['PromoCode']['promoCode'] = $pgValue['PromoCode']['promoCode'];
+                    if (isset($pgValue['PromoCode']['promoCode'])) {
+                        $promoCodeData = $this->PromoCodeRel->find(
+                            'all',
+                            array(
+                                'conditions' => array('promoCodeId'=>$pgValue['PromoCode']['promoCodeId'])
+                            )
+                        );
+                        $transformedPegasusArray[$pgKey]['Promo']['amountOff'] = $promoCodeData[0]['Promo']['amountOff'];
+                    }
+
+                 $pegasusCount++;
+                    //end foreach
+                 }
+            }//End if PG
+
+            //merge number of records with mapped Pegasus results
+            $results = array_merge($transformedPegasusArray, $results);
+
+            //increase number of records with pegasus records for paging
+            $numRecords =  $pegasusCount + $numRecords;
+            $numPages = ceil($numRecords / $this->perPage);
 
             /*
              * If downloading as a CSV, append records from the event registry transactions to the auction winner report
@@ -1821,6 +1932,8 @@ class ReportsController extends AppController
             $this->set('numRecords', $numRecords);
             $this->set('numPages', $numPages);
             $this->set('data', $this->data);
+            $this->set('pegasusResults',$pegasusResults);
+            $this->set('transformedPegasusArray', $transformedPegasusArray);
             $this->set('results', $results);
             $this->set('serializedFormInput', serialize($this->data));
 
