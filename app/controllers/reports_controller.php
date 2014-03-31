@@ -1853,6 +1853,12 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey]['Ticket']['ticketId'] = $pgValue['PgBooking']['pgBookingId'];
 
                     $transformedPegasusArray[$pgKey][0]['clientIds']= $pgValue['Client']['clientId'];
+                    $transformedPegasusArray[$pgKey][0]['clientIds']= $pgValue['Client']['clientId'];
+
+                    $transformedPegasusArray[$pgKey][0]['oldProductIds'] = $pgValue['Client']['oldProductId'];
+                    $transformedPegasusArray[$pgKey][0]['accountingIds'] = $pgValue['Client']['accountingId'];
+
+
                     $transformedPegasusArray[$pgKey][0]['clientNames'] = $pgValue['Client']['name'];
 
                     $transformedPegasusArray[$pgKey]['Ticket']['userId'] = $pgValue['PgBooking']['userId'];
@@ -1886,6 +1892,9 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey]['ExpirationCriteria']['expirationCriteriaId'] = 1; //keep
                     $transformedPegasusArray[$pgKey]['PricePoint']['validityStart'] = "";
                     $transformedPegasusArray[$pgKey]['PricePoint']['validityEnd'] = "";
+
+
+                    $transformedPegasusArray[$pgKey]['arrivalDate'] = $pgValue['PgBooking']['dateIn'];
 
                     if ($pgValue['PgBooking']['tldId'] == 1){
                         $transformedPegasusArray[$pgKey]['PaymentProcessor']['paymentProcessorName'] = 'NOVA';
