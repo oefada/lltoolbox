@@ -694,7 +694,7 @@
                         <td align="left" style="padding: 12px 20px 10px 10px;"><img border="0" name="line" src="http://www.luxurylink.com/images/email/new/vert-on-grey.jpg" width="8" height="109" style="display:block;" />
                         </td>
                         <td align="center" height="80" style="padding: 15px 20px 15px 10px;"><img border="0" name="line" src="http://www.luxurylink.com/images/email/new/ph-icon_49x49.jpg" width="49" height="49" style="display:block;" /><br />
-                            <span style="font-family:Times, Serif;font-size:15px;color:#333;line-height:21px;">CONCIERGE: (877) 372-5877</span><br />
+                            <span style="font-family:Times, Serif;font-size:15px;color:#333;line-height:21px;">CONCIERGE: (888) 297-3299</span><br />
                             <span style="font-family:Arial, sans-serif;font-size:11px;color:#555;">24 Hours / 7 Days a Week</span>
                         </td>
                     </tr>
