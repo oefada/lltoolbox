@@ -1847,8 +1847,8 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey]['Ticket']['siteId'] = 1;
                     //en_us?
                     $transformedPegasusArray[$pgKey]['Locale']['code'] = $this->LltgServiceHelper->getServiceBuilderFromTldId($pgValue['PgBooking']['tldId'])->getContext()->getLocaleCode();
-                    $transformedPegasusArray[$pgKey][0]['endDate'] = $pgValue['PgBooking']['dateOut'];
-                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppResponseDate'] = $pgValue['PgBooking']['dateIn'];
+                    $transformedPegasusArray[$pgKey][0]['endDate'] = $pgValue['PgBooking']['dateCreated'];
+                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppResponseDate'] = $pgValue['PgBooking']['dateCreated'];
 
                     $transformedPegasusArray[$pgKey]['Ticket']['ticketId'] = $pgValue['PgBooking']['pgBookingId'];
 
@@ -1887,7 +1887,7 @@ class ReportsController extends AppController
                         $pgValue['PgBooking']['dateOut']
                     );
                     $transformedPegasusArray[$pgKey]['Package']['numRooms'] = 1;
-                    $transformedPegasusArray[$pgKey]['OfferType']['offerTypeName'] = 'Best Buy';
+                    $transformedPegasusArray[$pgKey]['OfferType']['offerTypeName'] = 'Instant Conf';
                     $transformedPegasusArray[$pgKey][0]['percentOfRetail'] = '';
                     $transformedPegasusArray[$pgKey]['ExpirationCriteria']['expirationCriteriaId'] = 1; //keep
                     $transformedPegasusArray[$pgKey]['PricePoint']['validityStart'] = "";
