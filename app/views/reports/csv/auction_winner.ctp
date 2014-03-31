@@ -14,6 +14,7 @@ foreach ($results as $r):
 			$fee = 40;
 			break;
 		case 'Best Buy':
+        case 'Instant Conf':
 		case 'Exclusive':
 			$fee = 40;
 			break;
