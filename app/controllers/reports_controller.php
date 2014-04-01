@@ -1935,7 +1935,7 @@ class ReportsController extends AppController
             $numPages = ceil($numRecords / $this->perPage);
 
             /*
-             * If downloading as a CSV, append records from the event registry transactions to the auction winner report
+             * If downloading as a CSV, append records from the event registry transactions to the daily sales (formerly auction winner) report
              */
             if (@$this->data['download']['csv'] == 1) {
                 $eventRegistryData = $this->EventRegistry->getAuctionWinnerReport(

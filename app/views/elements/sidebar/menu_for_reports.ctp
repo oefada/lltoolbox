@@ -2,7 +2,7 @@
 	<li><?=$html->link('Account Manager Client Report', $this->webroot . 'reports/mcr')?></li>
 	<li><?=$html->link('Aging', $this->webroot . 'reports/aging')?></li>
 	<li><?=$html->link('Auction Timeslot', $this->webroot . 'reports/auction_timeslot')?></li>
-	<li><?=$html->link('Auction Winner', $this->webroot . 'reports/auction_winner')?></li>
+	<li><?=$html->link('Daily Sales', $this->webroot . 'reports/auction_winner')?></li>
 	<li><?=$html->link('Bids', $this->webroot . 'reports/bids')?></li>
 	<li><?=$html->link('Check-in Date', $this->webroot . 'reports/check_in_date')?></li>
 	<li><?=$html->link('Client Activity Report (internal use)', $this->webroot . 'reports/car')?></li>
