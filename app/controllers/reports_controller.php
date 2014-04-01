@@ -1688,6 +1688,7 @@ class ReportsController extends AppController
                 PaymentDetail.ppBillingState,
                 PaymentDetail.ppBillingCountry,
                 PaymentDetail.ppBillingZip,
+                Country.countryName,
                 Ticket.userWorkPhone,
                 Ticket.userHomePhone,
                 Ticket.userMobilePhone,
@@ -1743,6 +1744,7 @@ class ReportsController extends AppController
               LEFT JOIN promo Promo ON pcr.promoId = Promo.promoId
               LEFT JOIN offerLuxuryLink USING(offerId)
               LEFT JOIN offerFamily USING(offerId)
+              LEFT JOIN countryNew AS Country ON (PaymentDetail.ppBillingCountry = Country.countryId)
               WHERE $conditions
               GROUP BY Ticket.ticketId
               ORDER BY $order
@@ -1869,7 +1871,9 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingCity'] = $pgValue['PgBooking']['billingCity'];
                     $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingState'] = $pgValue['PgBooking']['billingState'];
                     $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingZip'] = $pgValue['PgBooking']['billingZip'];
-                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingCountry'] = $pgValue['PgBooking']['billingCountry'];
+                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingCountry'] = $pgValue['Country']['countryName'];
+                    $transformedPegasusArray[$pgKey]['Country']['countryName'] = $pgValue['Country']['countryName'];
+
                     $transformedPegasusArray[$pgKey]['Ticket']['userHomePhone'] = $pgValue['User']['homePhone'];
                     $transformedPegasusArray[$pgKey]['Ticket']['userEmail1'] = $pgValue['User']['email'];
 
@@ -1878,6 +1882,7 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppCardNumLastFour'] = substr($pgValue['UserPaymentSetting']['ccToken'],-4);
                     $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppExpMonth'] = $pgValue['UserPaymentSetting']['expMonth'];
                     $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppExpYear'] = $pgValue['UserPaymentSetting']['expYear'];
+                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['paymentAmount'] = $pgValue['PgPayment'][0]['paymentUSD'];
 
                     //TOTAL CHARGED ON THE CREDIT CARD ONLY
                     $transformedPegasusArray[$pgKey][0]['revenue'] = $pgValue['PgPayment'][0]['paymentUSD'];
@@ -1886,6 +1891,8 @@ class ReportsController extends AppController
                         $pgValue['PgBooking']['dateIn'],
                         $pgValue['PgBooking']['dateOut']
                     );
+
+                    $transformedPegasusArray[$pgKey]['r']['arrivalDate']= $pgValue['PgBooking']['dateIn'];
                     $transformedPegasusArray[$pgKey]['Package']['numRooms'] = 1;
                     $transformedPegasusArray[$pgKey]['OfferType']['offerTypeName'] = 'Instant Conf';
                     $transformedPegasusArray[$pgKey][0]['percentOfRetail'] = '';
@@ -1895,6 +1902,7 @@ class ReportsController extends AppController
 
 
                     $transformedPegasusArray[$pgKey]['arrivalDate'] = $pgValue['PgBooking']['dateIn'];
+
 
                     if ($pgValue['PgBooking']['tldId'] == 1){
                         $transformedPegasusArray[$pgKey]['PaymentProcessor']['paymentProcessorName'] = 'NOVA';
