@@ -5,7 +5,7 @@ error_reporting(0);
 **/
 ini_set('default_charset', 'utf-8');
 Configure::write('debug', 0);
-echo "Site,Locale,Payment Date, Booking Date,Booking,Vendor ID,Accounting Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Paid Search Id,Ref Url,Promo Description\n";
+echo "Site,Locale,Payment Date, Booking Date,Booking,Vendor ID,Accounting Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Promo Description\n";
 foreach ($results as $r):
 	switch($r['OfferType']['offerTypeName']) {
 		case 'Standard Auction':
@@ -64,7 +64,7 @@ foreach ($results as $r):
 	$line = array(
 	$siteIds[$r['Ticket']['siteId']],
     $r['Locale']['code'],
-	'"' . date('M d, Y', strtotime($r[0]['endDate'])) . '"',
+	'"' . date('M d, Y h:m:s', strtotime($r[0]['endDate'])) . '"',
 	'"' . date('M d, Y', strtotime($r['PaymentDetailFull'][0]['pd']['ppResponseDate'])) . '"',
 	$r['Ticket']['ticketId'],
 	$r[0]['clientIds'],
@@ -101,8 +101,6 @@ foreach ($results as $r):
 	$r['Promo']['amountOff'],
         $r['PricePoint']['validityStart']?date('M d Y h:i:s A', strtotime($r['PricePoint']['validityStart'])):' ',
         $r['PricePoint']['validityEnd']?date('M d Y h:i:s A', strtotime($r['PricePoint']['validityEnd'])):' ',
-	'',
-	'',
 	$promoCode
 	); //TODO: Add Paid Search Id and Ref Url
 	

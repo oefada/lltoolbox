@@ -1,4 +1,4 @@
-<?php $this->pageTitle = "Daily Auction Payment (Auction Winner)" ?>
+<?php $this->pageTitle = "Daily Sales Report" ?>
 
 <div style="float:right;">
     <?if (!empty($results)): ?>
@@ -18,7 +18,7 @@
 <div class='advancedSearch' style="width: 800px">
 	<?php echo $form->create('', array('action' => 'auction_winner'))?>
 <fieldset>
-<h3 class='title'>SEARCH AUCTION WINNERS BY:</h3>
+<h3 class='title'>SEARCH DAILY SALES BY:</h3>
 
 <div style="float: left; ">
 
@@ -101,7 +101,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 	<tr<?=$class?>>
 		<td><?=$siteIds[$r['Ticket']['siteId']]?></td>
         <td><?=$r['Locale']['code']?></td>
-        <td><?=date('M d, Y', strtotime($r[0]['endDate']))?></td>
+        <td><?=date('M d, Y h:m:s', strtotime($r[0]['endDate']))?></td>
         <td><?=date('M d, Y', strtotime($r['PaymentDetailFull'][0]['pd']['ppResponseDate']))?></td>
 		<td>
             <?php
