@@ -66,7 +66,6 @@ if (!empty($results) && isset($serializedFormInput)):
 		<thead class='fixedHeader'>
 		<tr>
 		<th><?=$utilities->sortLink('Ticket.siteId', 'Site',$this, $html,$url)?></th>
-        <th>Family Package</th>
         <th><?=$utilities->sortLink('Ticket.tldId', 'Locale', $this, $html, $url)?></th>
 		<th><?=$utilities->sortLink('Offer.offerId', 'Booking Date',$this, $html,$url)?></th>
 		<th><?=$utilities->sortLink('Client.name', 'Payment Date',$this, $html,$url)?></th>
@@ -101,10 +100,9 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
 		<td><?=$siteIds[$r['Ticket']['siteId']]?></td>
-        <td><?=$r['Ticket']['isFamily']?'Yes':'';?></td>
         <td><?=$r['Locale']['code']?></td>
-		<td><?=$r[0]['endDate']?></td>
-		<td><?=$r['PaymentDetailFull'][0]['pd']['ppResponseDate']?></td>
+        <td><?=date('M d, Y', strtotime($r[0]['endDate']))?></td>
+        <td><?=date('M d, Y', strtotime($r['PaymentDetailFull'][0]['pd']['ppResponseDate']))?></td>
 		<td>
             <?php
             if (
@@ -141,7 +139,14 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r['PaymentDetailFull'][0]['pd']['ppBillingCity']?></td>
 		<td><?=$r['PaymentDetailFull'][0]['pd']['ppBillingState']?></td>
 		<td><?=$r['PaymentDetailFull'][0]['pd']['ppBillingZip']?></td>
-		<td><?=$r['PaymentDetailFull'][0]['pd']['ppBillingCountry']?></td>
+
+		<td><?
+            if (!empty($r['Country']['countryName'])) {
+                echo $r['Country']['countryName'];
+            } else {
+                echo $r['PaymentDetailFull'][0]['pd']['ppBillingCountry'];
+            }
+           ?></td>
 		<td><?=$r['Ticket']['userHomePhone']?></td>
 		<td><?=$r['Ticket']['userEmail1']?></td>
 		<td><?=$r['PaymentDetailFull'][0]['pd']['ccType']?></td>
@@ -157,6 +162,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 				echo '$40';
 				break;
 			case 'Best Buy':
+            case 'Instant Conf':
 			case 'Exclusive':
 				echo '$40';
 				break;

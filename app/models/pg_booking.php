@@ -9,6 +9,10 @@ class PgBooking extends AppModel
         'User' => array('foreignKey' => 'userId'),
         'UserPaymentSetting' => array('foreignKey' => 'userPaymentSettingId'),
         'PromoCode' => array('foreignKey' => 'promoCodeId'),
+        'Country' => array(
+            'foreignKey' => false,
+            'conditions' => array("PgBooking.billingCountry = Country.countryId")
+        )
     );
 
     public $hasMany = array(
