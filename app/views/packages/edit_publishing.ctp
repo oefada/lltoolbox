@@ -58,7 +58,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
                 <?php endif;?>
             <?php endforeach;?>
                 <input type="hidden" name="data[PackageAgeRange][packageAgeRangeId]" value="<? echo $package['PackageAgeRange']['packageAgeRangeId'];?>">
-                <input type="hidden" name="data[PackageAgeRange][packageId]" value="<? echo $package['PackageAgeRange']['packageId'];?>">
+                <input type="hidden" name="data[PackageAgeRange][packageId]" value="<? echo $packageId;?>">
                 <input type="hidden" name="data[PackageAgeRange][rangeHigh]" value="<? echo $package['PackageAgeRange']['rangeHigh'];?>">
                 <input type="hidden" name="data[PackageAgeRange][rangeLow]"  value="<? echo $package['PackageAgeRange']['rangeLow'];?>">
     
