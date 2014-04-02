@@ -602,12 +602,25 @@ if (empty($pricePoints)) {
         <div class="section-title">Price Points</div>
         <div class="edit-link" name="<?php echo $linkName; ?>"
              title="<?php echo $linkTitle; ?>"><?php echo $linkTitle; ?></div>
+
     </div>
 </a>
 
 
 <div id="low-price-guarantees">
     <table cellpadding="0" cellspacing="0" border='0'>
+        <? if (!empty($pricePoints)){?>
+        <tr><td align="right">
+               <? echo $html->link(
+                '<span>Delete All Price Points?</span>',
+                "/packages/deleteMultiplePricePoints/pricepointid/" . $pricePointsList . "/clientId/" . $clientId . "/packageId/" . $package['Package']['packageId'],
+                array('class' => 'button'),
+                'Are you sure that you want to delete all pricepoints?',
+                false
+                );?>
+            </td>
+        </tr>
+        <? }?>
         <tr>
             <th>Name</th>
             <th>Retail Value</th>

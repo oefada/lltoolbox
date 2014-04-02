@@ -986,6 +986,33 @@ class PackagesController extends AppController
 
     }
 
+    function deleteMultiplePricePoints()
+    {
+        //allow you to act on these via url as svc
+        $strPricePoints = $this->params['pass'][1];
+        $clientId = $this->params['pass'][3];
+        $packageId = $this->params['pass'][5];
+
+        if(empty($strPricePoints)){
+            $this->Session->setFlash(__('Invalid Price Points', true));
+            //redirect to self
+            $this->redirect("/clients/$clientId/packages/summary/$packageId");
+        }else{
+            $pricePointsArray = explode(",",$strPricePoints);
+
+            foreach ($pricePointsArray as $pPid){
+                $this->Package->PricePoint->setInactive(1, $pPid);
+
+            }
+            $this->Session->setFlash(__('All of the PricePoints have been Deleted', true));
+            //redirect to self
+            $this->redirect("/clients/$clientId/packages/summary/$packageId");
+        }
+
+
+
+    }
+
     function delete($id = null)
     {
         if (!$id) {
@@ -1246,6 +1273,13 @@ class PackagesController extends AppController
 
 
         $this->set('pricePoints', $pricePoints);
+
+        $ppIdArray =array();
+        foreach($pricePoints as  $ppVal){
+            $ppIdArray[] = $ppVal['PricePoint']['pricePointId'];
+        }
+        $pricePointsList = implode(",",$ppIdArray);
+        $this->set('pricePointsList', $pricePointsList);
 
         // currency
         $currencyCodes = $this->Package->Currency->find('list', array('fields' => 'currencyCode'));
