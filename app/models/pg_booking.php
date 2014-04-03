@@ -37,11 +37,5 @@ class PgBooking extends AppModel
         $result = $this->query($sql);
         return $result;
     }
-    function getClientsFromClientId($clientId)
-    {
-        $sql = "SELECT clientId, name, clientTypeId, parentClientId FROM client ";
-        $sql .= "WHERE clientId = " . $clientId;
-        $clients = $this->query($sql);
-        return $clients;
-    }
+
 }

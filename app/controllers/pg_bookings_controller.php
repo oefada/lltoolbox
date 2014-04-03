@@ -197,7 +197,7 @@ class PgBookingsController extends AppController
         $this->set('s_end_d', $s_end_d);
 
         $bookings_index = $this->paginate();
-var_dump($bookings_index);
+
         if ($s_booking_id) {
             if (sizeof($bookings_index) == 1) {
                 header("location: /pg_bookings/view/" . $bookings_index[0]['PgBooking']['bookingId']);
@@ -209,12 +209,9 @@ var_dump($bookings_index);
             $bookings_index[$k]['PgBooking']['validCard'] = $this->getValidCcOnFile(
                 $v['PgBooking']['userId']
             );
-
-            $clients = $this->PgBooking->getClientsFromClientId($v['PgBooking']['clientId']);
             if ($v['PgBooking']['promoCodeId']) {
                 $bookings_index[$k]['Promo'] = $this->PgBooking->getTicketPromoData($v['PgBooking']['promoCodeId']);
             }
-            $bookings_index[$k]['Client'] = $clients;
         /*
             $bookings_index[$k]['ResPreferDate'] = array();
             if (in_array(

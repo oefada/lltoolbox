@@ -230,14 +230,10 @@ foreach ($bookings as $booking):
         <td><?php echo $booking['PgBooking']['pgBookingId']; ?></td>
         <td><?php echo ($booking['PgBooking']['tldId'] == 2) ? '.CO.UK' : '.COM'; ?></td>
         <td><?php echo $booking['PgBooking']['dateCreated'];?></td>
-		<td>
-			<?php foreach ($booking['Client'] as $client) : ?>
-			<a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?pid=<?php echo $client['client']['clientId'];?>" target="_BLANK"><?php echo $client['client']['clientId'];?></a> - <?php echo $client['client']['name'];?>
-			<br /><br />
-			<?php endforeach; ?>
+		<td><a href="http://www.luxurylink.com/portfolio/por_offer_redirect.php?pid=<?php echo $booking['Client']['clientId'];?>" target="_BLANK"><?php echo $booking['Client']['clientId'];?></a> - <?php echo $booking['Client']['name'];?>
 		</td>
 		<td>
-			<a href="/users/view/<?php echo $booking['PgBooking']['userId'];?>" target="_BLANK"><?php echo $booking['PgBooking']['userId'];?></a> - <?php echo $booking['PgBooking']['travelerFirstName']; ?> <?php echo $booking['PgBooking']['travelerLastName']; ?>
+			<a href="/users/view/<?php echo $booking['User']['userId'];?>" target="_BLANK"><?php echo $booking['User']['userId'];?></a> - <?php echo $booking['User']['firstName']; ?> <?php echo $booking['User']['lastName']; ?>
 		</td>
         <td><?php echo $booking['PgBooking']['travelerFirstName'];?> <?php echo $booking['PgBooking']['travelerLastName'];?></td>
 		<td>
