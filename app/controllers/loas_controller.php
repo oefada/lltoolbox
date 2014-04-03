@@ -512,6 +512,7 @@ class LoasController extends AppController
         $this->set('checkboxValuesSelectedArr', $checkboxValuesSelectedArr);
         $this->set('loaPaymentTermIds', $this->Loa->LoaPaymentTerm->find('list'));
         $this->set('loaInstallmentTypeIds', $this->Loa->LoaInstallmentType->find('list'));
+        $this->set('loaAudit',$this->Loa->findLog(array('model'=>'Loa','model_id'=>$this->data['Loa']['loaId'])));
     }
 
     public function sortLoaItemsByType($a, $b)

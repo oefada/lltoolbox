@@ -531,6 +531,56 @@ if (isset($loa['Loa']['modified'])) {
 
     </div>
 </div>
+<div class="collapsible">
+    <div class="handle"><?php __('Audit History'); ?></div>
+    <div class="collapsibleContent related">
+        <div class="actions">
+            <ul>
+                <li>
+                    <?php
+                    if (!empty($loaAudit)) {
+                        ?>
+                        <table class="summary">
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Changes</th>
+                            <?
+                            $i = 0;
+                            foreach ($loaAudit as $key => $logDataVal) {
+                                $class = null;
+
+                                if ($i % 2 == 0) {
+
+                                    $class = ' class="altrow"';
+                                }?>
+                                <tr <?php echo $class ?>>
+                                    <td><?= date('M d, Y h:i a', strtotime($logDataVal['Log']['created'])) ?></td>
+                                    <td><?= $logDataVal['Log']['samaccountname'] ?></td>
+                                    <? $changedFields = null;
+                                    foreach (explode(',', $logDataVal['Log']['change']) as $change) {
+                                        preg_match('/(\w+?) \((.*?)\) => \((.+?)\)/s', $change, $matches);
+                                        list($search, $field, $from, $to) = $matches;
+                                        $changedFields .= "change \"$field\" from \"$from\" to ".trim($to)."\n<br />";
+                                        $changedFields .= "----- <br />";
+                                    }?>
+                                    <td><?=
+                                        $changedFields;
+                                        unset($changedFields);
+                                        ?></td>
+                                </tr>
+                            <?
+                                //end foreach
+                                $i++;
+                            }?>
+                        </table>
+                        <? //end if
+                    }?>
+                </li>
+            </ul>
+
+        </div>
+    </div><!--#handle-->
+</div><!--#collapsible-->
 <script type="text/javascript">
 
     jQuery(document).ready(function () {
