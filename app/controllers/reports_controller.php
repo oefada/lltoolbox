@@ -1864,8 +1864,8 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey][0]['clientNames'] = $pgValue['Client']['name'];
 
                     $transformedPegasusArray[$pgKey]['Ticket']['userId'] = $pgValue['PgBooking']['userId'];
-                    $transformedPegasusArray[$pgKey]['Ticket']['userFirstName'] = $pgValue['PgBooking']['travelerFirstName'];
-                    $transformedPegasusArray[$pgKey]['Ticket']['userLastName'] = $pgValue['PgBooking']['travelerLastName'];
+                    $transformedPegasusArray[$pgKey]['Ticket']['userFirstName'] = $pgValue['User']['firstName'];
+                    $transformedPegasusArray[$pgKey]['Ticket']['userLastName'] = $pgValue['User']['lastName'];
 
                     $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingAddress1'] = $pgValue['PgBooking']['billingAddress'];
                     $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingCity'] = $pgValue['PgBooking']['billingCity'];
