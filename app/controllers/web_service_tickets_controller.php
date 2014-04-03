@@ -4,9 +4,9 @@ App::import('Vendor', 'nusoap/web_services_controller');
 App::import("Vendor", "Base", array('file' => "appshared" . DS . "framework" . DS . "Base.php"));
 require_once(APP . '/vendors/pp/Processor.class.php');
 
-error_reporting(E_ALL);
-set_error_handler("wstErrorHandler");
-register_shutdown_function('wstErrorShutdown');
+//error_reporting(E_ALL);
+//set_error_handler("wstErrorHandler");
+//register_shutdown_function('wstErrorShutdown');
 
 class WebServiceTicketsController extends WebServicesController
 {
@@ -982,12 +982,12 @@ class WebServiceTicketsController extends WebServicesController
                 'autoCharge' => 1,
                 'saveUps' => 0,
                 'zAuthHashKey' => $this->getAuthKeyHash(
-                    $userId,
-                    $ticketId,
-                    $paymentProcessorId,
-                    $ticketData['billingPrice'],
-                    $paymentInitials
-                ),
+                        $userId,
+                        $ticketId,
+                        $paymentProcessorId,
+                        $ticketData['billingPrice'],
+                        $paymentInitials
+                    ),
                 'userPaymentSettingId' => $ticketData['userPaymentSettingId']
             );
 
@@ -1079,6 +1079,7 @@ class WebServiceTicketsController extends WebServicesController
         $headerRed = false;
         $hideSalutation = false;
         $resConfirmationNotes = false;
+        $in0='{"ppvNoticeTypeId": 54,"userEmail":"rrose@luxurylink.com","clientId":470,"siteIdOverride":1,"packageId":"1","userFirstName":"Rand","clientImagePath":"http:\/\/photos.luxurylink.us\/images\/sho_4fd94e4b\/476_9101-auto-578\/Private%2BIsland%2BParadise.jpg","acAdditionalClients":" ","tldId":1,"send":1,"siteId":1}';
 
         // Can send in array or JSON string. Useful for using ppv() inside toolbox
         if (!is_array($in0)) {
@@ -1113,15 +1114,15 @@ class WebServiceTicketsController extends WebServicesController
         }
         $pgBookingId = isset($params['pgBookingId']) ? $params['pgBookingId'] : null;
         if ($pgBookingId) {
-			$bookingDataResult = $this->PgBooking->query("SELECT PgBooking.*, UserPaymentSetting.city, UserPaymentSetting.state, UserPaymentSetting.country, UserPaymentSetting.ccToken, UserPaymentSetting.ccType, PromoCode.promoCode FROM pgBooking PgBooking INNER JOIN userPaymentSetting UserPaymentSetting USING(userPaymentSettingId) LEFT JOIN promoCode PromoCode USING(promoCodeId) WHERE PgBooking.pgBookingId = " . $pgBookingId);
-        	$bookingData = $bookingDataResult[0]; 
-        	$userId = $bookingData['PgBooking']['userId'];
-        	$clientId = $bookingData['PgBooking']['clientId']; 
-        	$siteId = 1;
+            $bookingDataResult = $this->PgBooking->query("SELECT PgBooking.*, UserPaymentSetting.city, UserPaymentSetting.state, UserPaymentSetting.country, UserPaymentSetting.ccToken, UserPaymentSetting.ccType, PromoCode.promoCode FROM pgBooking PgBooking INNER JOIN userPaymentSetting UserPaymentSetting USING(userPaymentSettingId) LEFT JOIN promoCode PromoCode USING(promoCodeId) WHERE PgBooking.pgBookingId = " . $pgBookingId);
+            $bookingData = $bookingDataResult[0];
+            $userId = $bookingData['PgBooking']['userId'];
+            $clientId = $bookingData['PgBooking']['clientId'];
+            $siteId = 1;
             $bookingPaymentResult = $this->PgBooking->query("SELECT * FROM pgPayment PgPayment WHERE pgBookingId  = " . $pgBookingId);
             $bookingPaymentData = array();
             foreach ($bookingPaymentResult as $r) {
-            	$bookingPaymentData[$r['PgPayment']['paymentTypeId']] = $r['PgPayment'];
+                $bookingPaymentData[$r['PgPayment']['paymentTypeId']] = $r['PgPayment'];
             }
         }
 
@@ -1347,14 +1348,14 @@ class WebServiceTicketsController extends WebServicesController
                 $prefixUrl = Configure::read("UrlS.LL");
                 $optoutLink = 'http://echo3.bluehornet.com/phase2/survey1/change.htm?cid=mumogm&1362532207';
                 if (isset($ticketData)) {
-                	$tldId = (isset($ticketData['tldId']) && intval($ticketData['tldId']) > 0) ? $ticketData['tldId'] : 1;
+                    $tldId = (isset($ticketData['tldId']) && intval($ticketData['tldId']) > 0) ? $ticketData['tldId'] : 1;
                 } elseif ($bookingData) {
-                	$tldId = (isset($bookingData['tldId']) && intval($bookingData['tldId']) > 0) ? $bookingData['tldId'] : 1;
+                    $tldId = (isset($bookingData['tldId']) && intval($bookingData['tldId']) > 0) ? $bookingData['tldId'] : 1;
                 } elseif ($userData) {
-                	$tldId = (isset($userData['tldId']) && intval($userData['tldId']) > 0) ? $userData['tldId'] : 1;
+                    $tldId = (isset($userData['tldId']) && intval($userData['tldId']) > 0) ? $userData['tldId'] : 1;
                 } else {
-                	$tldId = 1;
-                } 
+                    $tldId = 1;
+                }
                 break;
 
             case 2:
@@ -1391,27 +1392,27 @@ class WebServiceTicketsController extends WebServicesController
             $tldId = isset($params['tldId']) ? $params['tldId'] : 1;
         }
 
-		$lltgServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($tldId);			
-		$lltgComponentService = $this->LltgServiceHelper->getComponentService($lltgServiceBuilder);
-		$lltgFormatterService = $this->LltgServiceHelper->getFormatterService($lltgServiceBuilder);
-		$lltgTranslationService = $this->LltgServiceHelper->getTranslationService($lltgServiceBuilder);
-		
-		$word_packages_upper = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGES_UPPER');
-		$word_package_upper = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGE_UPPER');
-		$word_packages_lower = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGES_LOWER');
-		$word_package_lower = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGE_LOWER');
-				
-		$sitePhoneTld = $sitePhone;
-		$sitePhoneLocalTld = $sitePhoneLocal;
-		if ($tldId == 2) {
-        	$siteDisplay = 'Luxury Link';
-        	$prefixUrl = 'https://www.luxurylink.co.uk';
-        	$siteUrl = 'http://www.luxurylink.co.uk/';
-        	$sitePhoneTld = $lltgFormatterService->formatTollFreeNumber('1' . preg_replace('/\D/', '', $sitePhoneTld));
-			$sitePhoneLocalTld = $lltgFormatterService->formatUSPhoneNumber('1' . preg_replace('/\D/', '', $sitePhoneLocalTld));
-			$sitePhoneLong = $sitePhoneTld;
-		}
-		
+        $lltgServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($tldId);
+        $lltgComponentService = $this->LltgServiceHelper->getComponentService($lltgServiceBuilder);
+        $lltgFormatterService = $this->LltgServiceHelper->getFormatterService($lltgServiceBuilder);
+        $lltgTranslationService = $this->LltgServiceHelper->getTranslationService($lltgServiceBuilder);
+
+        $word_packages_upper = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGES_UPPER');
+        $word_package_upper = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGE_UPPER');
+        $word_packages_lower = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGES_LOWER');
+        $word_package_lower = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGE_LOWER');
+
+        $sitePhoneTld = $sitePhone;
+        $sitePhoneLocalTld = $sitePhoneLocal;
+        if ($tldId == 2) {
+            $siteDisplay = 'Luxury Link';
+            $prefixUrl = 'https://www.luxurylink.co.uk';
+            $siteUrl = 'http://www.luxurylink.co.uk/';
+            $sitePhoneTld = $lltgFormatterService->formatTollFreeNumber('1' . preg_replace('/\D/', '', $sitePhoneTld));
+            $sitePhoneLocalTld = $lltgFormatterService->formatUSPhoneNumber('1' . preg_replace('/\D/', '', $sitePhoneLocalTld));
+            $sitePhoneLong = $sitePhoneTld;
+        }
+
         // Auction facilitator
         $userId = isset($userData['userId']) ? $userData['userId'] : false;
         $userFirstName = isset($userData['firstName']) ? ucwords(strtolower($userData['firstName'])) : false;
@@ -1427,7 +1428,7 @@ class WebServiceTicketsController extends WebServicesController
         $userPhone = $userHomePhone;
         $userPhone = !$userPhone && $userMobilePhone ? $userMobilePhone : $userPhone;
         $userPhone = !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
-        
+
         $fallPromo2013 = false;
         $blackFridayPromo2013 = false;
         if ($ppvNoticeTypeId == 39 || $ppvNoticeTypeId == 40 || $ppvNoticeTypeId == 41 || $ppvNoticeTypeId == 42) {
@@ -1437,8 +1438,8 @@ class WebServiceTicketsController extends WebServicesController
         }
 
         $dateNow = date("M d, Y");
-        
-		if ($pgBookingId) {
+
+        if ($pgBookingId) {
             if ($tldId == 1) {
                 $currency = 'USD';
                 $currencySymbol = '$';
@@ -1446,8 +1447,8 @@ class WebServiceTicketsController extends WebServicesController
                 $currency = 'GBP';
                 $currencySymbol = '&pound;';
             }
-		}
-        
+        }
+
         if ($ticketId) {
             $offerId = $offerData['offerId'];
             $packageSubtitle = $packageData['subtitle'];
@@ -1479,18 +1480,18 @@ class WebServiceTicketsController extends WebServicesController
             }
 
             $isTaxIncluded = (isset($ticketData['isTaxIncluded'])) ? $ticketData['isTaxIncluded'] : null;
-            
+
             $foreignPricedPackage = false;
             if (intval($packageData['currencyId']) > 1 && intval($ticketData['offerRetailValueUSD']) > 0 && intval($ticketData['offerRetailValueLocal']) > 0 && (intval($ticketData['offerRetailValueUSD']) != intval($ticketData['offerRetailValueLocal']))) {
-            	if (true) {
-            		$foreignPricedPackage = array();
-            		$foreignPricedPackage['exchangeRate'] = $ticketData['offerRetailValueLocal'] / $ticketData['offerRetailValueUSD'];
-            		$foreignPricedPackage['billingPriceLocal'] = $ticketData['billingPrice'] * $foreignPricedPackage['exchangeRate'];
-					$currencyCodeData = $this->Ticket->query("SELECT currencyCode FROM currency WHERE currencyId = " . $packageData['currencyId']);
-            		$foreignPricedPackage['currencyCode'] = $currencyCodeData[0]['currency']['currencyCode'];
-            	}
+                if (true) {
+                    $foreignPricedPackage = array();
+                    $foreignPricedPackage['exchangeRate'] = $ticketData['offerRetailValueLocal'] / $ticketData['offerRetailValueUSD'];
+                    $foreignPricedPackage['billingPriceLocal'] = $ticketData['billingPrice'] * $foreignPricedPackage['exchangeRate'];
+                    $currencyCodeData = $this->Ticket->query("SELECT currencyCode FROM currency WHERE currencyId = " . $packageData['currencyId']);
+                    $foreignPricedPackage['currencyCode'] = $currencyCodeData[0]['currency']['currencyCode'];
+                }
             }
-            
+
             //////////////////////////////////////////////////////////////////////////////////////////////////////
             // TODO: figure out how to share this with the customer facing sites
             //
@@ -2469,15 +2470,21 @@ class WebServiceTicketsController extends WebServicesController
                 $emailFrom = ($isAuction) ? "$siteDisplay <auction@$siteEmail>" : "$siteDisplay <exclusives@$siteEmail>";
                 $emailReplyTo = ($isAuction) ? "auction@$siteEmail" : "exclusives@$siteEmail";
                 break;
+            case 54:
+                $emailFrom = "$siteDisplay <customerservice@luxurylink.com>";
+                //  $additionalClients = (isset($params['acAdditionalClients'])) ? $params['acAdditionalClients'] : array();
+                include('../vendors/email_msgs/notifications/54_abandoned_pdp.html');
+                $emailSubject = "Questions with your " . $clientNameP . " Order?";
+                break;
             case 60:
                 include('../vendors/email_msgs/notifications/60_pegasus_confirmation.html');
                 $emailTo = 'jwoods@luxurylink.com';
-                $userEmail = 'jwoods@luxurylink.com'; 
+                $userEmail = 'jwoods@luxurylink.com';
                 $emailFrom = "$siteDisplay <exclusives@$siteEmail>";
                 $emailReplyTo = "exclusives@$siteEmail";
                 $emailSubject = "email confirmation for Pegasus booking";
-                break;    
-               
+                break;
+
             default:
                 break;
         }
