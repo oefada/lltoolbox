@@ -681,18 +681,18 @@ if (isset($loa['Loa']['modified'])) {
 
         if ($('LoaLoaMembershipTypeId').getValue() == 3) {
             // # packages
-            $('LoaMembershipTotalPackages').enable();
+            //$('LoaMembershipTotalPackages').enable();
             $('LoaRetailValueFee').disable();
             $('LoaRetailValueBalance').disable();
             $('LoaMembershipFeeEstimated').enable();
         } else if ($('LoaLoaMembershipTypeId').getValue() == 5) {
             // retail value credit
-            $('LoaMembershipTotalPackages').disable();
+            //$('LoaMembershipTotalPackages').disable();
             $('LoaRetailValueFee').enable();
             $('LoaRetailValueBalance').enable();
             $('LoaMembershipFeeEstimated').enable();
         } else {
-            $('LoaMembershipTotalPackages').disable();
+            //$('LoaMembershipTotalPackages').disable();
             $('LoaRetailValueFee').disable();
             $('LoaRetailValueBalance').disable();
             $('LoaMembershipFeeEstimated').disable();
