@@ -556,14 +556,16 @@ if (isset($loa['Loa']['modified'])) {
                                 <tr <?php echo $class ?>>
                                     <td><?= date('M d, Y h:i a', strtotime($logDataVal['Log']['created'])) ?></td>
                                     <td><?= $logDataVal['Log']['samaccountname'] ?></td>
-                                    <? $changedFields = null;
-                                    foreach (explode(',', $logDataVal['Log']['change']) as $change) {
-                                        preg_match('/(\w+?) \((.*?)\) => \((.+?)\)/s', $change, $matches);
-                                        list($search, $field, $from, $to) = $matches;
-                                        $changedFields .= "change \"$field\" from \"$from\" to ".trim($to)."\n<br />";
-                                        $changedFields .= "----- <br />";
-                                    }?>
-                                    <td><?=
+                                    <td><table cellspacing="2" style="font-size:80%;">
+                                        <tr> <th>Changed</th><th>From</th><th>To</th> </tr>
+                                            <? $changedFields = null;
+                                            foreach (explode(',', $logDataVal['Log']['change']) as $change) {
+                                            preg_match('/(\w+?) \((.*?)\) => \((.+?)\)/s', $change, $matches);
+                                            list($search, $field, $from, $to) = $matches;
+                                            ?>
+                                        <tr style="border-bottom:1px dashed #CCC"> <td style="width:150px;"><?=$field?></td><td><?=$from?></td><td><?=$to?></td> </tr>
+                                            <? }?>
+                                    </table><?=
                                         $changedFields;
                                         unset($changedFields);
                                         ?></td>
