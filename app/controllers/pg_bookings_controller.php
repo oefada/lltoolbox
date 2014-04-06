@@ -231,6 +231,24 @@ class PgBookingsController extends AppController
 			$pegasusResult = json_decode(curl_exec($ch), 1);		
 			curl_close($ch);
 
+			// cancellation notice
+			$ppvData = array();
+			$ppvData['pgBookingId'] = $id;
+			$ppvData['send'] = 1;
+			$ppvData['ppvNoticeTypeId'] = 61;
+			
+            $currentUser = $this->LdapAuth->user();
+			if (isset($currentUser['LdapUser']['samaccountname'])) {
+				$ppvInitials = $currentUser['LdapUser']['samaccountname'];
+			} else {
+				$ppvInitials = 'TOOLBOX';
+			}
+			$ppvData['initials'] = $ppvInitials;
+			$data_json_encoded = json_encode($ppvData);
+			$webservice_live_url = Configure::read("Url.Ws"). "/web_service_tickets/?wsdl";
+			$soap_client = new SoapClient($webservice_live_url, array("exception" => 1));
+			$response = $soap_client->ppv($data_json_encoded);
+			
 			if (isset($pegasusResult['status']) && $pegasusResult['status'] == '200') {
             	$this->Session->setFlash(__("Booking $id has been canceled", true), 'default', array(), 'error');
             	$this->redirect(array('action' => 'view', 'id' => $id));
