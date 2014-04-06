@@ -120,6 +120,7 @@
 																						<tr valign="top">
 																							<td style="line-height:20px;"<? if (isset($special_boxes)): ?> colspan="2"<?php endif; ?>>
 																								<?php if ($ticketId): ?><font face="Arial, Helvetica, sans-serif" color="#7b7b7b" style="font-size:12px; line-height:15px;"><b><?= ($ppvNoticeTypeId == 51) ? 'Confirmation Number' : 'Ticket ID'; ?>: <?= $ticketId ?></b></font><?php endif; ?>
+																								<?php if ($pgBookingId): ?><font face="Arial, Helvetica, sans-serif" color="#7b7b7b" style="font-size:12px; line-height:15px;"><b>Ticket ID: <?= $pgBookingId ?></b></font><?php endif; ?>
 																								<? if (!$hideSalutation): ?>
 																									<p>
 																										<font face="Arial, Helvetica, sans-serif" size="2" style="font-size:14px; line-height:15px" color="#474747">

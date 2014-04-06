@@ -2471,12 +2471,17 @@ class WebServiceTicketsController extends WebServicesController
                 break;
             case 60:
                 include('../vendors/email_msgs/notifications/60_pegasus_confirmation.html');
-                $emailTo = 'jwoods@luxurylink.com';
-                $userEmail = 'jwoods@luxurylink.com'; 
-                $emailFrom = "$siteDisplay <exclusives@$siteEmail>";
-                $emailReplyTo = "exclusives@$siteEmail";
-                $emailSubject = "email confirmation for Pegasus booking";
+                $emailFrom = "$siteDisplay <reservations@$siteEmail>";
+                $emailReplyTo = "reservations@$siteEmail";
+                $emailSubject = "Your Luxury Link Travel Booking - $clientNameP";
                 break;    
+            case 61:
+                $templateFile = "61_pegasus_cancel_confirmation";
+                $templateTitle = "Your Luxury Link Travel Booking Has Been Cancelled";
+                $emailSubject = "Your Luxury Link Travel Booking Has Been Cancelled";
+                $emailFrom = "$siteDisplay <reservations@$siteEmail>";
+                $emailReplyTo = "reservations@$siteEmail";
+                break;
                
             default:
                 break;
@@ -2552,7 +2557,9 @@ class WebServiceTicketsController extends WebServicesController
                 $emailBody,
                 $ticketId,
                 $ppvNoticeTypeId,
-                $ppvInitials
+                $ppvInitials,
+                false,
+                $pgBookingId
             );
 
             // AUTO SECTION FOR MULTI CLIENT PPV for multi-client packages send client emails [CLIENT PPV]
@@ -2804,7 +2811,8 @@ class WebServiceTicketsController extends WebServicesController
         $ticketId,
         $ppvNoticeTypeId,
         $ppvInitials,
-        $resend = false
+        $resend = false,
+        $pgBookingId = null
     ) {
         if (stristr($_SERVER['HTTP_HOST'], 'dev') || stristr($_SERVER['HTTP_HOST'], 'stage') || ISDEV) {
             $appendDevMessage = "\n<br />ORIGINAL TO:  $emailTo\n<br />ORIGINAL CC: $emailCc<br />ORIGINAL BCC: $emailBcc";
@@ -2872,6 +2880,7 @@ class WebServiceTicketsController extends WebServicesController
         $ppvNoticeSave['emailBodyFileName'] = $emailBodyFileName;
         $ppvNoticeSave['emailSentDatetime'] = date('Y-m-d H:i:s', $emailSentDatetime);
         $ppvNoticeSave['initials'] = $ppvInitials;
+        $ppvNoticeSave['pgBookingId'] = $pgBookingId;
 
         // save the record in the database
         // -------------------------------------------------------------------------------
