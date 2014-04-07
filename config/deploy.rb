@@ -17,7 +17,9 @@ set :keep_releases, 2
 task :post_deploy do
   on roles(:app) do
     execute "cd #{deploy_to}/current/app/config && ln -s #{fetch(:config_file)} database.php"
-    execute "cd #{deploy_to}/current/app/vendors && ln -s #{fetch(:appshared_location)} ."
+    execute "cd #{deploy_to}/current/app/vendors && ln -s /var/www/appshared ."
     execute "cd #{deploy_to}/current/app && chmod 777 tmp"
   end
 end
+
+after :deploy, :post_deploy
