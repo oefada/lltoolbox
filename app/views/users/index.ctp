@@ -16,7 +16,8 @@ $html->addCrumb('Users'); ?>
 
 <th><?php echo $paginator->sort('userId');?></th>
 <th><?php echo $paginator->sort('Username', 'UserSiteExtended.username');?> </th>
-<th><?php echo $utilities->clickSort($this,'ticketCount', 'Tickets',$html);?> </th>
+<th><?php echo $utilities->clickSort($this,'ticketCount', 'AUC + B/N',$html);?> </th>
+<th><?php echo $paginator->sort('pgBookingId', 'Pegasus');?> </th>
 <th><?php echo $paginator->sort('firstName');?></th>
 <th><?php echo $paginator->sort('lastName');?></th>
 <th><?php echo $paginator->sort('email');?></th>
@@ -74,7 +75,8 @@ foreach ($users as $user):
 <?php $this->pageTitle = 'Users' ?>
 <div class="userTools">
 	<ul class="treed">
-		<li class="file"><a href="/tickets">Search Tickets</a></li>
+		<li class="file"><a href="/pg_bookings">Search Pegasus Tickets</a></li>
+		<li class="file"><a href="/tickets">Search Auction and Buy Now Tickets</a></li>
 		<li class="file"><a href="/bids">Search Bids</a></li>
 		<li class="file"><a href="/credit_trackings">Credit On File</a></li>
 		<li class="file"><a href="/gift_cert_balances">Gift Certificates</a></li>

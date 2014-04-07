@@ -414,7 +414,6 @@ class TicketsController extends AppController
                     ) - strtotime('NOW') <= 604800) ? 1 : 0;
             }
         }
-
         $csv_link_string = '/tickets/index/csv_export:1/';
         foreach ($this->params['form'] as $kk => $vv) {
             $csv_link_string .= "$kk:$vv/";

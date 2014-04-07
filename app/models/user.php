@@ -53,6 +53,9 @@ class User extends AppModel
         'Ticket' => array(
             'foreignKey' => 'userId'
         ),
+        'PgBooking' => array(
+            'foreignKey' => 'userId'
+        ),
         'UserReferrals' => array(
             'foreignKey' => 'referrerUserId',
             'dependent' => true
