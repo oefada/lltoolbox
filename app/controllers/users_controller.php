@@ -691,7 +691,7 @@ class UsersController extends AppController
         }
 
         //
-        // build queries
+        // build queries "Auction + BuyNow" tickets
         //
         if ($query || $specificSearch || $email) {
 
@@ -720,8 +720,42 @@ class UsersController extends AppController
                     'table' => 'ticket',
                     'type' => 'LEFT',
                     'conditions' => 'User.userId=ticket.userId'
-                ),
+                )
             );
+
+            //
+            // build queries "Pegasus" tickets
+            //
+            if ($query || $specificSearch || $email) {
+
+                $fieldsPegasus = array(
+                    'pgBooking.pgBookingId',
+                    'UserSiteExtended.username',
+                    'User.userId',
+                    'User.firstName',
+                    'User.lastName',
+                    'User.email',
+                    'User.inactive',
+                    'count(*) as pegasusCount',
+                    '(CASE WHEN ticket.ticketId is not null THEN 1 ELSE 0 END) AS hasTicketId'
+                );
+
+                $joinsPegasus = array(
+                    array(
+                        'table' => 'userSiteExtended',
+                        'alias' => 'UserSiteExtended',
+                        'type' => 'LEFT',
+                        'conditions' => array(
+                            'User.userId=UserSiteExtended.userId',
+                        )
+                    ),
+                    array(
+                        'table' => 'pgBooking',
+                        'type' => 'LEFT',
+                        'conditions' => 'User.userId=pgBooking.userId'
+                    ),
+                );
+            }
 
             if ($email) {
 

@@ -6,6 +6,7 @@ class PgBooking extends AppModel
     var $primaryKey = 'pgBookingId';
     var $belongsTo = array(
         'Client' => array('foreignKey' => 'clientId'),
+        'Package' => array('foreignKey' => 'packageId'),
         'User' => array('foreignKey' => 'userId'),
         'UserPaymentSetting' => array('foreignKey' => 'userPaymentSettingId'),
         'PromoCode' => array('foreignKey' => 'promoCodeId'),
@@ -32,6 +33,7 @@ class PgBooking extends AppModel
 			50 => 'Canceled'
 		);
 	}
+
     public function isValidPurchaseStatus($purchaseStatus)
     {
 
@@ -43,6 +45,18 @@ class PgBooking extends AppModel
     $end_ts = strtotime($end);
     $diff = $end_ts - $start_ts;
     return round($diff / 86400);
+    }
+
+
+    function getTicketPromoData($promoCodeId)
+    {
+        $sql = "SELECT pc.*, pcr.promoCodeId, pcr.promoId, p.promoName, p.amountOff, p.percentOff FROM promoCode pc ";
+     //   $sql .= "INNER JOIN promoCode pc ON pc.promoCodeId = ptr.promoCodeId ";
+        $sql .= "INNER JOIN promoCodeRel pcr ON pcr.promoCodeId = pc.promoCodeId ";
+        $sql .= "INNER JOIN promo p on p.promoId = pcr.promoId ";
+        $sql .= "WHERE pc.promoCodeId = ".$promoCodeId;
+        $result = $this->query($sql);
+        return $result;
     }
 
 
