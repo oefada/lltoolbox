@@ -4,7 +4,7 @@ class DATABASE_CONFIG
     var $default = array(
         'driver' => 'mysqli',
         'persistent' => false,
-        'host' => 'localhost',
+        'host' => 'dbm1-uat',
         'login' => 'stg_usr',
         'password' => 'traveler',
         'database' => 'toolbox',
@@ -14,7 +14,7 @@ class DATABASE_CONFIG
     var $luxurylink = array(
         'driver' => 'mysqli',
         'persistent' => false,
-        'host' => 'localhost',
+        'host' => 'dbm1-uat',
         'login' => 'stg_usr',
         'password' => 'traveler',
         'database' => 'luxurylink',
@@ -24,7 +24,7 @@ class DATABASE_CONFIG
     var $family = array(
         'driver' => 'mysqli',
         'persistent' => false,
-        'host' => 'localhost',
+        'host' => 'dbm1-uat',
         'login' => 'stg_usr',
         'password' => 'traveler',
         'database' => 'family',
@@ -34,7 +34,7 @@ class DATABASE_CONFIG
     var $reporting = array(
         'driver' => 'mysqli',
         'persistent' => false,
-        'host' => 'localhost',
+        'host' => 'dbm1-uat',
         'login' => 'stg_usr',
         'password' => 'traveler',
         'database' => 'reporting',
@@ -44,7 +44,7 @@ class DATABASE_CONFIG
     var $vacationist = array(
         'driver' => 'mysqli',
         'persistent' => false,
-        'host' => 'localhost',
+        'host' => 'dbm1-uat',
         'login' => 'stg_usr',
         'password' => 'traveler',
         'database' => 'vacationist',
@@ -54,7 +54,7 @@ class DATABASE_CONFIG
     var $business_db2 = array(
         'driver' => 'mysqli',
         'persistent' => false,
-        'host' => 'localhost',
+        'host' => 'dbm1-uat',
         'login' => 'stg_usr_ro',
         'password' => 'traveler',
         'database' => 'toolbox',
@@ -64,7 +64,7 @@ class DATABASE_CONFIG
     var $default_ro = array(
         'driver' => 'mysqli',
         'persistent' => false,
-        'host' => 'localhost',
+        'host' => 'dbm1-uat',
         'login' => 'stg_usr_ro',
         'password' => 'traveler',
         'database' => 'toolbox',
