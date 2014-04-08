@@ -2,12 +2,12 @@
 
 class PgBookingsController extends AppController
 {
-    var $name = 'PgBookings';
-    var $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
+    public $name = 'PgBookings';
+    public $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
 
     public $LltgServiceHelper;
 
-    var $uses = array(
+    public $uses = array(
         'PgBooking',
         'OfferType',
         'Format',
@@ -30,11 +30,11 @@ class PgBookingsController extends AppController
         'ReservationPreferDate',
         'ReservationPreferDateFromHotel'
     );
-    var $components = array(
+    public $components = array(
         'LltgServiceHelper'
     );
 
-    function index()
+    public function index()
     {
         // Readonly db config
 
@@ -248,7 +248,7 @@ class PgBookingsController extends AppController
         $this->set('bookings', $bookings_index);
         $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
     }
-    function getValidCcOnFile($userId)
+    public function getValidCcOnFile($userId)
     {
         $ups = $this->Readonly->query(
             "select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc"
@@ -275,7 +275,7 @@ class PgBookingsController extends AppController
             ) : 'EXPIRED';
     }
 
-    function view($id = null)
+    public function view($id = null)
     {
         if (!$id) {
             $this->Session->setFlash(__('Invalid Booking.', true), 'default', array(), 'error');
@@ -297,7 +297,7 @@ class PgBookingsController extends AppController
         $this->set('booking', $booking);
         $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
     }
-    function edit($id = null)
+    public function edit($id = null)
     {
         // only for updating ticket notes for now.  should not be able to update anything else.
         if (!$id && empty($this->data)) {
@@ -333,7 +333,7 @@ class PgBookingsController extends AppController
         unset($ticketStatusIds[6]);
         $this->set('ticketStatusIds', $ticketStatusIds);
     }
-    function cancel($id = null)
+    public function cancel($id = null)
     {
         if (!$id) {
             $this->Session->setFlash(__('Invalid Booking.', true), 'default', array(), 'error');
@@ -347,10 +347,10 @@ class PgBookingsController extends AppController
             $this->Session->setFlash(__("Not Finding bookingId $id", true), 'default', array(), 'error');
             $this->redirect(array('action' => 'index'));
         }
-        
+
         // run cancel
         if (isset($this->params['url']['confirm']) && $this->params['url']['confirm'] == $id) {
-        
+
 			// api call for pegasus cancellation
 			$postData = array('bookingId' => $id);
 
@@ -359,7 +359,7 @@ class PgBookingsController extends AppController
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			$pegasusResult = json_decode(curl_exec($ch), 1);		
+			$pegasusResult = json_decode(curl_exec($ch), 1);
 			curl_close($ch);
 
 			// cancellation notice
@@ -367,7 +367,7 @@ class PgBookingsController extends AppController
 			$ppvData['pgBookingId'] = $id;
 			$ppvData['send'] = 1;
 			$ppvData['ppvNoticeTypeId'] = 61;
-			
+
             $currentUser = $this->LdapAuth->user();
 			if (isset($currentUser['LdapUser']['samaccountname'])) {
 				$ppvInitials = $currentUser['LdapUser']['samaccountname'];
@@ -379,13 +379,13 @@ class PgBookingsController extends AppController
 			$webservice_live_url = Configure::read("Url.Ws"). "/web_service_tickets/?wsdl";
 			$soap_client = new SoapClient($webservice_live_url, array("exception" => 1));
 			$response = $soap_client->ppv($data_json_encoded);
-			
+
 			if (isset($pegasusResult['status']) && $pegasusResult['status'] == '200') {
             	$this->Session->setFlash(__("Booking $id has been canceled", true), 'default', array(), 'error');
             	$this->redirect(array('action' => 'view', 'id' => $id));
 			}
         }
-        
+
         $this->set('booking', $booking);
         $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
     }
