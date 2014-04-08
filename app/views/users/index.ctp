@@ -17,7 +17,7 @@ $html->addCrumb('Users'); ?>
 <th><?php echo $paginator->sort('userId');?></th>
 <th><?php echo $paginator->sort('Username', 'UserSiteExtended.username');?> </th>
 <th><?php echo $utilities->clickSort($this,'ticketCount', 'AUC + B/N',$html);?> </th>
-<th><?php echo $paginator->sort('pgBookingId', 'Pegasus');?> </th>
+<th><?php echo $paginator->sort('Pegasus', 'pgTickets');?> </th>
 <th><?php echo $paginator->sort('firstName');?></th>
 <th><?php echo $paginator->sort('lastName');?></th>
 <th><?php echo $paginator->sort('email');?></th>
@@ -50,7 +50,14 @@ foreach ($users as $user):
 			}
 			?>
 		</td>
-
+		<td><?php
+		    if ($user[1]['pgTickets']) {
+		        echo $html->link(($user[1]['pgTickets']), '/pgBookings/?searchUserId='.$user['User']['userId']);
+		    } else {
+		        echo '0';
+		    }
+		    ?>
+		</td>
 		<td>
 			<?php echo $user['User']['firstName']; ?>
 		</td>

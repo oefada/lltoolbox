@@ -690,8 +690,9 @@ class UsersController extends AppController
             unset($this->passedArgs['direction']);
         }
 
+
         //
-        // build queries "Auction + BuyNow" tickets
+        // build queries for "Auction + BuyNow" tickets
         //
         if ($query || $specificSearch || $email) {
 
@@ -723,40 +724,6 @@ class UsersController extends AppController
                 )
             );
 
-            //
-            // build queries "Pegasus" tickets
-            //
-            if ($query || $specificSearch || $email) {
-
-                $fieldsPegasus = array(
-                    'pgBooking.pgBookingId',
-                    'UserSiteExtended.username',
-                    'User.userId',
-                    'User.firstName',
-                    'User.lastName',
-                    'User.email',
-                    'User.inactive',
-                    'count(*) as pegasusCount',
-                    '(CASE WHEN ticket.ticketId is not null THEN 1 ELSE 0 END) AS hasTicketId'
-                );
-
-                $joinsPegasus = array(
-                    array(
-                        'table' => 'userSiteExtended',
-                        'alias' => 'UserSiteExtended',
-                        'type' => 'LEFT',
-                        'conditions' => array(
-                            'User.userId=UserSiteExtended.userId',
-                        )
-                    ),
-                    array(
-                        'table' => 'pgBooking',
-                        'type' => 'LEFT',
-                        'conditions' => 'User.userId=pgBooking.userId'
-                    ),
-                );
-            }
-
             if ($email) {
 
                 $conditions = array("User.email" => $email);
@@ -783,6 +750,16 @@ class UsersController extends AppController
                 }
 
             }
+
+            $paginateArr = array(
+                'joins' => $joins,
+                'fields' => $fields,
+                'contain' => false,
+                'conditions' => $conditions,
+                'group' => 'User.userId',
+                'order' => $order,
+                'limit' => 20
+            );
 
             $order[] = $sort . ' ' . $dir;
             if ($sort == 'ticketCount') {
@@ -814,6 +791,14 @@ class UsersController extends AppController
             $this->User->Behaviors->attach('Containable');
             //debug($this->User->find('all', $paginateArr));
             $users = $this->paginate();
+
+            foreach($users as $key => $user) {
+                $count = $this->User->getPgCountByUserId($user['User']['userId']);
+                if ($count) {
+                   array_push($users[$key],$count);
+                }
+            }
+
             if ($this->params['paging']['User']['count'] == 1) {
                 $user = reset($users);
                 if (isset($user['User']['userId'])) {
