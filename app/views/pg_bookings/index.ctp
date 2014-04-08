@@ -10,10 +10,10 @@ $this->set('hideSidebar', true);
 ?>
 
 <div id="ticket-index">
-	
+
 	<div id="ticket-search-box">
 		<form action="/pg_bookings" method="post" id="ticket-search-form" name="ticket-search-form">
-		
+
 		<table cellpadding="0" cellspacing="0" style="border:1px solid silver;">
 		<tr>
 			<th colspan="4" style="border-bottom:1px solid silver;">&raquo;&nbsp;Search Criteria</th>
@@ -28,28 +28,28 @@ $this->set('hideSidebar', true);
 				</td>
 				<td width="170">
 					<select name="s_start_y">
-						<?php 
-						for ($i = date('Y'); $i > 2005; $i--) { 
-							$selected = ($i == $s_start_y) ? 'selected="selected"' : ''; 
-							echo "<option value=\"$i\" $selected>$i</option>\n"; 
+						<?php
+						for ($i = date('Y'); $i > 2005; $i--) {
+							$selected = ($i == $s_start_y) ? 'selected="selected"' : '';
+							echo "<option value=\"$i\" $selected>$i</option>\n";
 						}
 						?>
 					</select>
 					<select name="s_start_m">
-						<?php 
-						for ($i = 1; $i < 13; $i++) { 
+						<?php
+						for ($i = 1; $i < 13; $i++) {
 							$pad_i = str_pad($i, 2, 0, STR_PAD_LEFT);
-							$selected = ($pad_i == $s_start_m) ? 'selected="selected"' : ''; 
-							echo "<option value=\"$pad_i\" $selected>$pad_i</option>\n"; 
+							$selected = ($pad_i == $s_start_m) ? 'selected="selected"' : '';
+							echo "<option value=\"$pad_i\" $selected>$pad_i</option>\n";
 						}
 						?>
 					</select>
 					<select name="s_start_d">
-						<?php 
-						for ($i = 1; $i < 32; $i++) { 
+						<?php
+						for ($i = 1; $i < 32; $i++) {
 							$pad_i = str_pad($i, 2, 0, STR_PAD_LEFT);
-							$selected = ($pad_i == $s_start_d) ? 'selected="selected"' : ''; 
-							echo "<option value=\"$pad_i\" $selected>$pad_i</option>\n"; 
+							$selected = ($pad_i == $s_start_d) ? 'selected="selected"' : '';
+							echo "<option value=\"$pad_i\" $selected>$pad_i</option>\n";
 						}
 						?>
 					</select>
@@ -61,28 +61,28 @@ $this->set('hideSidebar', true);
 				</td>
 				<td>
 					<select name="s_end_y">
-						<?php 
-						for ($i = date('Y'); $i > 2005; $i--) { 
-							$selected = ($i == $s_end_y) ? 'selected="selected"' : ''; 
-							echo "<option value=\"$i\" $selected>$i</option>\n"; 
+						<?php
+						for ($i = date('Y'); $i > 2005; $i--) {
+							$selected = ($i == $s_end_y) ? 'selected="selected"' : '';
+							echo "<option value=\"$i\" $selected>$i</option>\n";
 						}
 						?>
 					</select>
 					<select name="s_end_m">
-						<?php 
-						for ($i = 1; $i < 13; $i++) { 
+						<?php
+						for ($i = 1; $i < 13; $i++) {
 							$pad_i = str_pad($i, 2, 0, STR_PAD_LEFT);
-							$selected = ($pad_i == $s_end_m) ? 'selected="selected"' : ''; 
-							echo "<option value=\"$pad_i\" $selected>$pad_i</option>\n"; 
+							$selected = ($pad_i == $s_end_m) ? 'selected="selected"' : '';
+							echo "<option value=\"$pad_i\" $selected>$pad_i</option>\n";
 						}
 						?>
 					</select>
 					<select name="s_end_d">
-						<?php 
-						for ($i = 1; $i < 32; $i++) { 
+						<?php
+						for ($i = 1; $i < 32; $i++) {
 							$pad_i = str_pad($i, 2, 0, STR_PAD_LEFT);
-							$selected = ($pad_i == $s_end_d) ? 'selected="selected"' : ''; 
-							echo "<option value=\"$pad_i\" $selected>$pad_i</option>\n"; 
+							$selected = ($pad_i == $s_end_d) ? 'selected="selected"' : '';
+							echo "<option value=\"$pad_i\" $selected>$pad_i</option>\n";
 						}
 						?>
 					</select>
@@ -91,7 +91,7 @@ $this->set('hideSidebar', true);
             <tr>
                 <td width="150">TLD</td>
                 <td>
-                    <select name="s_tld_id"> 
+                    <select name="s_tld_id">
                         <option value="0">All</option>
                         <option value="1" <? if ($s_tld_id == 1) { echo 'selected="selected"'; } ?>>.COM</option>
                         <option value="2" <? if ($s_tld_id == 2) { echo 'selected="selected"'; } ?>>.CO.UK</option>
@@ -103,7 +103,7 @@ $this->set('hideSidebar', true);
 					Booking Status
 				</td>
 				<td>
-					<select name="s_booking_status_id"> 
+					<select name="s_booking_status_id">
 						<option value="0">All</option>
                         <option value="1" <? if ($s_tld_id == 1) { echo 'selected="selected"'; } ?>>Booked</option>
                         <option value="2" <? if ($s_tld_id == 2) { echo 'selected="selected"'; } ?>>Canceled</option>
@@ -187,7 +187,7 @@ $this->set('hideSidebar', true);
 			</td>
 		</tr>
 		</table>
-		
+
 		</form>
 	</div>
 
@@ -199,11 +199,11 @@ $this->set('hideSidebar', true);
 		<strong>Search Criteria:</strong> <?php echo $query; ?>
 		</div>
 	<?php endif ?>
-		
+
 <table cellpadding="0" cellspacing="0" class="tickets-view-td" style="font-size:11px;">
 <tr>
 	<th width="10"><?php echo $paginator->sort('Booking Id', 'PgBooking.pgBookingId');?></th>
-	<th width="10" style="color:#FFF;">TLD</th>	
+	<th width="10" style="color:#FFF;">TLD</th>
     <th width="10"><?php echo $paginator->sort('Created', 'PgBooking.dateCreated');?></th>
 	<th width="220" style="color:#FFF;">Client</th>
 	<th width="220" style="color:#FFF;">User</th>
@@ -248,7 +248,13 @@ foreach ($bookings as $booking):
 		<td><?php echo round((strtotime($booking['PgBooking']['dateOut']) - strtotime($booking['PgBooking']['dateIn'])) / (86400)); ?></td>
 		<td><?php echo $booking['PgBooking']['dateIn'];?></td>
 		<td><?php echo $booking['PgBooking']['validCard']; ?></td>
-        <td><?php echo $bookingStatusDisplay[$booking['PgBooking']['pgBookingStatusId']];?></td>
+        <td>
+            <?php
+                if (isset($bookingStatusDisplay[$booking['PgBooking']['pgBookingStatusId']])) {
+                    echo $bookingStatusDisplay[$booking['PgBooking']['pgBookingStatusId']];
+                }
+            ?>
+        </td>
 		<td></td>
 		<td><?php if (!empty($booking['Promo'])) :?>
 			<?php foreach ($booking['Promo'] as $t_promo) : ?>
