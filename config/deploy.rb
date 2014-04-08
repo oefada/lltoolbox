@@ -18,6 +18,7 @@ task :post_deploy do
   on roles(:app) do
     execute "cd #{deploy_to}/current/app/config && ln -s #{fetch(:config_file)} database.php"
     execute "cd #{deploy_to}/current/app/vendors && ln -s /var/www/appshared ."
+    execute "cd #{deploy_to}/current/app/webroot && ln -s /mnt/images images"
     execute "cd #{deploy_to}/current/app && chmod -R 777 tmp"
   end
 end
