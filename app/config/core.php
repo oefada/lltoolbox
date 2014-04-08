@@ -6,6 +6,7 @@ $debug = (isset($_SERVER['ENV']) && $_SERVER['ENV'] == 'development') ? 2 : 0;
 Configure::write('debug', $debug);
 Configure::write('App.encoding', 'ISO-8859-15');
 Configure::write('Cache.check', true);
+Cache::config('default', array('engine' => 'File'));
 $cacheAction = true;
 
 define('LOG_ERROR', 2);
@@ -18,7 +19,6 @@ Configure::write('Security.level', 'low');
 Configure::write('Security.salt', '672fac72359e51f017c6355356d07d42137082d4');
 Configure::write('Acl.classname', 'DbAcl');
 Configure::write('Acl.database', 'default');
-Cache::config('default', array('engine' => 'File'));
 
 /**** Site Specific Configuration ****/
 $webservice_live_url = 'http://toolbox.luxurylink.com';
@@ -31,6 +31,7 @@ if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development' ||
     $ll_url = 'dev-luxurylink.luxurylink.com';
     $fg_url = 'dev-familygetaway.luxurylink.com';
     $webservice_live_url = 'http://dev-toolbox.luxurylink.com';
+    Configure::write('Cache.disable', true);
     Configure::write('TokenizerService', 'tokenex_v2');
     Configure::write('TokenEx.tokenExV2Url', 'https://test-api.tokenex.com:8081/TokenServices.svc/REST/');
     Configure::write('TokenEx.tokenExV2ID', '4700943473181519');
