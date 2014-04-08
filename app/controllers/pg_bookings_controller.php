@@ -30,6 +30,7 @@ class PgBookingsController extends AppController
         'ReservationPreferDate',
         'ReservationPreferDateFromHotel'
     );
+
     public $components = array(
         'LltgServiceHelper'
     );
@@ -37,12 +38,7 @@ class PgBookingsController extends AppController
     public function index()
     {
         // Readonly db config
-
         $this->PgBooking->useReadonlyDb();
-       // $this->PgBooking->useReadonlyDb();
-       // $this->PgBooking->PromoTicketRel->useReadonlyDb();
-        //$this->Ticket->Reservation->useReadonlyDb();
-
 
         // set search criteria from form post or set defaults
         $form = $this->params['form'];
@@ -115,13 +111,9 @@ class PgBookingsController extends AppController
                 'PgBooking.dateOut',
                 'PgBooking.pgBookingStatusId',
                 'PgBooking.promoCodeId',
-               // 'Client.name',
                 'PgBooking.travelerFirstName',
                 'PgBooking.travelerLastName',
                 'PgBooking.grandTotalUSD',
-                //'User.firstName',
-                //'User.lastName',
-                //'User.email',
             ),
             'order' => array(
                 'PgBooking.pgBookingId' => 'desc'
@@ -216,26 +208,6 @@ class PgBookingsController extends AppController
             if ($v['PgBooking']['promoCodeId']) {
                 $bookings_index[$k]['Promo'] = $this->PgBooking->getTicketPromoData($v['PgBooking']['promoCodeId']);
             }
-        /*
-            $bookings_index[$k]['ResPreferDate'] = array();
-            if (in_array(
-                    $v['Ticket']['offerTypeId'],
-                    array(1, 2, 6)
-                ) && !empty($v[0]['arrivalDate']) && !empty($v[0]['departureDate'])
-            ) {
-                $bookings_index[$k]['ResPreferDate']['arrival'] = $v[0]['arrivalDate'];
-                $bookings_index[$k]['ResPreferDate']['departure'] = $v[0]['departureDate'];
-                $bookings_index[$k]['ResPreferDate']['flagged'] = (strtotime(
-                        $bookings_index[$k]['ResPreferDate']['arrival']
-                    ) - strtotime('NOW') <= 604800) ? 1 : 0;
-            } elseif ($v['Ticket']['formatId'] == 2) {
-                $bookings_index[$k]['ResPreferDate']['arrival'] = $v['Ticket']['requestArrival'];
-                $bookings_index[$k]['ResPreferDate']['departure'] = $v['Ticket']['requestDeparture'];
-                $bookings_index[$k]['ResPreferDate']['flagged'] = (strtotime(
-                        $bookings_index[$k]['ResPreferDate']['arrival']
-                    ) - strtotime('NOW') <= 604800) ? 1 : 0;
-            }
-            */
         }
 
         $csv_link_string = '/pg_bookings/index/csv_export:1/';
@@ -248,6 +220,7 @@ class PgBookingsController extends AppController
         $this->set('bookings', $bookings_index);
         $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
     }
+
     public function getValidCcOnFile($userId)
     {
         $ups = $this->Readonly->query(
@@ -297,6 +270,7 @@ class PgBookingsController extends AppController
         $this->set('booking', $booking);
         $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
     }
+
     public function edit($id = null)
     {
         // only for updating ticket notes for now.  should not be able to update anything else.
@@ -333,6 +307,7 @@ class PgBookingsController extends AppController
         unset($ticketStatusIds[6]);
         $this->set('ticketStatusIds', $ticketStatusIds);
     }
+
     public function cancel($id = null)
     {
         if (!$id) {
@@ -351,58 +326,42 @@ class PgBookingsController extends AppController
         // run cancel
         if (isset($this->params['url']['confirm']) && $this->params['url']['confirm'] == $id) {
 
-			// api call for pegasus cancellation
-			$postData = array('bookingId' => $id);
+            // api call for pegasus cancellation
+            $postData = array('bookingId' => $id);
 
-			$ch = curl_init(Configure::read('LltgApiUrl') . '/api-internal/v1/cancel');
-			curl_setopt($ch, CURLOPT_HEADER, 0);
-			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			$pegasusResult = json_decode(curl_exec($ch), 1);
-			curl_close($ch);
+            $ch = curl_init(Configure::read('LltgApiUrl') . '/api-internal/v1/cancel');
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            $pegasusResult = json_decode(curl_exec($ch), 1);
+            curl_close($ch);
 
-			// cancellation notice
-			$ppvData = array();
-			$ppvData['pgBookingId'] = $id;
-			$ppvData['send'] = 1;
-			$ppvData['ppvNoticeTypeId'] = 61;
+            // cancellation notice
+            $ppvData = array();
+            $ppvData['pgBookingId'] = $id;
+            $ppvData['send'] = 1;
+            $ppvData['ppvNoticeTypeId'] = 61;
 
             $currentUser = $this->LdapAuth->user();
-			if (isset($currentUser['LdapUser']['samaccountname'])) {
-				$ppvInitials = $currentUser['LdapUser']['samaccountname'];
-			} else {
-				$ppvInitials = 'TOOLBOX';
-			}
-			$ppvData['initials'] = $ppvInitials;
-			$data_json_encoded = json_encode($ppvData);
-			$webservice_live_url = Configure::read("Url.Ws"). "/web_service_tickets/?wsdl";
-			$soap_client = new SoapClient($webservice_live_url, array("exception" => 1));
-			$response = $soap_client->ppv($data_json_encoded);
+            if (isset($currentUser['LdapUser']['samaccountname'])) {
+                $ppvInitials = $currentUser['LdapUser']['samaccountname'];
+            } else {
+                $ppvInitials = 'TOOLBOX';
+            }
+            $ppvData['initials'] = $ppvInitials;
+            $data_json_encoded = json_encode($ppvData);
+            $webservice_live_url = Configure::read("Url.Ws") . "/web_service_tickets/?wsdl";
+            $soap_client = new SoapClient($webservice_live_url, array("exception" => 1));
+            $response = $soap_client->ppv($data_json_encoded);
 
-			if (isset($pegasusResult['status']) && $pegasusResult['status'] == '200') {
-            	$this->Session->setFlash(__("Booking $id has been canceled", true), 'default', array(), 'error');
-            	$this->redirect(array('action' => 'view', 'id' => $id));
-			}
+            if (isset($pegasusResult['status']) && $pegasusResult['status'] == '200') {
+                $this->Session->setFlash(__("Booking $id has been canceled", true), 'default', array(), 'error');
+                $this->redirect(array('action' => 'view', 'id' => $id));
+            }
         }
 
         $this->set('booking', $booking);
         $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
     }
-
-
-    private function dateArrayToString($dt)
-    {
-        $rtn = $dt['year'] . '-' . $dt['month'] . '-' . $dt['day'];
-        if (Validation::date($rtn, 'ymd')) {
-            return $rtn;
-        } else {
-            return false;
-        }
-    }
-
-
-
-
-
 }
