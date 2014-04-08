@@ -79,15 +79,6 @@ if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development' ||
     Configure::write('TokenEx.tokenExV2APIKey', 'zcRrwhnTE7Y5RvYm9JiA');
 }
 
-if (ISDEV) {
-    Cache::config('default', array(
-        'engine' => 'Apc', //[required]
-        'duration' => 3600, //[optional]
-        'probability' => 100, //[optional]
-        'prefix' => Inflector::slug(APP_DIR) . '_', //[optional]  prefix every cache file with this string
-    ));
-}
-
 $ll_urls = 'https://' . $ll_url;
 $ll_url = 'http://' . $ll_url;
 $fg_urls = 'https://' . $fg_url;
