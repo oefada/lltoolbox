@@ -18,6 +18,7 @@ Configure::write('Security.level', 'low');
 Configure::write('Security.salt', '672fac72359e51f017c6355356d07d42137082d4');
 Configure::write('Acl.classname', 'DbAcl');
 Configure::write('Acl.database', 'default');
+Cache::config('default', array('engine' => 'File'));
 
 /**** Site Specific Configuration ****/
 $webservice_live_url = 'http://toolbox.luxurylink.com';
