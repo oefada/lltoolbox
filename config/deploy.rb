@@ -23,4 +23,15 @@ task :post_deploy do
   end
 end
 
+task :clear_cache do
+    set :TIMESTAMP, Time.now.to_i
+    set :CACHEDIR, fetch(:deploy_to) + "/current/app/tmp/cache"
+    set :CACHEDIR_GARBAGE, fetch(:CACHEDIR).to_s + "_garbage_" + fetch(:TIMESTAMP).to_s
+    set :CLEAR_CACHE_CMD, "mv " + fetch(:CACHEDIR) + " " + fetch(:CACHEDIR_GARBAGE) + " && mkdir " + fetch(:CACHEDIR) + " && chmod 777 " + fetch(:CACHEDIR)
+
+    on roles(:app) do
+        execute fetch(:CLEAR_CACHE_CMD)
+    end
+end
+
 after :deploy, :post_deploy
