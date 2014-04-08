@@ -2,11 +2,9 @@
 if (!isset($_SERVER['ENV'])) $_SERVER['ENV'] = '';
 if (!isset($_SERVER['ENV_USER'])) $_SERVER['ENV_USER'] = '';
 
-$debug = 0;
-if (isset($_SERVER['ENV']) && $_SERVER['ENV'] == 'development') $debug = 2;
+$debug = (isset($_SERVER['ENV']) && $_SERVER['ENV'] == 'development') ? 2 : 0;
 Configure::write('debug', $debug);
 Configure::write('App.encoding', 'ISO-8859-15');
-//Configure::write('Cache.disable', true);
 Configure::write('Cache.check', true);
 $cacheAction = true;
 
@@ -22,8 +20,6 @@ Configure::write('Acl.classname', 'DbAcl');
 Configure::write('Acl.database', 'default');
 
 /**** Site Specific Configuration ****/
-
-//Cache::config('default', array('engine' => 'File'));
 $webservice_live_url = 'http://toolbox.luxurylink.com';
 $ll_url = 'www.luxurylink.com';
 $fg_url = 'www.familygetaway.com';
@@ -97,7 +93,7 @@ $abs_path = dirname(__file__);
 $abs_path = str_replace('/config', '/', $abs_path);
 define('APP_ABSOLUTE_PATH', $abs_path);
 
-// TICKET4334: The below is neccessary for PHP 5.x.x < 5.2.x
+// The below is necessary for PHP 5.x.x < 5.2.x
 if (!function_exists('array_fill_keys')) {
     function array_fill_keys($array, $values)
     {
