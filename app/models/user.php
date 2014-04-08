@@ -178,7 +178,16 @@ class User extends AppModel
         }
         return $count;
     }
+    public function getPgCountByUserId($userId)
+    {
 
+        $sql = "SELECT count(*) as pgTickets FROM pgBooking p ";
+        $sql .= "WHERE p.userId = " . $userId;
+        $result = $this->query($sql);
+
+        return $result[0][0];
+
+    }
     /**
      * @param $userId
      * @return bool
