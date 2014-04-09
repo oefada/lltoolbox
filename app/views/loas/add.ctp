@@ -275,17 +275,17 @@ $this->set('clientId', $this->data['Loa']['clientId']);
     function toggle_fields() {
         if ($('LoaLoaMembershipTypeId').getValue() == 3) {
             $('_LoaMembershipFee').hide();
-            $('_LoaMembershipTotalPackages').show();
+            //$('_LoaMembershipTotalPackages').show();
             $('_LoaMembershipFeeEstimated').show();
             $('_LoaRetailValueFee').hide();
         } else if ($('LoaLoaMembershipTypeId').getValue() == 5) {
             $('_LoaMembershipFeeEstimated').show();
             $('_LoaRetailValueFee').show();
-            $('_LoaMembershipTotalPackages').hide();
+           // $('_LoaMembershipTotalPackages').hide();
             $('_LoaMembershipFee').hide();
         } else {
             $('_LoaMembershipFee').show();
-            $('_LoaMembershipTotalPackages').hide();
+            //$('_LoaMembershipTotalPackages').hide();
             $('_LoaMembershipFeeEstimated').hide();
             $('_LoaRetailValueFee').hide();
         }
