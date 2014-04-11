@@ -32,50 +32,33 @@ if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development' ||
     $fg_url = 'dev-familygetaway.luxurylink.com';
     $webservice_live_url = 'http://dev-toolbox.luxurylink.com';
     Configure::write('Cache.disable', true);
-    Configure::write('TokenizerService', 'tokenex_v2');
-    Configure::write('TokenEx.tokenExV2Url', 'https://test-api.tokenex.com:8081/TokenServices.svc/REST/');
-    Configure::write('TokenEx.tokenExV2ID', '4700943473181519');
-    Configure::write('TokenEx.tokenExV2APIKey', 'NulLHqEpmVfJCF6t3wQJ');
     Configure::write('LltgApiUrl', 'dev.api.luxurylink.com');
-} elseif (stristr($_SERVER['HTTP_HOST'], 'stage') || $_SERVER['ENV'] == 'staging' || strpos($_ENV['HOSTNAME'], 'stage') !== FALSE) {
-    // TODO: Remove this block once we've migrated off of old stage
-    define("ISDEV", true);
-    define("ISSTAGE", true);
-    $ll_url = 'stage-luxurylink.luxurylink.com';
-    $fg_url = 'stage-family.luxurylink.com';
-    $webservice_live_url = 'http://stage-toolbox.luxurylink.com';
-    Configure::write('TokenizerService', 'tokenex_v2');
-    Configure::write('TokenEx.tokenExV2Url', 'https://test-api.tokenex.com:8081/TokenServices.svc/REST/');
-    Configure::write('TokenEx.tokenExV2ID', '4700943473181519');
-    Configure::write('TokenEx.tokenExV2APIKey', 'NulLHqEpmVfJCF6t3wQJ');
+    Configure::write('TokenizerService', 'api');
+    Configure::write('TokenizerOptions.lltgAPIUrl', Configure::read('LltgApiUrl'));
 } elseif (stristr($_SERVER['HTTP_HOST'], 'uat-toolbox')) {
     define("ISDEV", true);
     define("ISSTAGE", true);
     $ll_url = 'uat-luxurylink.luxurylink.com';
     $webservice_live_url = 'http://uat-toolbox.luxurylink.com';
-    Configure::write('TokenizerService', 'tokenex_v2');
-    Configure::write('TokenEx.tokenExV2Url', 'https://test-api.tokenex.com:8081/TokenServices.svc/REST/');
-    Configure::write('TokenEx.tokenExV2ID', '4700943473181519');
-    Configure::write('TokenEx.tokenExV2APIKey', 'NulLHqEpmVfJCF6t3wQJ');
     Configure::write('LltgApiUrl', 'uat.api.luxurylink.com');
+    Configure::write('TokenizerService', 'api');
+    Configure::write('TokenizerOptions.lltgAPIUrl', Configure::read('LltgApiUrl'));
 } elseif (stristr($_SERVER['HTTP_HOST'], 'uat-internal-toolbox')) {
     define("ISDEV", true);
     define("ISSTAGE", true);
     $ll_url = 'uat-internal-luxurylink.luxurylink.com';
     $webservice_live_url = 'http://uat-internal-toolbox.luxurylink.com';
-    Configure::write('TokenizerService', 'tokenex_v2');
-    Configure::write('TokenEx.tokenExV2Url', 'https://test-api.tokenex.com:8081/TokenServices.svc/REST/');
-    Configure::write('TokenEx.tokenExV2ID', '4700943473181519');
-    Configure::write('TokenEx.tokenExV2APIKey', 'NulLHqEpmVfJCF6t3wQJ');
     Configure::write('LltgApiUrl', 'uat.internal.api.luxurylink.com');
+    Configure::write('TokenizerService', 'api');
+    Configure::write('TokenizerOptions.lltgAPIUrl', Configure::read('LltgApiUrl'));
 } else {
     define("ISDEV", false);
     define("ISSTAGE", false);
     Configure::write('LltgApiUrl', 'api.luxurylink.com');
     Configure::write('TokenizerService', 'tokenex_v2');
-    Configure::write('TokenEx.tokenExV2Url', 'https://api.tokenex.com/TokenServices.svc/REST/');
-    Configure::write('TokenEx.tokenExV2ID', '7671187692728770');
-    Configure::write('TokenEx.tokenExV2APIKey', 'zcRrwhnTE7Y5RvYm9JiA');
+    Configure::write('TokenizerOptions.tokenExV2Url', 'https://api.tokenex.com/TokenServices.svc/REST/');
+    Configure::write('TokenizerOptions.tokenExV2ID', '7671187692728770');
+    Configure::write('TokenizerOptions.tokenExV2APIKey', 'zcRrwhnTE7Y5RvYm9JiA');
 }
 
 $ll_urls = 'https://' . $ll_url;
