@@ -71,6 +71,7 @@ if (stristr($_SERVER['HTTP_HOST'], 'dev') || $_SERVER['ENV'] == 'development' ||
 } else {
     define("ISDEV", false);
     define("ISSTAGE", false);
+    Configure::write('LltgApiUrl', 'api.luxurylink.com');
     Configure::write('TokenizerService', 'tokenex_v2');
     Configure::write('TokenEx.tokenExV2Url', 'https://api.tokenex.com/TokenServices.svc/REST/');
     Configure::write('TokenEx.tokenExV2ID', '7671187692728770');
