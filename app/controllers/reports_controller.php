@@ -1841,6 +1841,7 @@ class ReportsController extends AppController
             $transformedPegasusArray = array();
             $pegasusCount = 0;
             if(!empty($pegasusResults)){
+            
                 //map Pegasus fields to Results
                 foreach ($pegasusResults as $pgKey => $pgValue) {
 
@@ -1894,11 +1895,11 @@ class ReportsController extends AppController
 
                     $transformedPegasusArray[$pgKey]['r']['arrivalDate']= $pgValue['PgBooking']['dateIn'];
                     $transformedPegasusArray[$pgKey]['Package']['numRooms'] = 1;
-                    $transformedPegasusArray[$pgKey]['OfferType']['offerTypeName'] = 'Instant Conf';
+                    $transformedPegasusArray[$pgKey]['OfferType']['offerTypeName'] = 'Instant Conf.';
                     $transformedPegasusArray[$pgKey][0]['percentOfRetail'] = '';
-                    $transformedPegasusArray[$pgKey]['ExpirationCriteria']['expirationCriteriaId'] = 1; //keep
-                    $transformedPegasusArray[$pgKey]['PricePoint']['validityStart'] = "";
-                    $transformedPegasusArray[$pgKey]['PricePoint']['validityEnd'] = "";
+                    $transformedPegasusArray[$pgKey]['ExpirationCriteria']['expirationCriteriaId'] = 2; //remit
+                    $transformedPegasusArray[$pgKey]['PricePoint']['validityStart'] = date('Y') . '-01-01';
+                    $transformedPegasusArray[$pgKey]['PricePoint']['validityEnd'] = date('Y') . '-12-31';
 
 
                     $transformedPegasusArray[$pgKey]['arrivalDate'] = $pgValue['PgBooking']['dateIn'];
