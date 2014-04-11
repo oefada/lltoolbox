@@ -266,6 +266,9 @@ class PgBookingsController extends AppController
         $lltgServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($booking['PgBooking']['tldId']);
         $this->set('lltgServiceBuilder', $lltgServiceBuilder);
 
+        if ($booking['PgBooking']['promoCodeId']) {
+           $booking['Promo'] = $this->PgBooking->getTicketPromoData($booking['PgBooking']['promoCodeId']);
+        }
         $booking['Notes'] = $this->Notes->getNotesByPgBooking($booking['PgBooking']['pgBookingId']);
         $this->set('booking', $booking);
         $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
