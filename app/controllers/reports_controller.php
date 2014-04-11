@@ -1898,8 +1898,8 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey]['OfferType']['offerTypeName'] = 'Instant Conf.';
                     $transformedPegasusArray[$pgKey][0]['percentOfRetail'] = '';
                     $transformedPegasusArray[$pgKey]['ExpirationCriteria']['expirationCriteriaId'] = 2; //remit
-                    $transformedPegasusArray[$pgKey]['PricePoint']['validityStart'] = date('Y') . '-01-01';
-                    $transformedPegasusArray[$pgKey]['PricePoint']['validityEnd'] = date('Y') . '-12-31';
+                    $transformedPegasusArray[$pgKey]['PricePoint']['validityStart'] = $pgValue['PgBooking']['dateIn'];
+                    $transformedPegasusArray[$pgKey]['PricePoint']['validityEnd'] = $pgValue['PgBooking']['dateOut'];
 
 
                     $transformedPegasusArray[$pgKey]['arrivalDate'] = $pgValue['PgBooking']['dateIn'];
