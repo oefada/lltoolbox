@@ -169,8 +169,8 @@
         ?>
     </td>
     <td>
-        <?php if (!empty($ticket['Promo'])) : ?>
-            <?php foreach ($ticket['Promo'] as $t_promo) : ?>
+        <?php if (!empty($booking['Promo'])) : ?>
+            <?php foreach ($booking['Promo'] as $t_promo) : ?>
 
                 <h3 style="margin:0px;padding:0px;padding-bottom:5px;">** Promo Code
                     [<?= $t_promo['pc']['promoCode']; ?>] **</h3>
@@ -226,7 +226,18 @@
                         <td style="text-align:center;"><?= $v['currencyId']; ?></td>
                         <td style="text-align:center;"><?= $v['paymentUSD']; ?></td>
                         <td style="text-align:center;"><?= $v['paymentAmountTld']; ?></td>
-                        <td style="text-align:center;"><?= $v['paymentTypeId']; ?></td>
+                        <td style="text-align:center;">
+                        <?php if ($v['paymentTypeId'] == 1) {
+                                    echo "Credit Card";
+                              }
+                              if ($v['paymentTypeId'] == 2) {
+                                    echo "Gift Certificate";
+                              }
+                              if ($v['paymentTypeId'] == 3) {
+                                    echo "Credit on File";
+                              }
+                         ?>
+                         </td>
                     </tr>
                 <?php endforeach; ?>
             </table>
