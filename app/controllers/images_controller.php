@@ -35,7 +35,8 @@ class ImagesController extends AppController
             '-auto-' => 1, // new PHOtos
         );
 
-        $this->fileRoot = dirname(dirname(dirname(dirname(__FILE__)))) . '/luxurylink/php';
+        $this->fileRoot = dirname(dirname(__FILE__)) . '/webroot';
+        var_dump($this->fileRoot); die;
     }
 
     /**
