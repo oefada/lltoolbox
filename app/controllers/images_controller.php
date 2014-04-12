@@ -36,7 +36,6 @@ class ImagesController extends AppController
         );
 
         $this->fileRoot = dirname(dirname(__FILE__)) . '/webroot';
-        var_dump($this->fileRoot); die;
     }
 
     /**
