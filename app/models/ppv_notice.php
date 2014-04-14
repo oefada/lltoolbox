@@ -1,14 +1,14 @@
 <?php
-class PpvNotice extends AppModel {
+class PpvNotice extends AppModel
+{
+    public $name = 'PpvNotice';
+    public $useTable = 'ppvNotice';
+    public $primaryKey = 'ppvNoticeId';
+    public $actsAs = array('Logable');
 
-	var $name = 'PpvNotice';
-	var $useTable = 'ppvNotice';
-	var $primaryKey = 'ppvNoticeId';
-	var $actsAs = array('Logable');
-	
-	var $belongsTo = array(//'Ticket' => array('foreignKey' => 'ticketId'),
-						   'PpvNoticeType' => array('foreignKey' => 'ppvNoticeTypeId')
-						  );
-
+    public $belongsTo = array(
+        'PpvNoticeType' => array(
+            'foreignKey' => 'ppvNoticeTypeId'
+        )
+    );
 }
-?>
