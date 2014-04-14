@@ -1754,6 +1754,8 @@ class ReportsController extends AppController
 
             $this->PaymentDetail->recursive = 0;
             $ids = null;
+
+            //@TODO, REFACTOR. Why are we looping through the result set 4 times? We should refactor.
             foreach ($results as $k => $v) {
                 if (!$ids) {
                     $ids = $v['Ticket']['ticketId'];
@@ -1841,7 +1843,6 @@ class ReportsController extends AppController
             $transformedPegasusArray = array();
             $pegasusCount = 0;
             if(!empty($pegasusResults)){
-            
                 //map Pegasus fields to Results
                 foreach ($pegasusResults as $pgKey => $pgValue) {
 
@@ -1868,22 +1869,45 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey]['Ticket']['userFirstName'] = $pgValue['User']['firstName'];
                     $transformedPegasusArray[$pgKey]['Ticket']['userLastName'] = $pgValue['User']['lastName'];
 
-                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingAddress1'] = $pgValue['PgBooking']['billingAddress'];
-                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingCity'] = $pgValue['PgBooking']['billingCity'];
-                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingState'] = $pgValue['PgBooking']['billingState'];
-                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingZip'] = $pgValue['PgBooking']['billingZip'];
-                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppBillingCountry'] = $pgValue['Country']['countryName'];
-                    $transformedPegasusArray[$pgKey]['Country']['countryName'] = $pgValue['Country']['countryName'];
-
                     $transformedPegasusArray[$pgKey]['Ticket']['userHomePhone'] = $pgValue['User']['homePhone'];
                     $transformedPegasusArray[$pgKey]['Ticket']['userEmail1'] = $pgValue['User']['email'];
 
-                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ccType'] = $pgValue['UserPaymentSetting']['ccType'];
+                    $transformedPegasusArray[$pgKey]['Country']['countryName'] = $pgValue['Country']['countryName'];
 
-                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppCardNumLastFour'] = substr($pgValue['UserPaymentSetting']['ccToken'],-4);
-                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppExpMonth'] = $pgValue['UserPaymentSetting']['expMonth'];
-                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['ppExpYear'] = $pgValue['UserPaymentSetting']['expYear'];
-                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][0]['pd']['paymentAmount'] = $pgValue['PgPayment'][0]['paymentUSD'];
+                    if (is_array($pgValue['PgPayment'])){
+                        foreach ($pgValue['PgPayment'] as $key => $val){
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingAddress1'] = $pgValue['PgBooking']['billingAddress'];
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingCity'] = $pgValue['PgBooking']['billingCity'];
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingState'] = $pgValue['PgBooking']['billingState'];
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingZip'] = $pgValue['PgBooking']['billingZip'];
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingCountry'] = $pgValue['Country']['countryName'];
+
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ccType'] = $pgValue['UserPaymentSetting']['ccType'];
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppCardNumLastFour'] = substr($pgValue['UserPaymentSetting']['ccToken'],-4);
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppExpMonth'] = $pgValue['UserPaymentSetting']['expMonth'];
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppExpYear'] = $pgValue['UserPaymentSetting']['expYear'];
+
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['paymentAmount'] = $pgValue['PgPayment'][$key]['paymentUSD'];
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['paymentTypeId'] = $pgValue['PgPayment'][$key]['paymentTypeId'];
+                            switch($pgValue['PgPayment'][$key]['paymentTypeId']){
+                                case '1':
+                                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pt']['paymentTypeName'] = 'Charge';
+                                break;
+                                case '2':
+                                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pt']['paymentTypeName'] = 'Gift Certificate';
+                                break;
+                                case '3':
+                                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pt']['paymentTypeName'] = 'Credit On File';
+                                break;
+                                case '4':
+                                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pt']['paymentTypeName'] = 'Promo';
+                                break;
+                            }
+                            //end foreach
+                        }
+                    //end is array
+                    }
+
 
                     //TOTAL CHARGED ON THE CREDIT CARD ONLY
                     $transformedPegasusArray[$pgKey][0]['revenue'] = $pgValue['PgPayment'][0]['paymentUSD'];
@@ -1897,7 +1921,7 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey]['Package']['numRooms'] = 1;
                     $transformedPegasusArray[$pgKey]['OfferType']['offerTypeName'] = 'Instant Conf.';
                     $transformedPegasusArray[$pgKey][0]['percentOfRetail'] = '';
-                    $transformedPegasusArray[$pgKey]['ExpirationCriteria']['expirationCriteriaId'] = 2; //remit
+                    $transformedPegasusArray[$pgKey]['ExpirationCriteria']['expirationCriteriaId'] = 3; //Remit
                     $transformedPegasusArray[$pgKey]['PricePoint']['validityStart'] = $pgValue['PgBooking']['dateIn'];
                     $transformedPegasusArray[$pgKey]['PricePoint']['validityEnd'] = $pgValue['PgBooking']['dateOut'];
 
