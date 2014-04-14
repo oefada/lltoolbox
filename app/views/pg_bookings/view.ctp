@@ -245,10 +245,10 @@
     </div>
 </div>
 <div class="collapsible">
-    <div class="handle"><?php __('Notifications and PPVs (' . count($ticket['PpvNotice']) . ')'); ?></div>
+    <div class="handle"><?php __('Notifications and PPVs (' . count($booking['PpvNotice']) . ')'); ?></div>
     <div class="collapsibleContent related">
         <br/>
-        <?php if (!empty($ticket['PpvNotice'])): ?>
+        <?php if (!empty($booking['PpvNotice'])): ?>
             <table cellpadding="0" cellspacing="0">
                 <tr>
                     <th><?php __('XA ID'); ?></th>
@@ -262,7 +262,7 @@
                 </tr>
                 <?php
                 $i = 0;
-                foreach ($ticket['PpvNotice'] as $ppvNotice):
+                foreach ($booking['PpvNotice'] as $ppvNotice):
                     $class = null;
                     if ($i++ % 2 == 0) {
                         $class = ' class="altrow"';
@@ -279,8 +279,8 @@
                     ?>
                     <tr<?php echo $class; ?>>
                         <td><?php echo $ppvNotice['ppvNoticeId']; ?></td>
-                        <td><?php echo $ppvNotice['PpvNoticeType']['ppvNoticeTypeName']; ?>
-                            (<?php echo $ppvNotice['PpvNoticeType']['ppvNoticeTypeId']; ?>)
+                        <td><?php echo $ppvNoticeTypes[$ppvNotice['ppvNoticeTypeId']]; ?>
+                            (<?php echo $ppvNotice['ppvNoticeTypeId'] ?>)
                         </td>
                         <td><?php echo $ppvNotice['emailTo']; ?></td>
                         <td><?php echo $ppvNotice['emailFrom']; ?></td>

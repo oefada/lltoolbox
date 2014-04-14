@@ -272,6 +272,7 @@ class PgBookingsController extends AppController
         $booking['Notes'] = $this->Notes->getNotesByPgBooking($booking['PgBooking']['pgBookingId']);
         $this->set('booking', $booking);
         $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
+        $this->set('ppvNoticeTypes', $this->PgBooking->PpvNotice->PpvNoticeType->find('list'));
     }
 
     public function edit($id = null)
