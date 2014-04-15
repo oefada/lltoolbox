@@ -101,9 +101,6 @@ class Client extends AppModel
     {
         parent::__construct($id, $table, $ds);
 
-        App::import('Helper', 'Html'); // loadHelper('Html'); in CakePHP 1.1.x.x
-        $this->html = new HtmlHelper();
-
         App::import('Vendor', 'PHPMailer', array('file' => 'phpmailer' . DS . 'class.phpmailer.php'));
         $this->mail = new PHPMailer();
     }
@@ -1234,8 +1231,10 @@ class Client extends AppModel
 
     public function sendPDPUrlChangeEmail($oldDataArray, $newDataArray)
     {
+        App::import('Helper', 'Html'); // loadHelper('Html'); in CakePHP 1.1.x.x
+        $html = new HtmlHelper();
         $tbl = "<table cellpadding='2' cellspacing='1' width='640'>";
-        $tbl .= $this->html->tableHeaders(
+        $tbl .= $html->tableHeaders(
             array(
                 '<b>Field</b>',
                 '<b>Old Value</b>',
@@ -1251,7 +1250,7 @@ class Client extends AppModel
         }
         foreach ($this->changedFields as $fieldName) {
             //build table of change fields in email
-            $tbl .= $this->html->tableCells(
+            $tbl .= $html->tableCells(
                 array(
                     $fieldName,
                     $oldDataArray['Client'][$fieldName],
