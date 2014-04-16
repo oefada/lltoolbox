@@ -273,7 +273,7 @@ class WebServiceTicketsController extends WebServicesController
         // send out fixed price emails
         // -------------------------------------------------------------------------------
         if (isset($ticketData['siteId']) && $ticketData['siteId'] == 2) {
-            $params['ppvNoticeTypeId'] = 20; // Fixed Price - Winner Notification	
+            $params['ppvNoticeTypeId'] = 20; // Fixed Price - Winner Notification
         } else {
             $params['ppvNoticeTypeId'] = 12; // Fixed Price - Winner Notification
         }
@@ -420,7 +420,7 @@ class WebServiceTicketsController extends WebServicesController
             return false;
         }
 
-        // $ticket_toolbox contains data specific to the the purchase as contained in 'ticket' table. 
+        // $ticket_toolbox contains data specific to the the purchase as contained in 'ticket' table.
         // eg. user data, departure times, packageId etc
         $ticket_toolbox = $this->Ticket->read(null, $data['ticketId']);
 
@@ -447,7 +447,7 @@ class WebServiceTicketsController extends WebServicesController
         }
 
         // all ticket processing happens in here
-        // the auction closing cron job sets the the ticket to transmitted=1 when it finishes with it 
+        // the auction closing cron job sets the the ticket to transmitted=1 when it finishes with it
         // to prevent concurrency issues
         if ($ticket_toolbox['Ticket']['transmitted'] == 0) {
             $ticketId = $data['ticketId'];
@@ -1114,9 +1114,9 @@ class WebServiceTicketsController extends WebServicesController
         $pgBookingId = isset($params['pgBookingId']) ? $params['pgBookingId'] : null;
         if ($pgBookingId) {
 			$bookingDataResult = $this->PgBooking->query("SELECT PgBooking.*, UserPaymentSetting.city, UserPaymentSetting.state, UserPaymentSetting.country, UserPaymentSetting.ccToken, UserPaymentSetting.ccType, PromoCode.promoCode FROM pgBooking PgBooking INNER JOIN userPaymentSetting UserPaymentSetting USING(userPaymentSettingId) LEFT JOIN promoCode PromoCode USING(promoCodeId) WHERE PgBooking.pgBookingId = " . $pgBookingId);
-        	$bookingData = $bookingDataResult[0]; 
+        	$bookingData = $bookingDataResult[0];
         	$userId = $bookingData['PgBooking']['userId'];
-        	$clientId = $bookingData['PgBooking']['clientId']; 
+        	$clientId = $bookingData['PgBooking']['clientId'];
         	$siteId = 1;
             $bookingPaymentResult = $this->PgBooking->query("SELECT * FROM pgPayment PgPayment WHERE pgBookingId  = " . $pgBookingId);
             $bookingPaymentData = array();
@@ -1212,10 +1212,10 @@ class WebServiceTicketsController extends WebServicesController
             $clientData = $this->ClientLoaPackageRel->findAllBypackageid($liveOfferData['packageId']);
             $isMystery = isset($liveOfferData['isMystery']) && $liveOfferData['isMystery'] ? true : false;
 
-            // When making mystery auctions, the admin will enter generic data into the 'offerIncludes' field 
-            // in the offer table. However, once the mystery auction is over, the non-bid ppv's should 
-            // use the specific includes data found in the package table. 
-            // ticket3631 
+            // When making mystery auctions, the admin will enter generic data into the 'offerIncludes' field
+            // in the offer table. However, once the mystery auction is over, the non-bid ppv's should
+            // use the specific includes data found in the package table.
+            // ticket3631
             $alwaysShowArr = array(1, 12, 14, 18, 19, 26, 30, 32);
             if ($isMystery && in_array($ppvNoticeTypeId, $alwaysShowArr)) {
                 $q = "select * from package as Package where packageId = $packageId AND siteId=$siteId ";
@@ -1354,7 +1354,7 @@ class WebServiceTicketsController extends WebServicesController
                 	$tldId = (isset($userData['tldId']) && intval($userData['tldId']) > 0) ? $userData['tldId'] : 1;
                 } else {
                 	$tldId = 1;
-                } 
+                }
                 break;
 
             case 2:
@@ -1391,27 +1391,27 @@ class WebServiceTicketsController extends WebServicesController
             $tldId = isset($params['tldId']) ? $params['tldId'] : 1;
         }
 
-		$lltgServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($tldId);			
+		$lltgServiceBuilder = $this->LltgServiceHelper->getServiceBuilderFromTldId($tldId);
 		$lltgComponentService = $this->LltgServiceHelper->getComponentService($lltgServiceBuilder);
 		$lltgFormatterService = $this->LltgServiceHelper->getFormatterService($lltgServiceBuilder);
 		$lltgTranslationService = $this->LltgServiceHelper->getTranslationService($lltgServiceBuilder);
-		
+
 		$word_packages_upper = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGES_UPPER');
 		$word_package_upper = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGE_UPPER');
 		$word_packages_lower = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGES_LOWER');
 		$word_package_lower = $lltgTranslationService->getTranslationforKey('TEXT_PACKAGE_LOWER');
-				
+
 		$sitePhoneTld = $sitePhone;
 		$sitePhoneLocalTld = $sitePhoneLocal;
 		if ($tldId == 2) {
         	$siteDisplay = 'Luxury Link';
         	$prefixUrl = 'https://www.luxurylink.co.uk';
         	$siteUrl = 'http://www.luxurylink.co.uk/';
-        	$sitePhoneTld = $lltgFormatterService->formatTollFreeNumber('1' . preg_replace('/\D/', '', $sitePhoneTld));
+            $sitePhoneTld = $lltgComponentService->getTollfreeNumberFormatted();
 			$sitePhoneLocalTld = $lltgFormatterService->formatUSPhoneNumber('1' . preg_replace('/\D/', '', $sitePhoneLocalTld));
 			$sitePhoneLong = $sitePhoneTld;
 		}
-		
+
         // Auction facilitator
         $userId = isset($userData['userId']) ? $userData['userId'] : false;
         $userFirstName = isset($userData['firstName']) ? ucwords(strtolower($userData['firstName'])) : false;
@@ -1427,7 +1427,7 @@ class WebServiceTicketsController extends WebServicesController
         $userPhone = $userHomePhone;
         $userPhone = !$userPhone && $userMobilePhone ? $userMobilePhone : $userPhone;
         $userPhone = !$userPhone && $userWorkPhone ? $userWorkPhone : $userPhone;
-        
+
         $fallPromo2013 = false;
         $blackFridayPromo2013 = false;
         if ($ppvNoticeTypeId == 39 || $ppvNoticeTypeId == 40 || $ppvNoticeTypeId == 41 || $ppvNoticeTypeId == 42) {
@@ -1437,7 +1437,7 @@ class WebServiceTicketsController extends WebServicesController
         }
 
         $dateNow = date("M d, Y");
-        
+
 		if ($pgBookingId) {
             if ($tldId == 1) {
                 $currency = 'USD';
@@ -1447,7 +1447,7 @@ class WebServiceTicketsController extends WebServicesController
                 $currencySymbol = '&pound;';
             }
 		}
-        
+
         if ($ticketId) {
             $offerId = $offerData['offerId'];
             $packageSubtitle = $packageData['subtitle'];
@@ -1479,7 +1479,7 @@ class WebServiceTicketsController extends WebServicesController
             }
 
             $isTaxIncluded = (isset($ticketData['isTaxIncluded'])) ? $ticketData['isTaxIncluded'] : null;
-            
+
             $foreignPricedPackage = false;
             if (intval($packageData['currencyId']) > 1 && intval($ticketData['offerRetailValueUSD']) > 0 && intval($ticketData['offerRetailValueLocal']) > 0 && (intval($ticketData['offerRetailValueUSD']) != intval($ticketData['offerRetailValueLocal']))) {
             	if (true) {
@@ -1490,7 +1490,7 @@ class WebServiceTicketsController extends WebServicesController
             		$foreignPricedPackage['currencyCode'] = $currencyCodeData[0]['currency']['currencyCode'];
             	}
             }
-            
+
             //////////////////////////////////////////////////////////////////////////////////////////////////////
             // TODO: figure out how to share this with the customer facing sites
             //
@@ -1611,7 +1611,7 @@ class WebServiceTicketsController extends WebServicesController
                 $resDepartureDate = $fpDeparture;
             }
 
-            // Calculate cancellation fee. < 15 days from arrival, $100 fee, > 15 days from arrival, $35 fee 
+            // Calculate cancellation fee. < 15 days from arrival, $100 fee, > 15 days from arrival, $35 fee
             if ($ppvNoticeTypeId == 30) {
                 if ($isForeignCurrencyTicket) {
                     $cancelFee = 20;
@@ -1735,7 +1735,7 @@ class WebServiceTicketsController extends WebServicesController
             }
         } //End IF for $ticketId
 
-        // this needs to run outside of "if ($ticketId)" because bids (36) do not have tickets yet 
+        // this needs to run outside of "if ($ticketId)" because bids (36) do not have tickets yet
         if (!isset($isAuction)) {
             $isAuction = false;
         }
@@ -1965,7 +1965,7 @@ class WebServiceTicketsController extends WebServicesController
         }
 
         // "Confirm Reservation" button and other buttons...
-        // $emailSubject has not be defined as this point, not sure why it is appended to imgHref, 
+        // $emailSubject has not be defined as this point, not sure why it is appended to imgHref,
         // so check/init it
         if (!isset($emailSubject)) {
             $emailSubject = '';
@@ -2474,7 +2474,7 @@ class WebServiceTicketsController extends WebServicesController
                 $emailFrom = "$siteDisplay <reservations@$siteEmail>";
                 $emailReplyTo = "reservations@$siteEmail";
                 $emailSubject = "Your Luxury Link Travel Booking - $clientNameP";
-                break;    
+                break;
             case 61:
                 $templateFile = "61_pegasus_cancel_confirmation";
                 $templateTitle = "Your Luxury Link Travel Booking Has Been Cancelled";
@@ -2482,7 +2482,7 @@ class WebServiceTicketsController extends WebServicesController
                 $emailFrom = "$siteDisplay <reservations@$siteEmail>";
                 $emailReplyTo = "reservations@$siteEmail";
                 break;
-               
+
             default:
                 break;
         }
@@ -2626,7 +2626,7 @@ class WebServiceTicketsController extends WebServicesController
             'package_details_client' => 1,
             'property_notes' => 1,
             'about_this_auction' => 1,
-            // Special boxes that exist in the header. Place these anywhere in your template and 
+            // Special boxes that exist in the header. Place these anywhere in your template and
             // it will be placed in a td next to the Dear Firstname,
             'client_footer' => 2,
             'reservation_details' => 2,
@@ -3555,7 +3555,7 @@ class WebServiceTicketsController extends WebServicesController
         $isTestCard = ($isDev) ? true : false;
         $processor = new Processor('NOVA', $isTestCard);
 
-        // cvc required for gift 
+        // cvc required for gift
         $processor->getModule()->addCvc($userPaymentSettingPost['UserPaymentSetting']['cvc']);
         $processor->InitPayment($userPaymentSettingPost, $ticketInfo);
 
@@ -3630,7 +3630,7 @@ class WebServiceTicketsController extends WebServicesController
         $q = 'SELECT d.eventRegistryId, d.amount, d.userId AS donorUserId, d.ccDigits, d.personalNote
 			  , ud.firstName AS donorFirstName, ud.lastName AS donorLastName
 			  , e.eventRegistryTypeId, e.registrant1_firstName, e.registrant2_firstName, e.siteId, e.userId AS eventRegistryUserId
-			  FROM eventRegistryDonor d 
+			  FROM eventRegistryDonor d
 			  INNER JOIN eventRegistry e USING(eventRegistryId)
 			  INNER JOIN user ud ON d.userId = ud.userId
 			  WHERE d.statusId = 0 AND d.eventRegistryDonorId = ?';
@@ -3643,7 +3643,7 @@ class WebServiceTicketsController extends WebServicesController
             $eventRegistryUserId = $giftInfo['e']['eventRegistryUserId'];
             $siteId = $giftInfo['e']['siteId'];
 
-            // update COF 
+            // update COF
             $creditDetail = array();
             $creditDetail['creditTrackingTypeId'] = 6;
             $creditDetail['userId'] = $eventRegistryUserId;
