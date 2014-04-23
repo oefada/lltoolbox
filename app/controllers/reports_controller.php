@@ -1664,6 +1664,7 @@ class ReportsController extends AppController
                           LEFT JOIN offerLuxuryLink USING(offerId)
                           LEFT JOIN offerFamily USING(offerId)
                         WHERE $conditions
+                        AND ticketStatusId NOT IN (7,8,17,18)
                         ";
 
             $results = $this->OfferType->query($sql);
@@ -1746,6 +1747,7 @@ class ReportsController extends AppController
               LEFT JOIN offerFamily USING(offerId)
               LEFT JOIN countryNew AS Country ON (PaymentDetail.ppBillingCountry = Country.countryId)
               WHERE $conditions
+              AND ticketStatusId NOT IN (7,8,17,18)
               GROUP BY Ticket.ticketId
               ORDER BY $order
               LIMIT $this->limit";
