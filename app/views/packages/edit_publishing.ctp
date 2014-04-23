@@ -16,8 +16,8 @@ if ($isFamilyPackage== true){
     var packageId = <?=$packageId;?>;
     var clientId = <?=$clientId;?>;
 	var numNights = <?=(int)$package['Package']['numNights'];?>;
-	var numGuests = <?=(int)$package['Package']['numGuests'];?>;
-	var roomGrade = '<?=htmlentities($roomGrade);?>';
+	window.numGuests = <?=(int)$package['Package']['numGuests'];?>;
+	var roomGrade = "<?=htmlentities(str_replace("'","&#39;",$roomGrade));?>";
 	var roomNightDescription = "<?=htmlentities($roomNightDescription);?>";
 	var maxAdults = <?=(int)$package['Package']['maxAdults'];?>;
 	var siteId = <?=(int)$package['Package']['siteId'];?>;
@@ -54,7 +54,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
                     <?php endforeach;?>
                 <?php else: ?>
                     <span style="display:none;" id="merch-desc-<?=$k;?>-copy" rel="werd"><?=(!empty($i['LoaItem']['merchandisingDescription'])) ? htmlentities($i['LoaItem']['merchandisingDescription'])  : 'NO LIVE SITE DESCRIPTION'  ;?></span>
-                    <input type="hidden" id="merch-desc-<?=$k;?>-id" value="<?=$i['PackageLoaItemRel']['packageLoaItemRelId'];?>" />
+                    <input type="hidden" id="merch-desc-<?=$k;?>-id" value="<?=isset($i['PackageLoaItemRel']['packageLoaItemRelId'])?$i['PackageLoaItemRel']['packageLoaItemRelId']:'';?>" />
                 <?php endif;?>
             <?php endforeach;?>
                 <input type="hidden" name="data[PackageAgeRange][packageAgeRangeId]" value="<? echo $package['PackageAgeRange']['packageAgeRangeId'];?>">
@@ -179,7 +179,7 @@ echo $javascript->link('jquery/jquery-autocomplete/jquery.autocomplete'); ?>
         var inclusions = '';
         var inclusion_ids = '';
 
-        inclusions += "<p><b>Accommodations for " + numGuests + ":</b></p>\n";
+        inclusions += "<p><b>Accommodations for " + window.numGuests + ":</b></p>\n";
         inclusions += "<ul>\n";
 
         if (isFamilyPackage == 1) {
