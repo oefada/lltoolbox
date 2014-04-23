@@ -4,9 +4,9 @@ App::import('Vendor', 'nusoap/web_services_controller');
 App::import("Vendor", "Base", array('file' => "appshared" . DS . "framework" . DS . "Base.php"));
 require_once(APP . '/vendors/pp/Processor.class.php');
 
-//error_reporting(E_ALL);
-//set_error_handler("wstErrorHandler");
-//register_shutdown_function('wstErrorShutdown');
+error_reporting(E_ALL);
+set_error_handler("wstErrorHandler");
+register_shutdown_function('wstErrorShutdown');
 
 class WebServiceTicketsController extends WebServicesController
 {
@@ -1079,7 +1079,6 @@ class WebServiceTicketsController extends WebServicesController
         $headerRed = false;
         $hideSalutation = false;
         $resConfirmationNotes = false;
-      //  $in0='{"ppvNoticeTypeId": 54,"userEmail":"rrose@luxurylink.com","clientId":470,"siteIdOverride":1,"packageId":"1","userFirstName":"Rand","clientImagePath":"http:\/\/photos.luxurylink.us\/images\/sho_4fd94e4b\/476_9101-auto-578\/Private%2BIsland%2BParadise.jpg","acAdditionalClients":" ","tldId":1,"send":1,"siteId":1}';
 
         // Can send in array or JSON string. Useful for using ppv() inside toolbox
         if (!is_array($in0)) {
