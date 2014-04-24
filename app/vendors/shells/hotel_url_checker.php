@@ -113,7 +113,49 @@ class HotelUrlCheckerShell extends Shell
             $contents .= fread($handle, 8192);
         }
         fclose($handle);
-        $this->out($contents);
+        //$this->out($contents);
+
+        //send email
+
+        $watchedField = $this->getUrlField();
+        $subj = 'Client URl Watcher Report ' . $watchedField;
+
+        $this->Client->mail->From = 'no-reply@toolbox.luxurylink.com';
+        $this->Client->mail->FromName = 'no-reply@toolbox.luxurylink.com';
+        $this->Client->mail->IsHTML(true);
+
+        if ($_SERVER['ENV'] == 'development' || ISSTAGE == true) {
+            $this->Client->mail->AddAddress('devmail@luxurylink.com');
+            $this->Client->mail->AddBCC('oefada@luxurylink.com');
+            $subj .= ' [TESTING - IGNORE]';
+        } else {
+            $this->Client->mail->AddAddress('clienturlwatcher@luxurylink.com');
+            $this->Client->mail->AddBCC('oefada@luxurylink.com');
+        }
+        $this->mail->Subject = $subj;
+
+        $this->mail->AddStringAttachment(
+            $contents,
+            'Broken_urls_' . $watchedField . '.csv',
+            'base64',
+            'application/octet-stream'
+        );
+
+        $body = 'Watched Field: ' . $watchedField . "\n <br />";
+        $body .= 'Date: ' . date('m-d-Y', time()) . "\n <br />";
+        $body .= 'Valid Status Codes <pre>' . print_r($this->safeHttpResponseCodes, true) . '</pre>';
+
+        $this->mail->Body = $body;
+        $result = $this->mail->Send();
+
+        if (false !== $result) {
+            $this->out('Email sent');
+            exit(0);
+        }
+        $this->out('email not sent');
+        exit(1);
+
+
     }
 
     public function getHttpResponse($url)
