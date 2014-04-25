@@ -132,9 +132,9 @@ class HotelUrlCheckerShell extends Shell
             $this->Client->mail->AddAddress('clienturlwatcher@luxurylink.com');
             $this->Client->mail->AddBCC('oefada@luxurylink.com');
         }
-        $this->mail->Subject = $subj;
+        $this->Client->mail->Subject = $subj;
 
-        $this->mail->AddStringAttachment(
+         $this->Client->mail->AddStringAttachment(
             $contents,
             'Broken_urls_' . $watchedField . '.csv',
             'base64',
@@ -145,8 +145,8 @@ class HotelUrlCheckerShell extends Shell
         $body .= 'Date: ' . date('m-d-Y', time()) . "\n <br />";
         $body .= 'Valid Status Codes <pre>' . print_r($this->safeHttpResponseCodes, true) . '</pre>';
 
-        $this->mail->Body = $body;
-        $result = $this->mail->Send();
+         $this->Client->mail->Body = $body;
+        $result =  $this->Client->mail->Send();
 
         if (false !== $result) {
             $this->out('Email sent');
