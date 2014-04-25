@@ -141,6 +141,8 @@ class HotelUrlCheckerShell extends Shell
             'application/octet-stream'
         );
 
+        
+
         $body = 'Watched Field: ' . $watchedField . "\n <br />";
         $body .= 'Date: ' . date('m-d-Y', time()) . "\n <br />";
         $body .= 'Valid Status Codes <pre>' . print_r($this->safeHttpResponseCodes, true) . '</pre>';
