@@ -70,6 +70,10 @@ class TracksController extends AppController {
 			$this->Session->setFlash(__('Invalid id for Track', true));
 			$this->redirect(array('action'=>'index'));
 		}
+		if ($this->Track->inUse($id)) {
+			$this->Session->setFlash(__('Track is currently in use and can not be deleted', true));
+			$this->redirect(array('action'=>'index'));
+		}
 		if ($this->Track->del($id)) {
 			$this->Session->setFlash(__('Track deleted', true));
 			$this->redirect(array('action'=>'index'));

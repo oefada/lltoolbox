@@ -112,5 +112,17 @@ class Track extends AppModel {
 	    
 	    return true;
 	}
+	
+	function inUse($id) {
+		$q = 'SELECT COUNT(*) AS nbr FROM schedulingMasterTrackRel WHERE trackId = ?';
+		$result = $this->query($q, array($id));
+		if ($result && $result[0][0]['nbr'] > 0) { 
+			return true;
+		} else {
+			return false;
+		}
+
+	}	
+	
 }
 ?>
