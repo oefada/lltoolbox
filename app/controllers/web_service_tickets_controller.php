@@ -2925,8 +2925,9 @@ class WebServiceTicketsController extends WebServicesController
             } elseif (in_array($ppvNoticeTypeId, array(2, 25))) {
                 // send ticket status to RESERVATION REQUESTED
                 $newTicketStatus = 3;
-            } elseif (in_array($ppvNoticeTypeId, array(10, 33))) {
-                #$newTicketStatus = 1;
+            } elseif ($ppvNoticeTypeId == 33) {
+                $newTicketStatus = 9;
+            } elseif ($ppvNoticeTypeId == 10) {
                 $newTicketStatus = 12;
             } elseif ($ppvNoticeTypeId == 14) {
                 // DATES NOT AVAILABLE
