@@ -1721,7 +1721,11 @@ class ReportsController extends AppController
                 Ticket.offerId,
                 Ticket.guaranteeAmt,
                 Ticket.billingPrice,
-                Locale.code
+                Locale.code,
+                Package.currencyId,
+                Currency.currencyCode,
+                Ticket.offerRetailValueUSD,
+                Ticket.offerRetailValueLocal
               FROM ticket AS Ticket
               INNER JOIN tld AS Tld ON (Ticket.tldId = Tld.tldId)
               INNER JOIN i18nLocales AS Locale ON (Tld.localeId = Locale.localeId)
@@ -1746,6 +1750,7 @@ class ReportsController extends AppController
               LEFT JOIN offerLuxuryLink USING(offerId)
               LEFT JOIN offerFamily USING(offerId)
               LEFT JOIN countryNew AS Country ON (PaymentDetail.ppBillingCountry = Country.countryId)
+              LEFT JOIN currency AS Currency ON (Package.currencyId = Currency.currencyId)
               WHERE $conditions
               AND ticketStatusId NOT IN (7,8,17,18)
               GROUP BY Ticket.ticketId
@@ -1774,6 +1779,14 @@ class ReportsController extends AppController
                     WHERE ticketId = ' . $v['Ticket']['ticketId'] . ' ORDER BY pd.paymentTypeId'
                 );
                 $results[$k]['PaymentDetailFull'] = $paymentDetail;
+                
+                $billingPriceLocal = null;
+                if ($v['Package']['currencyId'] > 1 && $v['Ticket']['offerRetailValueLocal'] && $v['Ticket']['offerRetailValueUSD']) {
+                	$exchangeRate = $v['Ticket']['offerRetailValueLocal'] / $v['Ticket']['offerRetailValueUSD'];
+                	$billingPriceLocal = round($v['Ticket']['billingPrice'] * $exchangeRate, 2);
+                }
+                $results[$k]['Ticket']['billingPriceLocal'] = $billingPriceLocal;
+                
             }
             // This extracts pricePointId and PackageId from the result set and queries
             // pricePoint table to get the validity dates and then inserts them into the
@@ -1873,6 +1886,9 @@ class ReportsController extends AppController
 
                     $transformedPegasusArray[$pgKey]['Ticket']['userHomePhone'] = $pgValue['User']['homePhone'];
                     $transformedPegasusArray[$pgKey]['Ticket']['userEmail1'] = $pgValue['User']['email'];
+                    
+                    $transformedPegasusArray[$pgKey]['Currency']['currencyCode'] = null;
+                    $transformedPegasusArray[$pgKey]['Ticket']['billingPriceLocal'] = null;
 
                     $transformedPegasusArray[$pgKey]['Country']['countryName'] = $pgValue['Country']['countryName'];
 

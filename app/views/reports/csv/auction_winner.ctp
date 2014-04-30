@@ -5,7 +5,7 @@ error_reporting(0);
 **/
 ini_set('default_charset', 'utf-8');
 Configure::write('debug', 0);
-echo "Site,Locale,Payment Date, Booking Date,Booking,Vendor ID,Accounting Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Promo Description\n";
+echo "Site,Locale,Payment Date, Booking Date,Booking,Vendor ID,Accounting Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Promo Description,Currency,Local Billing Price\n";
 foreach ($results as $r):
 	switch($r['OfferType']['offerTypeName']) {
 		case 'Standard Auction':
@@ -101,7 +101,9 @@ foreach ($results as $r):
 	$r['Promo']['amountOff'],
         $r['PricePoint']['validityStart']?date('M d Y h:i:s A', strtotime($r['PricePoint']['validityStart'])):' ',
         $r['PricePoint']['validityEnd']?date('M d Y h:i:s A', strtotime($r['PricePoint']['validityEnd'])):' ',
-	$promoCode
+	$promoCode,
+    $r['Currency']['currencyCode'],
+    $r['Ticket']['billingPriceLocal']
 	); //TODO: Add Paid Search Id and Ref Url
 	
 	echo implode(',', $line)."\r\n";
