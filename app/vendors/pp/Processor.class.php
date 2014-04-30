@@ -112,7 +112,6 @@ class Processor
         }
 
         $post_string = $this->SetPostFields();
-        CakeLog::write('processorLog', print_r($this->post_data, true));
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->getModule()->getUrl());
