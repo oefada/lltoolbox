@@ -319,7 +319,7 @@ class PgBookingsController extends AppController
             $this->redirect(array('action' => 'index'));
         }
 
-        $this->PgBooking->recursive = 2;
+        $this->PgBooking->recursive = 1;
         $booking = $this->PgBooking->read(null, $id);
 
         if ($booking === false) {
