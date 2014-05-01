@@ -1783,7 +1783,7 @@ class ReportsController extends AppController
                 $billingPriceLocal = null;
                 if ($v['Package']['currencyId'] > 1 && $v['Ticket']['offerRetailValueLocal'] && $v['Ticket']['offerRetailValueUSD']) {
                 	$exchangeRate = $v['Ticket']['offerRetailValueLocal'] / $v['Ticket']['offerRetailValueUSD'];
-                	$billingPriceLocal = round($v['Ticket']['billingPrice'] * $exchangeRate, 2);
+                	$billingPriceLocal = round($v['Ticket']['billingPrice'] * $exchangeRate);
                 }
                 $results[$k]['Ticket']['billingPriceLocal'] = $billingPriceLocal;
                 
