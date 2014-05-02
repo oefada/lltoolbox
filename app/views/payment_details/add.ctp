@@ -51,6 +51,9 @@ $session->flash('error');
 <form onSubmit="return false;" id="paymentForm">
     <?php echo $form->input('ticketId', array('type' => 'hidden', 'value' => $ticket['Ticket']['ticketId']));?>
     <?php echo $form->input('userId', array('type' => 'hidden', 'value' => $ticket['Ticket']['userId']));?>
+    <?php echo $form->input('offerId', array('type' => 'hidden', 'value' => $ticket['Ticket']['offerId']));?>
+    <?php echo $form->input('siteId', array('type' => 'hidden', 'value' => $ticket['Ticket']['siteId']));?>
+    <?php echo $form->input('tldId', array('type' => 'hidden', 'value' => $ticket['Ticket']['tldId']));?>
     <div class="paymentsDebug" style="display: none"></div>
     <div class="paymentColumns">
         <div class="col1">
@@ -417,46 +420,75 @@ jQuery(document).ready(function ($) {
         $("#promoOff").hide();
         $("#promoInvalid").hide();
 
-        $.get("/promo_codes/ajax_valid_promo/" + $("#promoCode").val(), function (data) {
-            var obj = $.parseJSON(data);
-            if (obj == null) {
-                $("#promoInvalid").show();
-            } else if (obj.giftCertBalance.balance != null) {
-                // Gift certificate
-                if (ptId.val() != 2) {
-                    alert("The promo you have entered is for a gift certificate, not a promo. Please re-enter.");
-                    return false;
-                }
+        var promoCode = $("#promoCode").val();
+        var userId = $("#userId").val();
+        var paymentAmount = $("#PaymentDetailPaymentAmount").val();
+        var offerId = $("#offerId").val();
+        var siteId = $("#siteId").val();
+        var tldId = $("#tldId").val();
 
-                payment_amt = obj.giftCertBalance.balance;
-                $("#giftBalance #giftBalanceBalance").html(payment_amt);
-                $("#giftBalance").show();
+        var data = {
+            promoCode: promoCode,
+            userId: userId,
+            paymentAmount: paymentAmount,
+            offerId: offerId,
+            siteId: siteId,
+            tldId: tldId
+        };
 
-                var total_bal = parseInt($("#balanceRemaining").html());
+        $.ajax({
+            type: "POST",
+            url: "/promo_codes/ajax_is_valid",
+            data: data,
+            success: function(data) {
+                data = jQuery.parseJSON(data);
 
-                if (payment_amt > total_bal) {
-                    payment_amt = total_bal;
-                }
+                if (data.status == 200 && data.validPromoCode == true) {
+                    $.get("/promo_codes/ajax_valid_promo/" + $("#promoCode").val(), function (data) {
+                        var obj = $.parseJSON(data);
+                        if (obj == null) {
+                            $("#promoInvalid").show();
+                        } else if (obj.giftCertBalance.balance != null) {
+                            // Gift certificate
+                            if (ptId.val() != 2) {
+                                alert("The promo you have entered is for a gift certificate, not a promo. Please re-enter.");
+                                return false;
+                            }
 
-                setPaymentAmt({payment_amt: payment_amt});
-            } else if (obj.promoCodeRel.promoCodeRelId != null) {
-                // Normal promo code
-                if (ptId.val() == 2) {
-                    alert("The promo you have entered is for a promo, not a gift certificate. Please re-enter.");
-                    return false;
-                }
+                            payment_amt = obj.giftCertBalance.balance;
+                            $("#giftBalance #giftBalanceBalance").html(payment_amt);
+                            $("#giftBalance").show();
 
-                if (obj.promo.amountOff != null && obj.promo.amountOff > 0) {
-                    var amountOff = "$" + obj.promo.amountOff;
-                    payment_amt = obj.promo.amountOff;
+                            var total_bal = parseInt($("#balanceRemaining").html());
+
+                            if (payment_amt > total_bal) {
+                                payment_amt = total_bal;
+                            }
+
+                            setPaymentAmt({payment_amt: payment_amt});
+                        } else if (obj.promoCodeRel.promoCodeRelId != null) {
+                            // Normal promo code
+                            if (ptId.val() == 2) {
+                                alert("The promo you have entered is for a promo, not a gift certificate. Please re-enter.");
+                                return false;
+                            }
+
+                            if (obj.promo.amountOff != null && obj.promo.amountOff > 0) {
+                                var amountOff = "$" + obj.promo.amountOff;
+                                payment_amt = obj.promo.amountOff;
+                            } else {
+                                payment_amt = Math.round(payment_amt * (obj.promo.percentOff / 100));
+                                var amountOff = obj.promo.percentOff + "% / $" + payment_amt;
+                            }
+
+                            setPaymentAmt({payment_amt: payment_amt});
+                            $("#promoOff #amountOff").html(amountOff);
+                            $("#promoOff").show();
+                        }
+                    });
                 } else {
-                    payment_amt = Math.round(payment_amt * (obj.promo.percentOff / 100));
-                    var amountOff = obj.promo.percentOff + "% / $" + payment_amt;
+                    $("#promoInvalid").show();
                 }
-
-                setPaymentAmt({payment_amt: payment_amt});
-                $("#promoOff #amountOff").html(amountOff);
-                $("#promoOff").show();
             }
         });
 

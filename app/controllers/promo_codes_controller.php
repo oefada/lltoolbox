@@ -28,6 +28,8 @@ class PromoCodesController extends AppController
      */
     public function ajax_valid_promo($promoCode)
     {
+        Configure::write('debug', 0);
+        $this->autoRender = false;
         $query = "SELECT promoCode.promoCodeId,giftCertBalance.balance,giftCertBalance.userId,promoCodeRel.promoCodeRelId,promo.amountOff,promo.percentOff FROM promoCode
             LEFT JOIN giftCertBalance USING (promoCodeId)
             LEFT JOIN promoCodeRel USING (promoCodeId)
@@ -38,7 +40,51 @@ class PromoCodesController extends AppController
 
         $promo = $this->PromoCode->query($query);
         echo json_encode($promo[0]);
-        exit;
+    }
+
+    /**
+     *
+     */
+    public function ajax_is_valid()
+    {
+        Configure::write('debug', 0);
+        $this->autoRender = false;
+        $data = file_get_contents("php://input");
+
+        foreach (explode("&", $data) as $j) {
+            $pair = (explode("=", $j));
+            $postData[$pair[0]] = $pair[1];
+        }
+        unset($data, $j, $pair);
+
+        $promoCode = $postData['promoCode'];
+        $userId = $postData['userId'];
+        $paymentAmount = $postData['paymentAmount'];
+        $offerId = $postData['offerId'];
+        $siteId = $postData['siteId'];
+        $tldId = $postData['tldId'];
+
+        $isValidPromoCode = $this->PromoCode->checkPromoCode(
+            $promoCode,
+            $userId,
+            $paymentAmount,
+            $offerId,
+            $siteId,
+            $tldId
+        );
+
+        if ($isValidPromoCode === true) {
+            $dataToReturn = array(
+                'status' => 200,
+                'validPromoCode' => true
+            );
+        } else {
+            $dataToReturn = array(
+                'status' => 200,
+                'validPromoCode' => false
+            );
+        }
+        echo json_encode($dataToReturn);
     }
 
     /**
