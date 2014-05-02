@@ -73,17 +73,19 @@ class PromoCodesController extends AppController
             $tldId
         );
 
-        if ($isValidPromoCode === true) {
-            $dataToReturn = array(
-                'status' => 200,
-                'validPromoCode' => true
-            );
-        } else {
-            $dataToReturn = array(
-                'status' => 200,
-                'validPromoCode' => false
-            );
-        }
+        $dataToReturn = array(
+            'status' => 200,
+            'validPromoCode' => $isValidPromoCode,
+            'data' => array(
+                'promoCode' => $promoCode,
+                'userId' => $userId,
+                'paymentAmount' => $paymentAmount,
+                'offerId' => $offerId,
+                'siteId' => $siteId,
+                'tldId' => $tldId
+            )
+        );
+
         echo json_encode($dataToReturn);
     }
 
