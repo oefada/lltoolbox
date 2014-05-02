@@ -1,9 +1,9 @@
-			<?php
+            <?php
             $psettings = array();
 
             foreach ($ticket['PaymentDetail'] as $v):
                 $psettings[0] = $v['userPaymentSettingId'];
-                ?>
+            ?>
 				<table class="paymentsApplied">
 					<tr>
 						<td>Payment ID:</td>
@@ -13,7 +13,7 @@
 					<tr>
 						<td>Payment Status:</td>
 						<td><? if ($v['isSuccessfulCharge'] == 1): ?><span style="color: #00ff00">APPROVED</span><? else: ?><span style="color: #ff0000">DECLINED</span><? endif; ?></td>
-					</tr>					
+					</tr>
 					<tr>
 						<td>Type:</td>
 						<td><?= $paymentTypeIds[$v['paymentTypeId']] ?></td>
@@ -27,22 +27,12 @@
 
 
             <script type="text/javascript">
-
                 (function($){
-
-
-                    var userPaymentSettingId = <?= $psettings[0] ?>;// last payment setting
-
-                    //grab selector object of lasst used payment setting ID
+                    var userPaymentSettingId = <?= isset($psettings[0]) ? $psettings[0] : 0 ?>;
                     var lastUsedPaymentSel = $('input[value="'+userPaymentSettingId+'"]');
 
-                    //ensure the selector exists.
                     if (lastUsedPaymentSel.length > 0){
-
-                        //check select the radio button for this object.
                         $('input[value="'+userPaymentSettingId+'"]').attr("checked",true);
                      }
-                    //
                 })(jQuery);
-
             </script>
