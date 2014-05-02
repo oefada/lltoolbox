@@ -1,120 +1,193 @@
 <?php
-class PromoCodesController extends AppController {
+class PromoCodesController extends AppController
+{
+    public $name = 'PromoCodes';
+    public $helpers = array('Html', 'Form');
 
-	var $name = 'PromoCodes';
-	var $helpers = array('Html', 'Form');
+    /**
+     *
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-	function __construct() {
-		parent::__construct();
-		// $this->set('hideSidebar',true);
-	}
+    /**
+     *
+     */
+    public function index()
+    {
+        $this->PromoCode->recursive = 2;
+        $this->paginate['order'] = array('promoCodeId' => 'DESC');
+        $this->paginate['limit'] = 100;
+        $this->set('promoCodes', $this->paginate());
+    }
 
-	function index() {
-		$this->PromoCode->recursive = 2;
-		$this->paginate['order'] = array('promoCodeId' => 'DESC');
-		$this->paginate['limit'] = 100;
-		$this->set('promoCodes', $this->paginate());
-	}
+    /**
+     * @param $promoCode
+     */
+    public function ajax_valid_promo($promoCode)
+    {
+        Configure::write('debug', 0);
+        $this->autoRender = false;
+        $query = "SELECT promoCode.promoCodeId,giftCertBalance.balance,giftCertBalance.userId,promoCodeRel.promoCodeRelId,promo.amountOff,promo.percentOff FROM promoCode
+            LEFT JOIN giftCertBalance USING (promoCodeId)
+            LEFT JOIN promoCodeRel USING (promoCodeId)
+            LEFT JOIN promo USING (promoId)
+            WHERE promoCode = '" . $promoCode . "'
+            AND IF(promo.promoId IS NOT NULL,promo.endDate > NOW(),1) = 1
+            ORDER BY giftCertBalance.giftCertBalanceId DESC LIMIT 1";
 
-	function ajax_valid_promo($promoCode) {
-		$query = "SELECT promoCode.promoCodeId,giftCertBalance.balance,giftCertBalance.userId,promoCodeRel.promoCodeRelId,promo.amountOff,promo.percentOff FROM promoCode
-			LEFT JOIN giftCertBalance USING (promoCodeId)
-			LEFT JOIN promoCodeRel USING (promoCodeId)
-			LEFT JOIN promo USING (promoId)
-			WHERE promoCode = '".$promoCode."'
-			AND IF(promo.promoId IS NOT NULL,promo.endDate > NOW(),1) = 1
-			ORDER BY giftCertBalance.giftCertBalanceId DESC LIMIT 1";
+        $promo = $this->PromoCode->query($query);
+        echo json_encode($promo[0]);
+    }
 
-		$promo = $this->PromoCode->query($query);
-		echo json_encode($promo[0]);
-		exit;
-	}
+    /**
+     *
+     */
+    public function ajax_is_valid()
+    {
+        Configure::write('debug', 0);
+        $this->autoRender = false;
+        $data = file_get_contents("php://input");
 
-	function view($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid PromoCode.', true));
-			$this->redirect(array('action'=>'index'));
-		}
+        foreach (explode("&", $data) as $j) {
+            $pair = (explode("=", $j));
+            $postData[$pair[0]] = $pair[1];
+        }
+        unset($data, $j, $pair);
 
-		$this->set('promoCode', $this->PromoCode->read(null, $id));
-	}
+        $promoCode = $postData['promoCode'];
+        $userId = $postData['userId'];
+        $paymentAmount = $postData['paymentAmount'];
+        $offerId = $postData['offerId'];
+        $siteId = $postData['siteId'];
+        $tldId = $postData['tldId'];
 
-	function add($id = null) {
+        $isValidPromoCode = $this->PromoCode->checkPromoCode(
+            $promoCode,
+            $userId,
+            $paymentAmount,
+            $offerId,
+            $siteId,
+            $tldId
+        );
 
-		if (!$this->PromoCode->Promo->hasEditAccess($this->LdapAuth->user())) {
-			$this->Session->setFlash(__('You do not have permission to edit promos.', true));
-			$this->redirect(array('controller'=>'promos', 'action'=>'index'));	
-		}
+        $dataToReturn = array(
+            'status' => 200,
+            'validPromoCode' => $isValidPromoCode,
+            'data' => array(
+                'promoCode' => $promoCode,
+                'userId' => $userId,
+                'paymentAmount' => $paymentAmount,
+                'offerId' => $offerId,
+                'siteId' => $siteId,
+                'tldId' => $tldId
+            )
+        );
 
-		if (!empty($this->data)) {
-			if (empty($this->data['PromoCode']['promoCode']) && $this->data['totalCode'] && $this->data['prefix']) {
-				$results = $this->PromoCode->query("SELECT GROUP_CONCAT(promoCode) AS promoCodes FROM promoCode");
-				$promo_codes = explode(',', $results[0][0]['promoCodes']);
-				for ($x = 0; $x < $this->data['totalCode']; $x++) {
-					$promo_code = $this->PromoCode->__generateCode(strlen($this->data['totalCode']));
-					if (in_array($promo_code, $promo_codes)) { // TODO: GOTTA CHECK DB AS WELL
-						$x--;
-					} else {
-						$promo_codes[] = $promo_code;
-						$this->data['PromoCode']['promoCode'] = $this->data['prefix'] . $promo_code;
-						$this->PromoCode->create();
-						$this->PromoCode->save($this->data);
-					}
-				}
+        echo json_encode($dataToReturn);
+    }
 
-				$this->Session->setFlash(__('The Promo Codes have been saved', true));
-				$this->redirect(array('controller'=>'promo_code_rels', 'action'=>'index', $this->data['Promo']['Promo']));
+    /**
+     * @param null $id
+     */
+    public function view($id = null)
+    {
+        if (!$id) {
+            $this->Session->setFlash(__('Invalid PromoCode.', true));
+            $this->redirect(array('action' => 'index'));
+        }
 
-			} elseif (!empty($this->data['PromoCode']['promoCode'])) {
-				$this->PromoCode->create();
-				if ($this->PromoCode->save($this->data)) {
-					$this->Session->setFlash(__('The Promo Code has been saved', true));
-					$this->redirect(array('controller'=>'promo_code_rels', 'action'=>'index', $this->data['Promo']['Promo']));
-				} else {
-					$this->Session->setFlash(__('The PromoCode could not be saved. Please, try again.', true));
-				}
-			}
-		} else {
-			if ($id) {
-			    $this->data['Promo']['Promo'] = $id;
-			}
-		}
+        $this->set('promoCode', $this->PromoCode->read(null, $id));
+    }
 
-		$promos = $this->PromoCode->Promo->find('list', array('order'=>array('Promo.promoName')));
-		$this->set('promoIds', $promos);
-		$this->set(compact('promos'));
-	}
+    /**
+     * @param null $id
+     */
+    public function add($id = null)
+    {
 
-	function edit($id = null) {
-		if (!$id && empty($this->data)) {
-			$this->Session->setFlash(__('Invalid PromoCode', true));
-			$this->redirect(array('action'=>'index'));
-		}
-		if (!empty($this->data)) {
-			if ($this->PromoCode->save($this->data)) {
-				$this->Session->setFlash(__('The PromoCode has been saved', true));
-				$this->redirect(array('action'=>'index'));
-			} else {
-				$this->Session->setFlash(__('The PromoCode could not be saved. Please, try again.', true));
-			}
-		}
-		if (empty($this->data)) {
-			$this->data = $this->PromoCode->read(null, $id);
-		}
-		$promos = $this->PromoCode->Promo->find('list');
-		$this->set(compact('promos'));
-	}
+        if (!$this->PromoCode->Promo->hasEditAccess($this->LdapAuth->user())) {
+            $this->Session->setFlash(__('You do not have permission to edit promos.', true));
+            $this->redirect(array('controller' => 'promos', 'action' => 'index'));
+        }
 
-	function delete($id = null) {
-		if (!$id) {
-			$this->Session->setFlash(__('Invalid id for PromoCode', true));
-			$this->redirect(array('action'=>'index'));
-		}
-		if ($this->PromoCode->del($id)) {
-			$this->Session->setFlash(__('PromoCode deleted', true));
-			$this->redirect(array('action'=>'index'));
-		}
-	}
+        if (!empty($this->data)) {
+            if (empty($this->data['PromoCode']['promoCode']) && $this->data['totalCode'] && $this->data['prefix']) {
+                $results = $this->PromoCode->query("SELECT GROUP_CONCAT(promoCode) AS promoCodes FROM promoCode");
+                $promo_codes = explode(',', $results[0][0]['promoCodes']);
+                for ($x = 0; $x < $this->data['totalCode']; $x++) {
+                    $promo_code = $this->PromoCode->__generateCode(strlen($this->data['totalCode']));
+                    if (in_array($promo_code, $promo_codes)) { // TODO: GOTTA CHECK DB AS WELL
+                        $x--;
+                    } else {
+                        $promo_codes[] = $promo_code;
+                        $this->data['PromoCode']['promoCode'] = $this->data['prefix'] . $promo_code;
+                        $this->PromoCode->create();
+                        $this->PromoCode->save($this->data);
+                    }
+                }
 
+                $this->Session->setFlash(__('The Promo Codes have been saved', true));
+                $this->redirect(array('controller' => 'promo_code_rels', 'action' => 'index', $this->data['Promo']['Promo']));
+
+            } elseif (!empty($this->data['PromoCode']['promoCode'])) {
+                $this->PromoCode->create();
+                if ($this->PromoCode->save($this->data)) {
+                    $this->Session->setFlash(__('The Promo Code has been saved', true));
+                    $this->redirect(array('controller' => 'promo_code_rels', 'action' => 'index', $this->data['Promo']['Promo']));
+                } else {
+                    $this->Session->setFlash(__('The PromoCode could not be saved. Please, try again.', true));
+                }
+            }
+        } else {
+            if ($id) {
+                $this->data['Promo']['Promo'] = $id;
+            }
+        }
+
+        $promos = $this->PromoCode->Promo->find('list', array('order' => array('Promo.promoName')));
+        $this->set('promoIds', $promos);
+        $this->set(compact('promos'));
+    }
+
+    /**
+     * @param null $id
+     */
+    public function edit($id = null)
+    {
+        if (!$id && empty($this->data)) {
+            $this->Session->setFlash(__('Invalid PromoCode', true));
+            $this->redirect(array('action' => 'index'));
+        }
+        if (!empty($this->data)) {
+            if ($this->PromoCode->save($this->data)) {
+                $this->Session->setFlash(__('The PromoCode has been saved', true));
+                $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash(__('The PromoCode could not be saved. Please, try again.', true));
+            }
+        }
+        if (empty($this->data)) {
+            $this->data = $this->PromoCode->read(null, $id);
+        }
+        $promos = $this->PromoCode->Promo->find('list');
+        $this->set(compact('promos'));
+    }
+
+    /**
+     * @param null $id
+     */
+    public function delete($id = null)
+    {
+        if (!$id) {
+            $this->Session->setFlash(__('Invalid id for PromoCode', true));
+            $this->redirect(array('action' => 'index'));
+        }
+        if ($this->PromoCode->del($id)) {
+            $this->Session->setFlash(__('PromoCode deleted', true));
+            $this->redirect(array('action' => 'index'));
+        }
+    }
 }
-?>
