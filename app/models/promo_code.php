@@ -1,98 +1,135 @@
 <?php
-class PromoCode extends AppModel {
 
-	var $name = 'PromoCode';
-	var $useTable = 'promoCode';
-	var $primaryKey = 'promoCodeId';
-	var $displayField = 'promoCode';
+class PromoCode extends AppModel
+{
 
-	var $hasAndBelongsToMany = array(
-		'Promo' =>
-		   array('className'    => 'Promo',
-				 'foreignKey'   => 'promoCodeId',
-				 'associationForeignKey'=> 'promoId',
-				 'with' => 'promoCodeRel',
-				 'unique'       => true,
-		   )
-	);
+    public $name = 'PromoCode';
+    public $useTable = 'promoCode';
+    public $primaryKey = 'promoCodeId';
+    public $displayField = 'promoCode';
 
-	var $validate = array(
-	    'promoCode' => array(
-	    	'rule1' => array(
-	        	'rule' => array('custom', '/^[a-zA-Z0-9-_]*$/'),
-	        	'allowEmpty' => false,
-	        	'message' => 'Only letters, integers and dashes are allowed.'
-	        ),
-	        'rule2' => array(
-	        	'rule' => array('__isDuplicatePromoCode'),
-	        	'message' => 'The promoCode you entered already existed.'
-	        )
-	    )
-	);
+    public $hasAndBelongsToMany = array(
+        'Promo' =>
+            array('className' => 'Promo',
+                'foreignKey' => 'promoCodeId',
+                'associationForeignKey' => 'promoId',
+                'with' => 'promoCodeRel',
+                'unique' => true,
+            )
+    );
 
-	function beforeSave() {
-		// check to make sure the promoCode does not already exist
-		$this->data['PromoCode']['promoCode'] = strtoupper($this->data['PromoCode']['promoCode']);
-		$result = $this->query('SELECT * FROM promoCode WHERE promoCode = "' . $this->data['PromoCode']['promoCode'] . '"');
-		if (empty($result)) {
-			return true;
-		}
-	}
+    public $validate = array(
+        'promoCode' => array(
+            'rule1' => array(
+                'rule' => array('custom', '/^[a-zA-Z0-9-_]*$/'),
+                'allowEmpty' => false,
+                'message' => 'Only letters, integers and dashes are allowed.'
+            ),
+            'rule2' => array(
+                'rule' => array('__isDuplicatePromoCode'),
+                'message' => 'The promoCode you entered already existed.'
+            )
+        )
+    );
 
-	function __generateCode($length) {
-		$code = array();
-		for ($i = 0; $i < $length + 1; $i++) {
-			$code[$i] = rand(2,35);
-			if ($code[$i] > 9) {
-				$code[$i] = chr(55 + $code[$i]);
-				if ($code[$i] == 'I') { $code[$i] = 'Z'; }
-				if ($code[$i] == 'O') { $code[$i] = 'W'; }
-			}
-		}
-		return implode('', $code);
-	}
-
-	function __isDuplicatePromoCode() {
-		// check to make sure the promoCode does not already exist
-		$this->data['PromoCode']['promoCode'] = strtoupper($this->data['PromoCode']['promoCode']);
-		$result = $this->query('SELECT * FROM promoCode WHERE promoCode = "' . $this->data['PromoCode']['promoCode'] . '"');
-		if (empty($result)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	function checkDuplicatePromoCode($code) {
-		$result = $this->query('SELECT * FROM promoCode WHERE UPPER(promoCode) = "' . strtoupper($code) . '"');
-		if (empty($result)) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	function generateMultipleCodes($prefix, $count, $promoId, $length = 5) {
-		$created = 0;
-		for ($i=0; $i<$count; $i++) {
-			$codeIsDuplicate = true;
-			while ($codeIsDuplicate) {
-				$thisCode = $prefix . $this->__generateCode($length);
-				$codeIsDuplicate = $this->checkDuplicatePromoCode($thisCode);
-			}
-			$data = array();
-			$data['Promo'] = array('promoId'=>$promoId);
-			$data['PromoCode'] = array('promoCode'=>$thisCode);
-			if ($this->saveAll($data)) {
-				$created++;
-			}
-		}
-		return $created;
-	}
-    /*
-     * Similar to above but will return the generated codes so we can use them programmatically.
+    /**
+     * @return bool
      */
-    function generateReturnMultipleCodes($prefix, $count, $promoId, $length = 5)
+    public function beforeSave()
+    {
+        // check to make sure the promoCode does not already exist
+        $this->data['PromoCode']['promoCode'] = strtoupper($this->data['PromoCode']['promoCode']);
+        $result = $this->query('SELECT * FROM promoCode WHERE promoCode = "' . $this->data['PromoCode']['promoCode'] . '"');
+        if (empty($result)) {
+            return true;
+        }
+    }
+
+    /**
+     * @param $length
+     * @return string
+     */
+    public function __generateCode($length)
+    {
+        $code = array();
+        for ($i = 0; $i < $length + 1; $i++) {
+            $code[$i] = rand(2, 35);
+            if ($code[$i] > 9) {
+                $code[$i] = chr(55 + $code[$i]);
+                if ($code[$i] == 'I') {
+                    $code[$i] = 'Z';
+                }
+                if ($code[$i] == 'O') {
+                    $code[$i] = 'W';
+                }
+            }
+        }
+        return implode('', $code);
+    }
+
+    /**
+     * @return bool
+     */
+    public function __isDuplicatePromoCode()
+    {
+        // check to make sure the promoCode does not already exist
+        $this->data['PromoCode']['promoCode'] = strtoupper($this->data['PromoCode']['promoCode']);
+        $result = $this->query('SELECT * FROM promoCode WHERE promoCode = "' . $this->data['PromoCode']['promoCode'] . '"');
+        if (empty($result)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param $code
+     * @return bool
+     */
+    public function checkDuplicatePromoCode($code)
+    {
+        $result = $this->query('SELECT * FROM promoCode WHERE UPPER(promoCode) = "' . strtoupper($code) . '"');
+        if (empty($result)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @param $prefix
+     * @param $count
+     * @param $promoId
+     * @param int $length
+     * @return int
+     */
+    public function generateMultipleCodes($prefix, $count, $promoId, $length = 5)
+    {
+        $created = 0;
+        for ($i = 0; $i < $count; $i++) {
+            $codeIsDuplicate = true;
+            while ($codeIsDuplicate) {
+                $thisCode = $prefix . $this->__generateCode($length);
+                $codeIsDuplicate = $this->checkDuplicatePromoCode($thisCode);
+            }
+            $data = array();
+            $data['Promo'] = array('promoId' => $promoId);
+            $data['PromoCode'] = array('promoCode' => $thisCode);
+            if ($this->saveAll($data)) {
+                $created++;
+            }
+        }
+        return $created;
+    }
+
+    /**
+     * @param $prefix
+     * @param $count
+     * @param $promoId
+     * @param int $length
+     * @return array
+     */
+    public function generateReturnMultipleCodes($prefix, $count, $promoId, $length = 5)
     {
         $created = 0;
         $arrGeneratedCodes = array();
@@ -112,6 +149,11 @@ class PromoCode extends AppModel {
         }
         return $arrGeneratedCodes;
     }
+
+    /**
+     * @param null $errorMsg
+     * @return bool
+     */
     private function isInvalidPromoCode($errorMsg = null)
     {
         $this->isValidPromoCode = false;
@@ -120,8 +162,15 @@ class PromoCode extends AppModel {
         }
         return false;
     }
-    /*
-     * Ticket #4659 - Add LL Checkout promotion code logic to manual tickets
+
+    /**
+     * @param $promoCode
+     * @param $userId
+     * @param int $bidAmount
+     * @param $offerId
+     * @param $siteId
+     * @param bool $topLevelDomain
+     * @return bool
      */
     public function checkPromoCode($promoCode, $userId, $bidAmount = 0, $offerId, $siteId, $topLevelDomain = false)
     {
@@ -180,10 +229,6 @@ class PromoCode extends AppModel {
             return $this->isInvalidPromoCode('display|Please note there is a locale restriction on this promotion.');
         }
 
-        // ------------------------------------------
-        // 08/30/11 jwoods - new restriction checks
-        // ------------------------------------------
-
         // is promo code inactive?
         if ($this->promoCodeData['promoCodeInactive'] == 1) {
             return $this->isInvalidPromoCode(
@@ -192,7 +237,6 @@ class PromoCode extends AppModel {
         }
 
         if (intval($offerId) > 0) {
-
             $result = $this->getClientDetailsByOffer($offerId);
             $offerClientId = $result['clientId'];
             $offerClientTypeId = $result['clientTypeId'];
@@ -282,17 +326,17 @@ class PromoCode extends AppModel {
         $this->isValidPromoCode = true;
         return true;
     }
-    /*
-        *  =====================================================
-        *  PROMO RESTRICTIONS / REQUIREMENTS FUNCTIONALITY
-        *  =====================================================
-        */
 
-    function hasUsagePerCode($promoCodeId, $userId)
+    /**
+     * @param $promoCodeId
+     * @param $userId
+     * @return bool
+     */
+    public function hasUsagePerCode($promoCodeId, $userId)
     {
         // any other user has a promoOfferTracking record
-        $sql =  'SELECT COUNT(*) AS nbr FROM promoOfferTracking ';
-        $sql .= 'WHERE userId <> '.$userId.' AND promoCodeId = '.$promoCodeId;
+        $sql = 'SELECT COUNT(*) AS nbr FROM promoOfferTracking ';
+        $sql .= 'WHERE userId <> ' . $userId . ' AND promoCodeId = ' . $promoCodeId;
 
         $result = $this->query($sql);
         if ($result[0][0]['nbr'] > 0) {
@@ -301,8 +345,8 @@ class PromoCode extends AppModel {
 
         // any promoTicketRel record
 
-       $sql = 'SELECT COUNT(*) AS nbr FROM promoTicketRel ';
-       $sql .= 'WHERE promoCodeId = '.$promoCodeId;
+        $sql = 'SELECT COUNT(*) AS nbr FROM promoTicketRel ';
+        $sql .= 'WHERE promoCodeId = ' . $promoCodeId;
 
         $result = $this->query($sql);
         if ($result[0][0]['nbr'] > 0) {
@@ -311,11 +355,17 @@ class PromoCode extends AppModel {
         return false;
     }
 
-    function hasUsagePerUser($promoCodeId, $userId, $offerId)
+    /**
+     * @param $promoCodeId
+     * @param $userId
+     * @param $offerId
+     * @return bool
+     */
+    public function hasUsagePerUser($promoCodeId, $userId, $offerId)
     {
 
-        $sql =  'SELECT COUNT(*) AS nbr FROM promoOfferTracking ';
-        $sql .= 'WHERE userId = ' .$userId. ' AND promoCodeId = '.$promoCodeId.' AND offerId <> '.$offerId;
+        $sql = 'SELECT COUNT(*) AS nbr FROM promoOfferTracking ';
+        $sql .= 'WHERE userId = ' . $userId . ' AND promoCodeId = ' . $promoCodeId . ' AND offerId <> ' . $offerId;
 
         $result = $this->query($sql);
         // any other promoOfferTracking record for this user
@@ -323,21 +373,19 @@ class PromoCode extends AppModel {
             return true;
         }
 
-        // any promoTicketRel record for this user
-     /*   $promoToolbox = Loader::loadModel('UserPromoToolboxModel');
-        if ($promoToolbox->promoHasUsagePerUser($promoCodeId, $this->userId)) {
-            return true;
-        }
-    */
         return false;
     }
 
-    function checkUsageForUser($promoCodeId, $userId)
+    /**
+     * @param $promoCodeId
+     * @param $userId
+     */
+    public function checkUsageForUser($promoCodeId, $userId)
     {
         // code is only allowed to be used by this user if promocode exists in this table
 
-        $sql =  'SELECT userId FROM promoCodeRecipient ';
-        $sql .= 'WHERE promoCodeId = '. $promoCodeId;
+        $sql = 'SELECT userId FROM promoCodeRecipient ';
+        $sql .= 'WHERE promoCodeId = ' . $promoCodeId;
 
         $result = $this->query($sql);
         if (!empty($result)) {
@@ -357,29 +405,31 @@ class PromoCode extends AppModel {
         }
     }
 
-    function checkPreviousPurchases($userId)
+    /**
+     * @param $userId
+     */
+    public function checkPreviousPurchases($userId)
     {
         // see if this user has previous tickets
-        $sql =  'SELECT COUNT(*) AS COUNT FROM paymentDetail ';
+        $sql = 'SELECT COUNT(*) AS COUNT FROM paymentDetail ';
         $sql .= 'WHERE isSuccessfulCharge = 1 AND userId = ' . $userId;
 
         $result = $this->query($sql);
         $this->isPreviousBuyer = ($result[0][0]['COUNT'] > 0) ? true : false;
     }
 
-    /*
-     *  =====================================================
-     *  PROMO OFFER TRACKING FUNCTIONALITY
-     *  =====================================================
+    /**
+     * @param $userId
+     * @param $offerId
+     * @return bool
      */
-
-    function getPromoCodeOT($userId, $offerId)
+    public function getPromoCodeOT($userId, $offerId)
     {
 
-        $sql =  'SELECT pc.*, gc.giftCertBalanceId FROM promoOfferTracking pot';
+        $sql = 'SELECT pc.*, gc.giftCertBalanceId FROM promoOfferTracking pot';
         $sql .= 'INNER JOIN promoCode pc USING(promoCodeId)';
         $sql .= 'LEFT JOIN giftCertBalance gc ON gc.promoCodeId = pc.promoCodeId';
-        $sql .= 'WHERE pot.userId = '.$userId. ' AND pot.offerId = '.$offerId.' LIMIT 1';
+        $sql .= 'WHERE pot.userId = ' . $userId . ' AND pot.offerId = ' . $offerId . ' LIMIT 1';
 
         $result = $this->query($sql);
         if (!empty($result[0]['giftCertBalanceId'])) {
@@ -387,31 +437,45 @@ class PromoCode extends AppModel {
         }
         return (!empty($result)) ? $result[0]['promoCode'] : false;
     }
+
+    /**
+     * @param $offerId
+     * @return mixed
+     */
     public function getClientDetailsByOffer($offerId)
     {
         $sql = "SELECT c.clientId, c.clientTypeId FROM offerLuxuryLink o INNER JOIN client c USING(clientId) ";
-        $sql .= " where o.offerid = ".$offerId;
+        $sql .= " where o.offerid = " . $offerId;
 
         $result = $this->query($sql);
 
         return $result[0]['c'];
     }
 
+    /**
+     * @param $promoId
+     * @return mixed
+     */
     public function getThemeRestrictions($promoId)
     {
         $sql = "SELECT t.themeId, t.themeName FROM toolbox.promoRestrictionTheme rt ";
         $sql .= "INNER JOIN theme t USING(themeId) ";
-        $sql .= "WHERE rt.promoId = ".$promoId;
+        $sql .= "WHERE rt.promoId = " . $promoId;
 
         $result = $this->query($sql);
 
         return $result;
     }
 
+    /**
+     * @param $client
+     * @param $themes
+     * @return bool
+     */
     public function isClientInTheme($client, $themes)
     {
         $sql = "SELECT COUNT(*) AS nbr FROM clientThemeRel ";
-        $sql .= "WHERE clientId = ".$client. " AND themeId IN (" . implode(
+        $sql .= "WHERE clientId = " . $client . " AND themeId IN (" . implode(
                 ',',
                 $themes
             ) . ")";
@@ -423,15 +487,24 @@ class PromoCode extends AppModel {
         return false;
     }
 
+    /**
+     * @param $promoId
+     * @return mixed
+     */
     public function getDestinationRestrictions($promoId)
     {
         $sql = "SELECT d.destinationId, d.destinationName FROM toolbox.promoRestrictionDestination rd ";
         $sql .= "INNER JOIN destination d USING(destinationId) ";
-        $sql .= " WHERE rd.promoId = ".$promoId;
+        $sql .= " WHERE rd.promoId = " . $promoId;
 
         return $this->query($sql);
     }
 
+    /**
+     * @param $client
+     * @param $destinations
+     * @return bool
+     */
     public function isClientInDestination($client, $destinations)
     {
         $sql = "SELECT COUNT(*) AS nbr FROM clientDestinationRel WHERE clientId = $client AND destinationId IN (" . implode(
@@ -445,29 +518,38 @@ class PromoCode extends AppModel {
         return false;
     }
 
+    /**
+     * @param $promoId
+     * @return mixed
+     */
     public function getClientRestrictions($promoId)
     {
         $sql = "SELECT IFNULL(c.clientId, 0) AS clientId, c.name FROM toolbox.promoRestrictionClient rc ";
         $sql .= " LEFT JOIN client c USING(clientId) ";
-        $sql .= "WHERE promoId = ".$promoId;
+        $sql .= "WHERE promoId = " . $promoId;
 
         return $this->query($sql);
 
     }
 
+    /**
+     * @param $promoId
+     * @return mixed
+     */
     public function getClientTypeRestrictions($promoId)
     {
         $sql = "SELECT IFNULL(c.clientTypeId, 0) AS clientTypeId, c.clientTypeName FROM toolbox.promoRestrictionClientType rc ";
         $sql .= " INNER JOIN clientType c USING(clientTypeId) ";
-        $sql .= " WHERE promoId = ".$promoId;
+        $sql .= " WHERE promoId = " . $promoId;
 
         return $this->query($sql);
     }
 
+    /**
+     * @return bool
+     */
     protected static function getEntityColumnsMap()
     {
         return false;
     }
-
 }
-?>
