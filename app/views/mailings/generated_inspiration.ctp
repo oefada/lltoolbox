@@ -78,7 +78,7 @@
 
 			<tr>
 				<td 
-					valign="bottom" 
+					valign="bottom"
 					height="26" 
 					align="right" 
 					style="font-size:12px; font-family: Arial,Sans-Serif;color:#666666;line-height:16px;padding: 5px 30px 0px 0px;"><a 
