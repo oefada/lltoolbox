@@ -123,7 +123,7 @@ class MailingsController extends AppController {
                 // utm_content is set per item in the view
                 // utm_term is set per item in the view
                 $this->set('utmArr', $utmArr);
-				$this->render('generated_inspiration');
+				$this->render('generated_inspiration_new');
 			}
 			
 		}
