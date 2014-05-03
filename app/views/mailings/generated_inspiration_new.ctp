@@ -239,19 +239,42 @@ foreach($rows as $key=>$row){
                                    cellpadding="0" border="0">
                                 <tr>
                                     <td align="center" height="50">
+                                        <?
+                                        if (isset($offers)){
+                                            if(isset($percentOff)){
+                                                unset($percentOff);
+                                            }
+
+                                            $percentOff =  isset($offers[0]['flexPercentOff'])?$offers[0]['flexPercentOff']:null;
+                                            foreach ($offers as $k=>$val){
+
+                                                if(isset($val['shortBlurb'])){
+                                                    if(isset($shortBlurb)){
+                                                        unset($shortBlurb);
+                                                    }
+                                                    $shortBlurb =   ucfirst(str_replace(",","<br />",$val['shortBlurb'])).'<br />';
+                                                };
+
+                                            }
+                                        }
+                                        ?>
                                         <table class="deskt" valign="top" width="119" height="50" align="center"
                                                cellspacing="0" cellpadding="0" border="0">
+                                            <? if (isset($percentOff) && !empty($percentOff)){ ?>
                                             <tr>
-                                                <td bgcolor="#4ca8d7" align="center" height="36" valign="middle"
-                                                    style="vertical-align:top;padding-top:8px;padding-bottom:8px;font-family:Times, Times New Roman, serif;color:#fff; font-size:30px;">
-                                                    49% <span style=" font-size:14px;">OFF</span></td>
+                                                <td bgcolor="#4ca8d7" align="center" height="36" valign="middle" style="vertical-align:top;padding-top:8px;padding-bottom:8px;font-family:Times, Times New Roman, serif;color:#fff; font-size:30px;">
+                                                    <?=isset($percentOff)?$percentOff.'% <span style=" font-size:14px;">OFF</span>':'';?>
+
+                                                </td>
                                             </tr>
-                                            <tr>
-                                                <td align="top"><img border="0" alt="" name="arrow"
-                                                                     src="http://www.luxurylink.com/images/email/new/savings-arrow.gif"
-                                                                     width="119" height="14" border="0"
-                                                                     style="vertical-align:top"/></td>
-                                            </tr>
+                                                <tr>
+                                                    <td align="top"><img border="0" alt="" name="arrow"
+                                                                         src="http://www.luxurylink.com/images/email/new/savings-arrow.gif"
+                                                                         width="119" height="14" border="0"
+                                                                         style="vertical-align:top"/></td>
+                                                </tr>
+                                            <? } ?>
+
                                         </table>
                                     </td>
                                 </tr>
@@ -282,16 +305,8 @@ foreach($rows as $key=>$row){
                     <tr>
                         <td align="right" class="font" width="220"
                             style="font-family:Times, Times New Roman, serif;color:#008ec5; font-size:12.5px; line-height: 28px; vertical-align:top; padding-right:9px;border-right:1px solid #cccccc;">
-                            <?
-                            if (isset($offers)){
-                              foreach ($offers as $k=>$val){
-                                  if(isset($val['shortBlurb'])){
-                                  echo  ucfirst(str_replace(",","<br />",$val['shortBlurb'])).'<br />';
-                              };
 
-                            }
-                            }
-                             ?>
+                            <?=$shortBlurb;?>
                         </td>
 
                         <td align="left" class="font" width="380"
@@ -316,7 +331,7 @@ foreach($rows as $key=>$row){
 
 <?
     //display properties with half text
-    if ($count <= 8 && $count !== 1 && $count !==  5) { ?>
+    if ($count <= 8 && ($count !== 1 OR 5)) { ?>
 
 <!--start P1b property 2: half with text-->
 

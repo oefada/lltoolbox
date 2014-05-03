@@ -118,7 +118,7 @@ class HotelUrlCheckerShell extends Shell
         //send email
 
         $watchedField = $this->getUrlField();
-        $subj = 'Client URl Watcher Report ' . $watchedField;
+        $subj = 'Client URl Watcher Report - ' . $watchedField;
 
         $this->Client->mail->From = 'no-reply@toolbox.luxurylink.com';
         $this->Client->mail->FromName = 'no-reply@toolbox.luxurylink.com';
