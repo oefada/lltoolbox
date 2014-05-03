@@ -16,11 +16,15 @@ class CurrencyShell extends Shell
 
         $result = $this->fetch_api_data($url);
 
-        $newRates = $this->update_exchange_rates($result);
-        // email when no new entries made
-        $dayOfWeek = date('w');
-        if ($newRates == 0 && $dayOfWeek != 0 && $dayOfWeek != 6) {
-            $this->sendEmailNoEntries();
+        if ($result !== false) {
+            $newRates = $this->update_exchange_rates($result);
+            // email when no new entries made
+            $dayOfWeek = date('w');
+            if ($newRates == 0 && $dayOfWeek != 0 && $dayOfWeek != 6) {
+                $this->sendEmailNoEntries();
+            }
+        } else {
+            exit(1);
         }
     }
 
@@ -56,11 +60,15 @@ class CurrencyShell extends Shell
     {
         $handle = @fopen($url, 'r');
 
-        do {
-            $result[] = fgets($handle);
-        } while (!feof($handle));
+        if ($handle !== false) {
+            do {
+                $result[] = fgets($handle);
+            } while (!feof($handle));
 
-        fclose($handle);
+            fclose($handle);
+        } else {
+            $result = false;
+        }
 
         return $result;
     }
