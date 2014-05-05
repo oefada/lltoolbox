@@ -316,7 +316,7 @@ foreach($rows as $key=>$row){
 
 <?
     //display properties with half text
-    if ($count <= 8 && ($count !== 1 OR 5)) { ?>
+    if ($count <= 8 && $count !== 1 && $count !==  5) { ?>
 
 <!--start P1b property 2: half with text-->
 
