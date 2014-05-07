@@ -145,7 +145,7 @@
 <!--start header-->
 <tr>
     <td class="remove" align="left" valign="top" style="padding-left:15px; padding-top:15px; padding-bottom:10px;">
-        <a name="logo" target="_blank" href="http://www.luxurylink.com?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140410b&utm_content=LL-logo"><img width="239" height="37" border="0" alt="Luxury Link" name="logo" src="http://www.luxurylink.com/images/email/new/LL-logo-plain.jpg" class="logo" /></a>
+        <a name="logo" target="_blank" href="http://www.luxurylink.com?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=LL-logo"><img width="239" height="37" border="0" alt="Luxury Link" name="logo" src="http://www.luxurylink.com/images/email/new/LL-logo-plain.jpg" class="logo" /></a>
     </td>
 </tr>
 <tr>
@@ -162,11 +162,11 @@
         <table class="container" width="620"valign="top" height="27" align="left" cellspacing="0" cellpadding="0" border="0">
             <tr>
                 <td class="container" align="left" valign="middle" style="padding: 5px 0px 5px 0px; font-family:Helvetica,maradival,Sans-Serif;text-transform:uppercase;font-size:11px;line-height:20px">&nbsp; &nbsp; &nbsp;
-                    <a style="color:#666;text-decoration:none;" target="_blank" href="http://www.luxurylink.com/fivestar?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140410b&utm_content=nav_destinations">Destinations</a> &nbsp; &nbsp; <span class="deskt">&nbsp;</span> &nbsp;
-                    <a style=" color:#666;text-decoration:none" target="_blank" href="http://www.luxurylink.com/5star/all-inclusive-resorts/deals?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140410b&utm_content=nav_all-incl">All-Inclusive</a> &nbsp; &nbsp; &nbsp; &nbsp;
-                    <a style="color:#666666;text-decoration:none" target="_blank" href="http://www.luxurylink.com/5star/hawaii/hotels?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140410b&utm_content=nav&utm_term=hawaii">Hawaii</a> &nbsp; &nbsp; &nbsp; &nbsp;<span class="deskt">
-				<a style="color:#666666;text-decoration:none" target="_blank" href="http://www.luxurylink.com/5star/california/hotels?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140410b&utm_content=nav&utm_term=new-york">California</a>  &nbsp; &nbsp; &nbsp; &nbsp;
-				<a  style="color:#666666;text-decoration:none" target="_blank" href="http://www.luxurylink.com/5star/costa-rica/hotels?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140410b&utm_content=nav&utm_term=costa-rica">Costa Rica</a>&nbsp; &nbsp; &nbsp; &nbsp; </span></td>
+                    <a style="color:#666;text-decoration:none;" target="_blank" href="http://www.luxurylink.com/fivestar?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=nav_destinations">Destinations</a> &nbsp; &nbsp; <span class="deskt">&nbsp;</span> &nbsp;
+                    <a style=" color:#666;text-decoration:none" target="_blank" href="http://www.luxurylink.com/5star/all-inclusive-resorts/deals?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=nav_all-incl">All-Inclusive</a> &nbsp; &nbsp; &nbsp; &nbsp;
+                    <a style="color:#666666;text-decoration:none" target="_blank" href="http://www.luxurylink.com/5star/hawaii/hotels?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=nav&utm_term=hawaii">Hawaii</a> &nbsp; &nbsp; &nbsp; &nbsp;<span class="deskt">
+				<a style="color:#666666;text-decoration:none" target="_blank" href="http://www.luxurylink.com/5star/california/hotels?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=nav&utm_term=new-york">California</a>  &nbsp; &nbsp; &nbsp; &nbsp;
+				<a  style="color:#666666;text-decoration:none" target="_blank" href="http://www.luxurylink.com/5star/costa-rica/hotels?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=nav&utm_term=costa-rica">Costa Rica</a>&nbsp; &nbsp; &nbsp; &nbsp; </span></td>
             </tr>
         </table>
         <!--end nav bar-->
@@ -178,7 +178,7 @@
 <!-- end header-->
 <!-- start image: 1-up-->
 <tr>
-    <td class="container" align="center" style="padding-top:20px;padding-bottom:15px"><a target="_blank" href="http://www.luxurylink.com?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140410b&utm_content=top-img"><img width="576" height="151" border="0" alt="Inspiration" name="ll-insp-img" src="http://www.luxurylink.com/images/email/Inspiration/Inspiration2014_top2.jpg" class="img" /></a></td>
+    <td class="container" align="center" style="padding-top:20px;padding-bottom:15px"><a target="_blank" href="http://www.luxurylink.com?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=top-img"><img width="576" height="151" border="0" alt="Inspiration" name="ll-insp-img" src="http://www.luxurylink.com/images/email/Inspiration/Inspiration2014_top2.jpg" class="img" /></a></td>
 </tr>
 <!--end image: 1-up-->
 
@@ -189,7 +189,9 @@
         <table valign="top" class="container" width="580" align="center" cellspacing="0" cellpadding="0" border="0">
 
             <tr>
-                <td class="remove" align="center" valign="top" style="padding:10px 0px 10px 0px; line-height:18px; font-family:Arial, sans-serif; font-size: 13px; color:#666;">Dust off your camera  and make sure the battery is fully charged, because this week's <em>Inspiration</em> focuses its lens on the world's most  <a style="text-decoration:none;color:#3ca9d5" href="http://www.luxurylink.com/5star/hotel-deals/photographer?utm_term=Photographer%27s%20Dream&showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140410b&utm_content=copy_LL" target="_blank">photogenic vacation experiences</a>. Let the teeming wildlife of the African savannah "strike a pose" for your camera while on safari, or frame that perfect shot of the Venice canals from the balcony of your five-star hotel room. With Luxury Link's rates up to  <a style="text-decoration:none;color:#3ca9d5" href="http://www.luxurylink.com/travel-deals/biggest-discounts?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140410b&utm_content=copy_LL" target="_blank">65% off</a> other travel sites, you can put those incredible savings towards a new tripod or panoramic lens!  </td>
+                <td class="remove" align="center" valign="top" style="padding:10px 0px 10px 0px; line-height:18px; font-family:Arial, sans-serif; font-size: 13px; color:#666;">
+                    For years, there was perception that "luxury travel" and "all-inclusive" were mutually-exclusive. However, a distinguished collection of Luxury Link resorts is shattering that notion, delivering upscale vacation experiences in stress-free, wallet-free surroundings. Meals prepared by celebrated chefs, a full slate of wellness activities led by experts and unrivaled service standards are among the many ways these properties are raising the all-inclusive bar. From the Caribbean to Mexico and beyond, the world is your luxurious oyster at these jaw-dropping, value-packed resorts!
+                </td>
             </tr>
 
         </table>
@@ -198,7 +200,7 @@
 </tr>
 <!--T1 end text:1 column-->
 <tr>
-    <td align="center" class="font2" valign="top" style="padding:10px 30px 20px 30px;line-height:18px; font-family:Times, Times New Roman, serif; font-size:26px; font-style:italic;"><a style="color:#008ec5; text-decoration:none" target="_blank" href="http://www.luxurylink.com/5star/hotel-deals/photographer?utm_term=Photographer%27s%20Dream&showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140410b&utm_content=view-all">View All Photographer's Dream Escapes &#187;&#187;</a></td>
+    <td align="center" class="font2" valign="top" style="padding:10px 30px 20px 30px;line-height:18px; font-family:Times, Times New Roman, serif; font-size:26px; font-style:italic;"><a style="color:#008ec5; text-decoration:none" target="_blank" href="http://www.luxurylink.com/5star/all-inclusive-resorts/deals?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=view-all-all-inclusive">View All All-Inclusive Hotels &amp; Resorts&#187;&#187;</a></td>
 </tr>
 <?
 $count = 0;
@@ -420,7 +422,7 @@ foreach($rows as $key=>$row){
     <!--start Leaderboard 1-->
     <tr>
         <td class="deskt" align="center" colspan="2" style="padding: 5px 10px 20px 0px;"><a
-                href="http://www.luxurylink.com/last-minute-travel-deals/mystery-offer?utm_medium=news&utm_source=insider&utm_campaign=insider_140410b&utm_content=LB1-mystery"
+                href="http://www.luxurylink.com/last-minute-travel-deals/mystery-offer?utm_medium=news&utm_source=insider&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=LB1-mystery"
                 name="Mystery_LB1_4.10.14" target="_blank"><img border="0" width="610" height="82" name="LB1"
                                                                 src="http://www.luxurylink.com/images/house-banners/728x90-mystery.jpg"
                                                                 alt="Mystery"/></a>
@@ -452,7 +454,7 @@ foreach($rows as $key=>$row){
                     </tbody></table>
                 <? }else{ ?>
                 <table valign="top" class="container" align="left" width="270" style="mso-table-lspace:0;mso-table-rspace:0; margin:0px; padding:0px;" cellspacing="0" cellpadding="0" border="0">
-                    <tbody><tr>/
+                    <tbody><tr>
                         <td align="left" valign="top" width="270" class="container">
                             <a target="_blank" name="<?=$arr['seoName']?>" href="<?=$seoUrl;?>">
                                 <img width="270" border="0" alt="<?=$arr['name']?>" style="display: block;padding-left:8px" src="http://photos.luxurylink.us<?= $arr['imagePath'] ?>" class="img"></a>
@@ -470,7 +472,12 @@ foreach($rows as $key=>$row){
 <? } //end > 8?>
 
 <? } //end loop ?>
-
+<!--horizontal ad start -->
+<tr>
+    <td align="center" style="padding: 0px 0px 10px 0px;" colspan="2" class="deskt">  <a target="_blank" name="spring-sale_LB1_5.1.14" href="http://www.luxurylink.com?showLeader=1&amp;utm_medium=news&amp;utm_source=inspiration&amp;utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&amp;utm_content=spring-sale-LB"><img width="610" height="82" border="0" alt="Spring Sale at Luxury Link" src="http://www.luxurylink.com/images/house-banners/SpringSave_728x90.jpg" name="LB1"></a>
+    </td>
+</tr>
+<!--horizontal ad end -->
 <!--start footer-->
 <tr>
     <td align="center"  valign="top" style="padding:2px 10px 0px 0px;">
@@ -494,7 +501,7 @@ foreach($rows as $key=>$row){
                     <a style="color:#444;text-decoration:none;" target="_blank" href="http://www.luxurylink.com/LL/preference_center.php">Email Preferences</a></td>
 
                 <td class="smalltd" align="center" width="140" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
-                    <a style="color:#444;text-decoration:none;" name="priv-policy" target="_blank" href="http://www.luxurylink.com/about/index.php/privacy-policy?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140410b&utm_content=priv-policy">Privacy Policy</a></td>
+                    <a style="color:#444;text-decoration:none;" name="priv-policy" target="_blank" href="http://www.luxurylink.com/about/index.php/privacy-policy?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=priv-policy">Privacy Policy</a></td>
             </tr>
         </table>
 
@@ -504,13 +511,13 @@ foreach($rows as $key=>$row){
     <td align="center" class="remove" valign="top" style="padding:0px 13px 0px 3px;">
         <table class="table310" width="582" align="center" cellspacing="0" cellpadding="0" bgcolor="#f2f2f2" style="padding:0px 20px 0px 20px;">
             <tr>
-                <td align="center"style="padding:10px 10px 10px 10px"><a name="save-50" target="_blank" href="http://www.luxurylink.com/refer-friend/?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140410b&utm_content=raf"><img border="0" width="180" height="100" src="http://www.luxurylink.com/images/email/new/AH_Save50.jpg" style="display:block;" border="0" alt="Save $50 on your next vacation -Click Here" class="img2" /></a>
+                <td align="center"style="padding:10px 10px 10px 10px"><a name="save-50" target="_blank" href="http://www.luxurylink.com/refer-friend/?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=raf"><img border="0" width="180" height="100" src="http://www.luxurylink.com/images/email/new/AH_Save50.jpg" style="display:block;" border="0" alt="Save $50 on your next vacation -Click Here" class="img2" /></a>
                 </td>
                 <td class="deskt" align="left" style="padding: 12px 20px 10px 10px;"><img border="0" name="line" src="http://www.luxurylink.com/images/email/new/vert-on-grey.jpg" width="8" height="109" style="display:block;" />
                 </td>
-                <td align="center" height="80" style="padding: 15px 20px 15px 10px;"><img border="0" name="line" src="http://www.luxurylink.com/images/email/new/ph-icon_49x49.jpg" width="49" height="49" style="display:block;" class="img3" /><br />
-                    <span style="font-family:Times, Serif;font-size:15px;color:#333;line-height:21px;letter-spacing:0.5px;vertical-align:top;" class="font-sm remove" >CONCIERGE: (877) 372-5877</span><br />
-                    <span style="font-family:Arial, sans-serif;font-size:11px;color:#555;letter-spacing:0.5px;">24 Hours / 7 Days a Week</span>
+                <td height="80" align="center" style="padding: 15px 20px 10px 10px;">
+                    <img width="49" height="49" border="0" class="img3" style="display:block;" src="http://www.luxurylink.com/images/email/new/ph-icon_49x49.jpg" name="line"><br>
+                    <span style="font-family:Times, Serif;font-size:15px;color:#333;line-height:17px;letter-spacing:0.5px;vertical-align:top;" class="font-sm">Talk to Our Travel Experts!<br>CALL NOW: <a href="tel:8773725877">(888) 297-3299</a></span><br>
                 </td>
             </tr>
         </table>
