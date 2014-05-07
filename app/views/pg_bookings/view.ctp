@@ -341,3 +341,38 @@
         <div style="clear:both;"></div>
     </div>
 </div>
+<div class="collapsible">
+    <?php
+    $res_count = 0;
+    if (isset($booking['PgBooking']['confirmationNumber'])) {
+        if ($booking['PgBooking']['confirmationNumber'] > 0) {
+            $res_count = 1;
+        }
+    }
+    ?>
+    <div class="handle"><?php __('Reservation Info (' . $res_count . ')'); ?></div>
+    <div class="collapsibleContent related">
+        <br/>
+        <?php if (!empty($booking['PgBooking']['confirmationNumber'])): ?>
+            <table cellpadding="0" cellspacing="0">
+                <tr class="altrow">
+                    <td width="200">Hotel Confirmation Number</td>
+                    <td><?php echo $booking['PgBooking']['confirmationNumber']; ?></td>
+                </tr>
+                <tr>
+                    <td width="200">Arrival Date</td>
+                    <td><?php echo $booking['PgBooking']['dateIn']; ?></td>
+                </tr>
+                <tr class="altrow">
+                    <td width="200">Departure Date</td>
+                    <td><?php echo $booking['PgBooking']['dateOut']; ?></td>
+                </tr>
+
+            </table>
+            <?php echo $html->link(
+                              'Send Reservation Confirmation Email',
+                              '/tickets/' . $booking['PgBooking']['pgBookingId'] . '/ppvNotices/add/1'
+                              ); ?> - 1
+        <?php endif; ?>
+    </div>
+</div>
