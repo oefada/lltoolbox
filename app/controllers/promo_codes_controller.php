@@ -63,26 +63,39 @@ class PromoCodesController extends AppController
         $offerId = $postData['offerId'];
         $siteId = $postData['siteId'];
         $tldId = $postData['tldId'];
+        $paymentTypeId = isset($postData['ptId']) ? $postData['ptId'] : null;
 
-        $isValidPromoCode = $this->PromoCode->checkPromoCode(
-            $promoCode,
-            $userId,
-            $paymentAmount,
-            $offerId,
-            $siteId,
-            $tldId
-        );
+        if ($paymentTypeId == 4) {
+            $isValidPromoCode = $this->PromoCode->checkPromoCode(
+                $promoCode,
+                $userId,
+                $paymentAmount,
+                $offerId,
+                $siteId,
+                $tldId
+            );
+            $paymentType = 'Promo Code';
+        } else if ($paymentTypeId == 2) {
+            $isValidPromoCode = true;
+            $paymentType = 'Gift Certificate';
+        } else {
+            $isValidPromoCode = false;
+            $paymentType = false;
+        }
 
         $dataToReturn = array(
             'status' => 200,
             'validPromoCode' => $isValidPromoCode,
+            'paymentType' => $paymentType,
+            'paymentTypeId' => $paymentTypeId,
             'data' => array(
                 'promoCode' => $promoCode,
                 'userId' => $userId,
                 'paymentAmount' => $paymentAmount,
                 'offerId' => $offerId,
                 'siteId' => $siteId,
-                'tldId' => $tldId
+                'tldId' => $tldId,
+                'ptId' => $paymentTypeId
             )
         );
 

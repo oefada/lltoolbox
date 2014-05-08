@@ -433,7 +433,8 @@ jQuery(document).ready(function ($) {
             paymentAmount: paymentAmount,
             offerId: offerId,
             siteId: siteId,
-            tldId: tldId
+            tldId: tldId,
+            ptId: ptId.val()
         };
 
         $.ajax({
