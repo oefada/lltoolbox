@@ -1,4 +1,6 @@
-
+<?
+Configure::write('debug',0);
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>
 <head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <meta property="og:title" content="Luxury Link's Newest Travel Deals" />
@@ -178,7 +180,7 @@
 <!-- end header-->
 <!-- start image: 1-up-->
 <tr>
-    <td class="container" align="center" style="padding-top:20px;padding-bottom:15px"><a target="_blank" href="http://www.luxurylink.com?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=top-img"><img width="576" height="151" border="0" alt="Inspiration" name="ll-insp-img" src="http://www.luxurylink.com/images/email/Inspiration/Inspiration2014_top2.jpg" class="img" /></a></td>
+    <td class="container" align="center" style="padding-top:20px;padding-bottom:15px"><a target="_blank" href="http://www.luxurylink.com?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=top-img"><img width="576" height="93" border="0" alt="Inspiration" name="ll-insp-img" src="http://www.luxurylink.com/images/email/Inspiration/Inspiration2014_top3.jpg" class="img" /></a></td>
 </tr>
 <!--end image: 1-up-->
 
@@ -200,7 +202,7 @@
 </tr>
 <!--T1 end text:1 column-->
 <tr>
-    <td align="center" class="font2" valign="top" style="padding:10px 30px 20px 30px;line-height:18px; font-family:Times, Times New Roman, serif; font-size:26px; font-style:italic;"><a style="color:#008ec5; text-decoration:none" target="_blank" href="http://www.luxurylink.com/5star/all-inclusive-resorts/deals?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=view-all-all-inclusive">View All All-Inclusive Hotels &amp; Resorts&#187;&#187;</a></td>
+    <td align="center" class="font2" valign="top" style="padding:10px 30px 10px 30px;line-height:18px; font-family:Times, Times New Roman, serif; font-size:26px; font-style:italic;"><a style="color:#008ec5; text-decoration:none" target="_blank" href="http://www.luxurylink.com/5star/all-inclusive-resorts/deals?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=view-all-all-inclusive">View All All-Inclusive Hotels &amp; Resorts&#187;&#187;</a></td>
 </tr>
 <?
 $count = 0;
@@ -262,11 +264,12 @@ foreach($rows as $key=>$row){
                                         ?>
                                         <table class="deskt" valign="top" width="119" height="50" align="center"
                                                cellspacing="0" cellpadding="0" border="0">
-                                            <? if (isset($percentOff) && !empty($percentOff)){ ?>
+
                                             <tr>
                                                 <td bgcolor="#4ca8d7" align="center" height="36" valign="middle" style="vertical-align:top;padding-top:8px;padding-bottom:8px;font-family:Times, Times New Roman, serif;color:#fff; font-size:30px;">
-                                                    <?=isset($percentOff)?$percentOff.'% <span style=" font-size:14px;">OFF</span>':'';?>
-
+                                        <? if (isset($percentOff) && !empty($percentOff)){ ?>
+                                            <?=isset($percentOff)?$percentOff.'% <span style=" font-size:14px;">OFF</span>':'';?>
+                                        <? }else{ echo '&nbsp;';} ?>
                                                 </td>
                                             </tr>
                                                 <tr>
@@ -275,7 +278,7 @@ foreach($rows as $key=>$row){
                                                                          width="119" height="14" border="0"
                                                                          style="vertical-align:top"/></td>
                                                 </tr>
-                                            <? } ?>
+
 
                                         </table>
                                     </td>
@@ -301,7 +304,7 @@ foreach($rows as $key=>$row){
         </tr>
 
         <tr>
-            <td align="left" class="remove" style="padding: 32px 0px 0px 0px;">
+            <td align="left" class="remove" style="padding: 32px 0px 15px 0px;">
 
                 <table class="container" width="620" align="center" cellspacing="0" cellpadding="0" border="0">
                     <tr>
@@ -333,12 +336,14 @@ foreach($rows as $key=>$row){
 
 <?
     //display properties with half text
-    if ($count <= 8 && ($count !== 1 OR 5)) { ?>
+    if ($count <= 8 &&
+        $count !== 1 &&
+        $count !== 5 ) { ?>
 
 <!--start P1b property 2: half with text-->
 
 <tr>
-    <td class="remove" style="padding: 40px 20px 10px 20px;" valign="top">
+    <td class="remove" style="padding: 20px 20px 10px 20px;" valign="top">
         <!--start content image and text-->
 
         <table valign="top" class="container" height="140" width="590" cellspacing="0" cellpadding="0" border="0">
@@ -348,7 +353,7 @@ foreach($rows as $key=>$row){
                     <table valign="top" class="container" height="130" align="left" width="300" style="mso-table-lspace:0;mso-table-rspace:0; margin:0px; padding:0px;" cellspacing="0" cellpadding="0" border="0">
                         <tr>
                             <td align="left" valign="top" width="300" class="container" height="130">
-                                <a target="_blank" name="<?=$arr['seoName']?>" href="<?=$seoUrl?>"><img width="280" border="0" alt="<?=$arr['name'];?>" style="display: block;padding-right:20px;" src="http://photos.luxurylink.us<?=$arr['imagePath']?>" class="img" /></a>
+                                <a target="_blank" name="<?=$arr['seoName']?>" href="<?=$seoUrl?>"><img width="280" height="147" border="0" alt="<?=$arr['name'];?>" style="display: block;padding-right:20px;" src="http://photos.luxurylink.us<?=$arr['imagePath']?>" class="img" /></a>
                             </td>
                         </tr>
                     </table>
@@ -382,16 +387,16 @@ foreach($rows as $key=>$row){
 <? if ($count == 4){?>
 <!--mystery auction and anchor-->
 <tr>
-    <td class="container" align="left">
+    <td class="container" align="center" width="620">
 
         <!--start mystery mod-->
         <table class="container" width="620" align="center" border="0" cellpadding="0" cellspacing="0">
             <tr>
-                <td class="remove" align="center" valign="top" style="padding: 20px 0px 20px 0px;">
+                <td class="remove" width="620" align="left" valign="top" style="padding: 20px 0px 10px 10px;">
 
-                    <table class="container" align="left" width="310" cellspacing="0" cellpadding="0" border="0" valign="top">
+                    <table class="container" align="left" width="300" cellspacing="0" cellpadding="0" border="0" valign="top">
                         <tr>
-                            <td class="ad" width="290" align="left" valign="top" height="83" style="padding: 0px 0px 0px 0px;"><a href="http://ad.doubleclick.net/clk;279277405;106370342;e" name="london-waALES_4.10.14" target="_blank"><img border="0" width="289" height="243" name="LONDON-W" src="http://www.luxurylink.com/images/ads/insertions/300x250_LondonWales2.gif" alt="London Wales Ad" /></a></td>
+                            <td class="ad" width="290" align="left" valign="top" height="83" style="padding: 0px 5px 0px 0px;"><a href="http://ad.doubleclick.net/clk;279277405;106370342;e" name="london-waALES_4.10.14" target="_blank"><img border="0" width="289" height="243" name="LONDON-W" src="http://www.luxurylink.com/images/ads/insertions/300x250_LondonWales2.gif" alt="London Wales Ad" /></a></td>
                         </tr>
                         <tr>
                             <td valign="top" align="left" style="font-size:9px; font-family: Arial,Sans-Serif;color:#666666;line-height:11px;padding: 2px 15px 10px 0px; vertical-align:top;text-align:center">Advertisement</td>
@@ -400,7 +405,7 @@ foreach($rows as $key=>$row){
                     <!--start anchor ad section -->
                     <table class="container" align="left" width="290" cellspacing="0" cellpadding="0" border="0" valign="top" style="mso-table-lspace:0;mso-table-rspace:0; margin:0px; padding:0px;">
                         <tr>
-                            <td class="ad" width="290" align="left" valign="top" height="83" style="padding: 0px 0px 0px 0px;">
+                            <td class="ad" width="290" align="left" valign="top" height="83" style="padding: 0px 0px 0px 5px;">
                                 <a href="http://bs.serving-sys.com/BurstingPipe/adServer.bs?cn=tf&c=20&mc=click&pli=9291503&PluID=0&ord=<?=time()?>" name="Paradisus_3.20.14" target="_blank"><img border="0" width="289" height="243" name="anchor-paradisus" src="http://www.luxurylink.com/images/ads/insertions/300X250_Paradisus.jpg" alt="Paradisus" /></a>	</td>
                         </tr>
                         <tr>
@@ -415,13 +420,15 @@ foreach($rows as $key=>$row){
 
     </td>
 </tr>
+
 <!--end mystery and anchor-->
 <? } //end count ==4 ?>
+<!--Add blocks end-->
 
 <? if ($count == 8) { ?>
     <!--start Leaderboard 1-->
     <tr>
-        <td class="deskt" align="center" colspan="2" style="padding: 5px 10px 20px 0px;"><a
+        <td class="deskt" align="center" colspan="2" style="padding: 25px 10px 20px 0px;"><a
                 href="http://www.luxurylink.com/last-minute-travel-deals/mystery-offer?utm_medium=news&utm_source=insider&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=LB1-mystery"
                 name="Mystery_LB1_4.10.14" target="_blank"><img border="0" width="610" height="82" name="LB1"
                                                                 src="http://www.luxurylink.com/images/house-banners/728x90-mystery.jpg"
@@ -429,21 +436,19 @@ foreach($rows as $key=>$row){
         </td>
     </tr>
 <? } //end count ==8 ?>
-<!--Add blocks END-->
-<!--<tr>
-<td class="deskt" valign="top" colspan="2" align="center" style="font-size:9px; font-family: Arial,Sans-Serif;color:#666666;line-height:11px;padding: 2px 20px 22px 0px; vertical-align:top;text-align:center">Advertisement</td>
-</tr>-->
-<? if ($count > 8) { ?>
+
+<? if ($count > 8 &&
+       $count < 13) { ?>
     <!--start P2 property 1: 2-up-->
     <? if ($count %2 !==0) { ?>
         <tr>
-            <td class="container" style="padding: 20px 15px 30px 25px;" valign="top">
+            <td class="container" style="padding: 20px 15px 15px 25px;" valign="top">
 
                 <table valign="top" class="container" align="left" width="280" style="mso-table-lspace:0;mso-table-rspace:0; margin:0px; padding:0px;" cellspacing="0" cellpadding="0" border="0">
                     <tbody><tr>
                         <td align="left" valign="top" width="275" class="container">
                             <a target="_blank" name="<?=$arr['seoName']?>" href="<?=$seoUrl;?>">
-                                <img width="270" border="0" alt="<?=$arr['name']?>" style="display: block;padding-right:15px;" src="http://photos.luxurylink.us<?= $arr['imagePath'] ?>" class="img"></a>
+                                <img width="270" height="141" border="0" alt="<?=$arr['name']?>" style="display: block;padding-right:15px;" src="http://photos.luxurylink.us<?= $arr['imagePath'] ?>" class="img"></a>
                         </td>
                     </tr>
                     <tr>
@@ -457,7 +462,7 @@ foreach($rows as $key=>$row){
                     <tbody><tr>
                         <td align="left" valign="top" width="270" class="container">
                             <a target="_blank" name="<?=$arr['seoName']?>" href="<?=$seoUrl;?>">
-                                <img width="270" border="0" alt="<?=$arr['name']?>" style="display: block;padding-left:8px" src="http://photos.luxurylink.us<?= $arr['imagePath'] ?>" class="img"></a>
+                                <img width="270" height="141" border="0" alt="<?=$arr['name']?>" style="display: block;padding-left:8px" src="http://photos.luxurylink.us<?= $arr['imagePath'] ?>" class="img"></a>
                         </td>
                     </tr>
                     <tr>
@@ -474,7 +479,7 @@ foreach($rows as $key=>$row){
 <? } //end loop ?>
 <!--horizontal ad start -->
 <tr>
-    <td align="center" style="padding: 0px 0px 10px 0px;" colspan="2" class="deskt">  <a target="_blank" name="spring-sale_LB1_5.1.14" href="http://www.luxurylink.com?showLeader=1&amp;utm_medium=news&amp;utm_source=inspiration&amp;utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&amp;utm_content=spring-sale-LB"><img width="610" height="82" border="0" alt="Spring Sale at Luxury Link" src="http://www.luxurylink.com/images/house-banners/SpringSave_728x90.jpg" name="LB1"></a>
+    <td align="center" style="padding: 15px 0px 10px 0px;" colspan="2" class="deskt">  <a target="_blank" name="spring-sale_LB1_5.1.14" href="http://www.luxurylink.com?showLeader=1&amp;utm_medium=news&amp;utm_source=inspiration&amp;utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&amp;utm_content=spring-sale-LB"><img width="610" height="82" border="0" alt="Spring Sale at Luxury Link" src="http://www.luxurylink.com/images/house-banners/SpringSave_728x90.jpg" name="LB1"></a>
     </td>
 </tr>
 <!--horizontal ad end -->
