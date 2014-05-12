@@ -7,6 +7,7 @@ class PaymentDetailsController extends AppController
     public  $helpers = array('Html', 'Form', 'Ajax', 'Text', 'Layout', 'Number');
     public  $uses = array(
         'PaymentDetail',
+        'PaymentProcessor',
         'Ticket',
         'UserPaymentSetting',
         'PpvNotice',
@@ -21,7 +22,8 @@ class PaymentDetailsController extends AppController
         'PromoCode',
         'PaymentType',
         'PaymentDetail',
-        'Ticket'
+        'Readonly',
+        'PgPayment'
     );
 
     public function beforeFilter()
@@ -57,6 +59,66 @@ class PaymentDetailsController extends AppController
 
     }
 
+    public function viewPg($id = null)
+    {
+        if (!$id) {
+            $this->Session->setFlash(__('Invalid Payment Detail Id.', true), 'default', array(), 'error');
+        }
+
+        $arr = array();
+        $pgPaymentResult = $this->PgPayment->readPgPayment($id);
+
+        if ($pgPaymentResult['PgPayment']['paymentTypeId']==2 || $pgPaymentResult['PgPayment']['paymentTypeId']==3){//Credit on File, Promo or Gift Cert
+            $arr = $pgPaymentResult;
+            $arr['PgPayment']['paymentUSD'] = $pgPaymentResult['PgPayment']['paymentUSD'];
+            if ($pgPaymentResult['PgPayment']['paymentTypeId']==2) // Promo or Gift Cert
+                $arr['PaymentType']['paymentTypeName'] = 'Gift Certificate/Promo';
+            else
+                $arr['PaymentType']['paymentTypeName'] = 'Credit on File';
+        }
+        else {
+            $this->PgPayment->recursive = 1;
+
+            //'fields' need to be set first due to the ordering of joins
+            $params =  array(
+                'conditions' => array('PgPayment.pgPaymentId' => $id),
+                'fields' => array('PgPayment.*','PgBookingAuthAttempt.ll2CreditCardAuthId', 'PgPaymentDetailCreditCard.*', 'PgBooking.*', 'PaymentType.*', 'Ll2CreditCardAuth.*' )
+            );
+
+            $params['joins'] = array(
+                array('table' => 'pgPaymentDetailCreditCard',
+                    'alias' => 'PgPaymentDetailCreditCard',
+                    'type' => 'inner',
+                    'conditions' => array(
+                        'PgPaymentDetailCreditCard.pgPaymentId = PgPayment.pgPaymentId'
+                    )
+                ),
+                array('table' => 'pgBookingAuthAttempt',
+                    'alias' => 'PgBookingAuthAttempt',
+                    'type' => 'inner',
+                    'conditions' => array(
+                        'PgBookingAuthAttempt.pgBookingAuthAttemptId = PgPaymentDetailCreditCard.pgBookingAuthAttemptId'
+                    )
+                ),
+                array('table' => 'll2CreditCardAuth',
+                    'alias' => 'Ll2CreditCardAuth',
+                    'type' => 'inner',
+                    'conditions' => array(
+                        'Ll2CreditCardAuth.ll2CreditCardAuthId = PgBookingAuthAttempt.ll2CreditCardAuthId'
+                    )
+                ),
+            );
+
+            $options['conditions'] = array(
+                 'PgPayment.pgPaymentId' => $id); //array of conditions
+
+            $arr = $this->PgPayment->find('first',$params);
+            $arr['PgBooking']['validCard'] = $this->getValidCcOnFile($arr['PgBooking']['userId']);
+        }
+
+        $this->set('paymentDetail', $arr);
+
+    }
     public function void()
     {
 
@@ -471,7 +533,32 @@ class PaymentDetailsController extends AppController
             $this->render("existing_cards", "ajax");
         }
     }
+    public function getValidCcOnFile($userId)
+    {
+        $ups = $this->Readonly->query(
+            "select * from userPaymentSetting as UserPaymentSetting where userId = $userId and inactive = 0 order by primaryCC desc, expYear desc"
+        );
 
+        $year_now = date('Y');
+        $month_now = date('m');
+        if (empty($ups)) {
+            return 'NONE';
+        }
+        $found_valid_cc = false;
+        foreach ($ups as $k => $v) {
+            if (($v['UserPaymentSetting']['expYear'] < $year_now) || ($v['UserPaymentSetting']['expYear'] == $year_now && $v['UserPaymentSetting']['expMonth'] < $month_now)) {
+                continue;
+            } else {
+                $found_valid_cc = true;
+                break;
+            }
+        }
+        return ($found_valid_cc) ? $v['UserPaymentSetting']['ccType'] . '-' . substr(
+                $v['UserPaymentSetting']['ccToken'],
+                -4,
+                4
+            ) : 'EXPIRED';
+    }
     /**
      * @param $userPaymentSettingId
      */
