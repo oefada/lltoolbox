@@ -270,6 +270,7 @@ class PgBookingsController extends AppController
            $booking['Promo'] = $this->PgBooking->getTicketPromoData($booking['PgBooking']['promoCodeId']);
         }
         $booking['Notes'] = $this->Notes->getNotesByPgBooking($booking['PgBooking']['pgBookingId']);
+        $booking['PgBooking']['validCard'] = $this->getValidCcOnFile($booking['PgBooking']['userId']);
         $this->set('booking', $booking);
         $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
         $this->set('ppvNoticeTypes', $this->PgBooking->PpvNotice->PpvNoticeType->find('list'));
