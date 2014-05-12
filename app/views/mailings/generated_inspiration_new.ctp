@@ -269,7 +269,7 @@ foreach($rows as $key=>$row){
                                                         if ($inclusionCount > 7){
                                                             continue;
                                                         }
-                                                        $shortBlurb .=  $inclusionCount. ucfirst($item).'<br />';
+                                                        $shortBlurb .=  ucfirst($item).'<br />';
                                                     }
 
 
