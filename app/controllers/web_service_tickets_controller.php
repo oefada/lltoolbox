@@ -1606,7 +1606,7 @@ class WebServiceTicketsController extends WebServicesController
             }
 
             // Set reservation date to REQUESTED date. These PPVs are sent when ticket doesn't yet have reservation
-            if (in_array($ppvNoticeTypeId, array(24, 2, 10, 28, 11))) {
+            if (in_array($ppvNoticeTypeId, array(24, 2, 10, 28, 11, 54))) {
                 $resArrivalDate = $fpArrival;
                 $resDepartureDate = $fpDeparture;
             }
@@ -1923,6 +1923,7 @@ class WebServiceTicketsController extends WebServicesController
             case 24:
             case 27:
             case 28:
+            case 54:
             case 29:
             case 33:
                 $offerTypeTxt_inEmail = $offerTypeTxt;
@@ -1940,6 +1941,7 @@ class WebServiceTicketsController extends WebServicesController
             case 25:
             case 27:
             case 28:
+            case 54:
             case 29:
             case 31:
             case 33:
@@ -1981,6 +1983,10 @@ class WebServiceTicketsController extends WebServicesController
                 break;
             case 27:
             case 28:
+                $imgHref = $extranet_link;
+                $imgSrc = "confirm_reservation.gif";
+                break;
+            case 54:
                 $imgHref = $extranet_link;
                 $imgSrc = "confirm_reservation.gif";
                 break;
@@ -2259,6 +2265,12 @@ class WebServiceTicketsController extends WebServicesController
                     include('../vendors/email_msgs/notifications/28_general_res_request_template.html');
                     $emailSubject = "Please Confirm This $siteName Booking - $offerTypeTxt - ACTION REQUIRED - $emailName";
                 }
+
+                break;
+            case 54:
+                $templateFile = "54_general_res_request_template_new";
+                $templateTitle = "Luxury Link Booking Request";
+                $emailSubject = "Booking Request - Please Confirm - $emailName";
 
                 break;
             case 29:
@@ -2716,7 +2728,7 @@ class WebServiceTicketsController extends WebServicesController
         $matches = $matches[1];
 
         // Override UTM_SOURCE for PPV #28
-        if ($ppvNoticeTypeId == "28") {
+        if ($ppvNoticeTypeId == "28" || $ppvNoticeTypeId == "54") {
             $append = "concierge";
         }
 
@@ -2941,7 +2953,7 @@ class WebServiceTicketsController extends WebServicesController
             } elseif ($ppvNoticeTypeId == 24) {
                 // Res follow up (for FP)
                 $newTicketStatus = 9;
-            } elseif ($ppvNoticeTypeId == 28) {
+            } elseif ($ppvNoticeTypeId == 28 || $ppvNoticeTypeId == 54) {
                 // ticket #2243
                 $newTicketStatus = 19;
             }

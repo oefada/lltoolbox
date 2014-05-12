@@ -746,6 +746,13 @@
                         ); ?> - 28
                     </td>
                 </tr>
+                <tr>
+                    <td style="border:0px;"><?php echo $html->link(
+                            'Reservation Request (Manual Auction Tickets)',
+                            '/tickets/' . $ticket['Ticket']['ticketId'] . '/ppvNotices/add/54'
+                        ); ?> - 54
+                    </td>
+                </tr>
             </table>
         </div>
 
