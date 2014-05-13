@@ -245,6 +245,7 @@ foreach($rows as $key=>$row){
                                     <td align="center" height="50">
                                         <?
                                         if (isset($offers)){
+                                            //print_r($offers);
                                             if(isset($percentOff)){
                                                 unset($percentOff);
                                             }
@@ -256,7 +257,23 @@ foreach($rows as $key=>$row){
                                                     if(isset($shortBlurb)){
                                                         unset($shortBlurb);
                                                     }
-                                                    $shortBlurb =   ucfirst(str_replace(",","<br />",$val['shortBlurb'])).'<br />';
+                                                    if(isset($arrShortBlurb)){
+                                                        unset($arrShortBlurb);
+                                                    }
+                                                    $arrShortBlurb = null;
+                                                    $arrShortBlurb = explode(",",$val['shortBlurb']);
+                                                    $shortBlurb = null;
+                                                    $inclusionCount = 0;
+                                                    foreach ($arrShortBlurb as $k=>$item){
+                                                        $inclusionCount++;
+                                                        if ($inclusionCount > 7){
+                                                            continue;
+                                                        }
+                                                        $shortBlurb .=  ucfirst($item).'<br />';
+                                                    }
+
+
+                                                    //$shortBlurb =   ucfirst(str_replace(",","<br />",$val['shortBlurb'])).'<br />';
                                                 };
 
                                             }
