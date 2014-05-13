@@ -312,7 +312,7 @@
 
 
 
-
+<!-- *** Comment out reservation PPV links until ticket 4869 gets slated - JW ***
         <div style="float:left;">
             <table width="340" cellspacing="3" cellpadding="3" border="0" style="border:0px;width:340px;">
                 <tr>
@@ -336,6 +336,7 @@
 
             </table>
         </div>
+		 -->
 
 
         <div style="clear:both;"></div>
