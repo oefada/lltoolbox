@@ -417,7 +417,7 @@
                 </tr>
                 <tr>
                     <td width="200">Res. Conf. Sent to User</td>
-                    <td><?php if (isset($booking['PpvNotice'][0]))
+                    <td><?php if (isset($booking['PpvNotice'][0]) && $booking['PpvNotice'][0]['ppvNoticeTypeId'] === '60' )
                                 echo $booking['PpvNotice'][0]['emailSentDatetime']; ?>
                     </td>
                 </tr>
