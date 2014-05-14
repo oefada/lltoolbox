@@ -414,7 +414,12 @@
                     <td width="200">Departure Date</td>
                     <td><?php echo $booking['PgBooking']['dateOut']; ?></td>
                 </tr>
-
+                <tr>
+                    <td width="200">Res. Conf. Sent to User</td>
+                    <td><?php if (isset($booking['PpvNotice'][0]))
+                                echo $booking['PpvNotice'][0]['emailSentDatetime']; ?>
+                    </td>
+                </tr>
             </table>
             <?php echo $html->link(
                               'Send Reservation Confirmation Email',
