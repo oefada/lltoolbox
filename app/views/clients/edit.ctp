@@ -22,6 +22,17 @@
     div.checkbox input[type='checkbox'] {
         width:20px;
     }
+    /***TinyMCE Start **/
+    /*.mceToolbarTop * {*/
+            /*float:left;*/
+        /*}*/
+    /*.mceToolbarTop select {*/
+        /*width:auto!important;*/
+    /*}*/
+    /*.mceToolbarTop option {*/
+        /*float:none;*/
+    /*}*/
+    /***TinyMCE End **/
 
 </style>
 
@@ -41,6 +52,69 @@
         $(amenityElem).insert({top: '<input type="hidden" name="'+hiddenName+'[remove]" value="1" />'});
         $(amenityElem).hide();
     }
+</script>
+<script type="text/javascript" src="/js/tiny_mce/tiny_mce.js"></script>
+<script type="text/javascript">
+   // alert('tinyMCE');
+    tinyMCE.init({
+        //mode : "specific_textareas",
+        // editor_selector : "ClientSiteExtended<?=$clientId;?>LongDesc",
+        mode : "exact",
+        elements : "ClientSiteExtended<?=$client['ClientSiteExtended'][0]['clientSiteExtendedId'];?>LongDesc\
+        ,ClientSiteExtended<?=$client['ClientSiteExtended'][0]['clientSiteExtendedId'];?>Blurb\
+        ,ClientInterview0Article",
+        theme : "advanced",
+        theme_advanced_buttons1 : "mybutton,bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright, justifyfull,bullist,numlist,undo,redo,link,unlink,code,iframe",
+        theme_advanced_buttons2 : "",
+        theme_advanced_buttons3 : "",
+        theme_advanced_toolbar_location : "top",
+        theme_advanced_toolbar_align : "left",
+        theme_advanced_statusbar_location : "bottom",
+        force_p_newlines : false,
+        force_br_newlines : true,/** make new lines use br **/
+        forced_root_block : '',
+        setup : function(ed) {
+            ed.onInit.add(function(ed) {
+                var dom = ed.dom,
+                    doc = ed.getDoc(),
+                    el = doc.content_editable ? ed.getBody() : (tinymce.isGecko ? doc : ed.getWin());
+                tinymce.dom.Event.add(el, 'focus', function(e) {
+//                    console.log('focus');
+                    $currentSelector = '#'+ed.id+'_ifr';
+
+                    $initialEditorHeight = jQuery($currentSelector).height();
+                    //expand size of tinyMCE
+                    jQuery($currentSelector).css('height','150px');
+
+                })
+                tinymce.dom.Event.add(el, 'blur', function(e) {
+//                    console.log('blur');
+//                    console.log(ed.id);
+                    jQuery('#'+ed.id+'_ifr').css('height',$initialEditorHeight+'px');
+                })
+
+            });
+        }
+        // init_instance_callback : 'resizeEditorBox',
+        //auto_resize : true
+    });
+
+</script>
+<script type="text/javascript">
+
+
+    jQuery(function($){
+    //resize field
+        $(document).ready(function() {
+            alert('ready for focus');
+            jQuery('#ClientSiteExtended<?=$client['ClientSiteExtended'][0]['clientSiteExtendedId'];?>LongDesc_ifr').css('height','250px');
+            $("#ClientSiteExtended<?=$client['ClientSiteExtended'][0]['clientSiteExtendedId'];?>LongDesc_ifr" +
+              ",#ClientSiteExtended<?=$client['ClientSiteExtended'][0]['clientSiteExtendedId'];?>Blurb_ifr" +
+                ",#ClientInterview0Article_ifr").live('focus click', function() {
+                    alert('focused!');
+                });
+        });
+    });
 </script>
 <?php
 $this->pageTitle = $this->data['Client']['name'].$html2->c($this->data['Client']['clientId'], 'Client Id:').'<br />'.$html2->c('manager: '.$this->data['Client']['managerUsername']);
