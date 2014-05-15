@@ -170,7 +170,7 @@ class PpvNoticesController extends AppController {
 
 		$this->set('promo', $this->Ticket->getTicketPromoData($ticketId));
 
-		if (in_array($id, array(2,4,10,27,28,24,29,33,31))) {
+		if (in_array($id, array(2,4,10,27,28,55,24,29,33,31))) {
 			$clientContacts = $this->Ticket->getClientContacts($ticketId, $clientId);
 			$this->data['PpvNotice']['emailTo'] = $clientContacts['contact_to_string'];
 			$this->data['PpvNotice']['emailCc'] = $clientContacts['contact_cc_string'];
@@ -222,7 +222,7 @@ class PpvNoticesController extends AppController {
 		$wstc->constructClasses();
 		$response = $wstc->ppv($data);
 
-		if (in_array($id, array(26,27,28,33))) {
+		if (in_array($id, array(26,27,28,55,33))) {
 			$data['returnSubject'] = true;
 			$this->set('editSubject', $wstc->ppv($data));
 			
