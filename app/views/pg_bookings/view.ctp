@@ -208,24 +208,33 @@
 
 <br/>
 <div class="collapsible">
-    <div class="handle"><?php __("Payments (" . sizeof($booking['PgPayment']) . ")"); ?></div>
+    <div class="handle"><?php __("Payment Detail History (" . sizeof($booking['PgPayment']) . ")"); ?></div>
     <div class="collapsibleContent related">
         <br/>
         <?php if (sizeof($booking['PgPayment']) > 0): ?>
             <table cellspacing="0" cellpadding="0">
                 <tr>
                     <th style="text-align:center;">Payment Detail Id</th>
-                    <th style="text-align:center;">Currency</th>
-                    <th style="text-align:center;">Amount USD</th>
-                    <th style="text-align:center;">Amount TLD</th>
-                    <th style="text-align:center;">CC Type</th>
+                    <th style="text-align:center;">Payment Type</th>
+                    <th style="text-align:center;">Processed Date</th>
+                    <th style="text-align:center;">Billing Amount</th>
+                    <th style="text-align:center;">CC Type - Last Four CC</th>
+
+                    <th style="text-align:center;">Processor</th>
+                    <th style="text-align:center;">Status</th>
+                    <th style="text-align:center;">Initials</th>
+                    <th style="text-align:center;">Actions</th>
                 </tr>
-                <?php foreach ($booking['PgPayment'] as $k => $v) : ?>
-                    <tr>
+                <?php
+                $i = 0;
+                foreach ($booking['PgPayment'] as $k => $v) :
+                     $class = null;
+                     if ($i++ % 2 == 0) {
+                         $class = ' class="altrow"';
+                     }
+                ?>
+                    <tr<?php echo $class; ?>>
                         <td style="text-align:center;"><?= $v['pgPaymentId']; ?></td>
-                        <td style="text-align:center;"><?= $v['currencyId']; ?></td>
-                        <td style="text-align:center;"><?= $v['paymentUSD']; ?></td>
-                        <td style="text-align:center;"><?= $v['paymentAmountTld']; ?></td>
                         <td style="text-align:center;">
                         <?php if ($v['paymentTypeId'] == 1) {
                                     echo "Credit Card";
@@ -238,6 +247,44 @@
                               }
                          ?>
                          </td>
+                        <td style="text-align:center;"><?php echo $booking['PgBooking']['dateCreated']; ?></td>
+                        <td style="text-align:center;">
+                        <?php if ($booking['PgBooking']['tldId'] == 1) {
+                                  echo $number->currency($v['paymentUSD']);
+                                } else {
+                                       echo $number->currency($v['paymentUSD'], 'GBP');
+                                }
+                        ?>
+                        </td>
+                        <?php
+                        //for credit card; at this time if CC, processor=NOVA, status=Payment Successful & initials=PEGASUS
+                        if ($v['paymentTypeId'] == 1) { ?>
+           		                <td style="text-align:center;"><?php echo $booking['PgBooking']['validCard']; ?></td>
+           		                <td style="text-align:center;">NOVA</td>
+           		                <td style="text-align:center;">Payment Successful</td>
+                                <td style="text-align:center;">PEGASUS</td>
+              		        <? }
+           		        else { ?>
+           		                <td style="text-align:center;">&nbsp;</td>
+           		                <td style="text-align:center;">CREDIT/GIFT</td>
+           		                <td style="text-align:center;">&nbsp;</td>
+           		                <td style="text-align:center;">&nbsp;</td>
+                        <?php } ?>
+                        <td class="actions">
+                        <?php
+                        echo $html->link(
+                            'View',
+                            '/payment_details/viewPg/' . $v['pgPaymentId'],
+                            array(
+                                'title' => 'View Payment Transaction Details',
+                                'onclick' => 'Modalbox.show(this.href, {title: this.title});return false',
+                                'complete' => 'closeModalbox()'
+                            ),
+                            null,
+                            false
+                        );
+                        ?>
+                    </td>
                     </tr>
                 <?php endforeach; ?>
             </table>
@@ -368,7 +415,12 @@
                     <td width="200">Departure Date</td>
                     <td><?php echo $booking['PgBooking']['dateOut']; ?></td>
                 </tr>
-
+                <tr>
+                    <td width="200">Res. Conf. Sent to User</td>
+                    <td><?php if (isset($booking['PpvNotice'][0]) && $booking['PpvNotice'][0]['ppvNoticeTypeId'] === '60' )
+                                echo $booking['PpvNotice'][0]['emailSentDatetime']; ?>
+                    </td>
+                </tr>
             </table>
             <?php echo $html->link(
                               'Send Reservation Confirmation Email',

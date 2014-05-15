@@ -6,10 +6,12 @@ class PgPayment extends AppModel
     var $primaryKey = 'pgPaymentId';
     var $belongsTo = array(
         'PgBooking' => array('foreignKey' => 'pgBookingId'),
+        'PaymentType' => array('foreignKey' => 'paymentTypeId'),
     );
+    public function readPgPayment($id){
 
-    public $hasOne = array(
-    );
+        return $this->findByPgPaymentID($id);
 
+    }
 
 }
