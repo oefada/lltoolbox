@@ -608,6 +608,8 @@ function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNigh
     defaultPercent = 0;
     var highestFlex = 0;
 	var checkedIds = '';
+    var nameRatePeriod = '';
+
     $('.check-rate-period:checked').each(function() {
         if (isMultiClientPackage) {
             highestRetail += retails[$(this).val()];
@@ -623,7 +625,11 @@ function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNigh
             }
         }
 		checkedIds += ',' + $(this).val();
+        nameRatePeriod += ratePeriodDates[$(this).val()] + ';';
     });
+    $('#name-rate-period').val(nameRatePeriod);
+
+    id="name-rate-period"
     $('#retail').html(highestRetail);
     if (isFlexPackage) {
         var pricePerNight = 0;

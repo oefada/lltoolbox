@@ -18,16 +18,6 @@
 									<td>
 										<table width="100%" cellpadding="0" cellspacing="0" border="0">
 
-
-											<? if ($blackFridayPromo2013) { ?>
-												<tr>
-												<td colspan="3" align="center" style="padding:0px 0px 20px 0px;">
-												<a name="promoBanner" href="<?= $siteUrl; ?>vacation-ideas/holiday-hotel-deals" target="_blank"><img border="0" width="600" alt="<?= $siteName; ?>" src="http://www.luxurylink.com/images/email/limitedTime_v1_r1_728x.jpg" /></a>
-												</td>
-												</tr>
-											<? } ?>
-
-
 											<tr><td bgcolor="#86878a" colspan="3" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td></tr>
 											<tr>
 												<td width="1" bgcolor="#86878a" style="font-size:0; line-height:0;"><img src="http://www.luxurylink.com/images/email/pixel.gif" align="left" vspace="0" hspace="0" width="1" height="1"></td>
@@ -117,7 +107,14 @@
 																						<tr>
 																							<td colspan="2" style="line-height:22px; padding: 0px 0px 15px 0px;"><font face="Arial, Helvetica, sans-serif" size="3" style="font-size:18px; line-height:22px" color="<? if ($clientPpv || $headerRed): ?>#B30000<? else: ?>#9c9a68<? endif; ?>"><strong><?= $templateTitle ?></strong></font></td>
 																						</tr>
-																						<tr valign="top">
+
+                                                                                        <? if ($ppvNoticeTypeId == 55) { ?>
+                                                                                        <tr>
+                                                                                            <td colspan="2" style="line-height:22px; padding: 0px 0px 15px 0px;"><font face="Arial, Helvetica, sans-serif" size="3" style="font-size:18px; line-height:22px" color="#B30000"><strong>*** Please click your reply key to respond to this reservation request and include a confirmation number if the dates are available.</strong></font></td>
+                                                                                        </tr>
+                                                                                        <? } ?>
+
+                                                                                        <tr valign="top">
 																							<td style="line-height:20px;"<? if (isset($special_boxes)): ?> colspan="2"<?php endif; ?>>
 																								<?php if ($ticketId): ?><font face="Arial, Helvetica, sans-serif" color="#7b7b7b" style="font-size:12px; line-height:15px;"><b><?= ($ppvNoticeTypeId == 51) ? 'Confirmation Number' : 'Ticket ID'; ?>: <?= $ticketId ?></b></font><?php endif; ?>
 																								<?php if ($pgBookingId): ?><font face="Arial, Helvetica, sans-serif" color="#7b7b7b" style="font-size:12px; line-height:15px;"><b>Ticket ID: <?= $pgBookingId ?></b></font><?php endif; ?>

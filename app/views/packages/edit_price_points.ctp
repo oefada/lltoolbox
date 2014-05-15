@@ -36,6 +36,7 @@
             echo "
                 <script>
                     retails = new Array();
+                    ratePeriodDates = new Array();
                     guaranteedPercents = new Array();
                     flexRoomPricePerNight = new Array();
                     conversionRate = $conversionRate;
@@ -49,7 +50,7 @@
         <? endif; ?>
         
         <!-- NAME -->
-        <dl><dt>Name:</dt><dd><input type="text" name="data[PricePoint][name]" value="<? if (isset($pricePoint['name'])) { echo $pricePoint['name']; } ?>" style="width:300px;" /></dd></dl><br />
+        <dl><dt>Name:</dt><dd><input type="text" id="name-rate-period" name="data[PricePoint][name]" value="<? if (isset($pricePoint['name'])) { echo $pricePoint['name']; } ?>" style="width:300px;" /></dd></dl><br />
 
         <!-- RATE PERIODS -->
         <table cellpadding="0" cellspacing="0">
@@ -103,7 +104,19 @@
                         </td>
                         <? if ($isMultiClientPackage): ?>
                             <td><? echo $ratePeriod['clientName']; ?></td>
-                        <? endif; ?>
+                        <? endif;
+                        //Convert Rate Period (ticket #4009)
+                        // Example: Jan 1, 2014 - Jun 30, 2014
+                        // new: Jan01'14 - Jun30'14
+                          $datePeriodStart = strtotime(strstr($ratePeriod['dateRanges'],' - ',true));
+                          $datePeriodEnd = strtotime(substr(strstr($ratePeriod['dateRanges'],' - ',false),2));
+
+                          $newformatStart  = date("Md'y",$datePeriodStart);
+                          $newformatEnd = date("Md'y",$datePeriodEnd);
+                         ?>
+                        <script>
+                             ratePeriodDates[<? echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>] = "<?php echo $newformatStart . ' - '. $newformatEnd; ?>";
+                        </script>
                         <td><? echo $ratePeriod['dateRanges']; ?></td>
                         <td><? echo number_format($ratePeriod['retailValue'], 0); ?></td>
                         <td><input type="hidden" name="data[gpr-<? echo $ratePeriod['LoaItemRatePeriod']['loaItemRatePeriodId']; ?>]" value="<?php echo $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']; ?>"><?php echo $ratePeriod['LoaItemRatePackageRel']['guaranteePercentRetail']; ?></td>
