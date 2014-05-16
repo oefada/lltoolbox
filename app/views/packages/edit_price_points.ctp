@@ -15,7 +15,11 @@
 <script>
 	var clientId = <?=$clientId;?>;
 	var packageId = <?=$packageId;?>;
+	var pricePointName = " ";
     var isMultiClientPackage = <? echo ($isMultiClientPackage) ? 'true' : 'false'; ?>;
+    <?php if (isset($pricePoint['name'])) { ?>
+        pricePointName = "<?php echo $pricePoint['name'];?>"<?
+    }?>
 </script>
 
 <div id="price-points">
@@ -43,15 +47,15 @@
                 </script>
             ";
         ?>
-        
+
         <h2>Choose One <? if (!$isMultiClientPackage): ?>or More <?php endif; ?>Rate Period<?php if (!$isMultiClientPackage): ?>s<?php endif; ?></h2>
         <? if ($isMultiClientPackage): ?>
             <div class="instructions">* You can only select one rate period per client for each price point in multiclient packages.</div>
         <? endif; ?>
         
         <!-- NAME -->
-        <dl><dt>Name:</dt><dd><input type="text" id="name-rate-period" name="data[PricePoint][name]" value="<? if (isset($pricePoint['name'])) { echo $pricePoint['name']; } ?>" style="width:300px;" /></dd></dl><br />
-
+        <dl><dt>Name:</dt><dd><input type="text" id="name-rate-period" name="data[PricePoint][name]" value="<? if (isset($pricePoint['name'])) { echo $pricePoint['name']; } ?>" style="width:600px;" /></dd></dl><br />
+                Note:
         <!-- RATE PERIODS -->
         <table cellpadding="0" cellspacing="0">
             <tr>
@@ -376,7 +380,7 @@
 <script>
 
 //updateRetail(true, false, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, <?php echo $package['Package']['isFlexPackage']; ?>);
-updateRetail(true, false, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1);
+updateRetail(true, false, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1, pricePointName);
 
 $('#isFlexPackage, #auction-percent, #buynow-percent').change(function() {
 
@@ -388,14 +392,14 @@ $('#isFlexPackage, #auction-percent, #buynow-percent').change(function() {
 	// this enables admin to manually enter the price if they want 
     var autoFillFlexPerNightPrice = false;
    
-    updateRetail(false, autoFillFlexPerNightPrice, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1);
+    updateRetail(false, autoFillFlexPerNightPrice, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1, pricePointName);
     $('.flexBuyNowCalc').html($('#buynow-percent').val());
     $('.flexDNGCalc').html($('#auction-percent').val());
 });
 
 $('.check-rate-period').change(function() {
     $('#flexSuggestedRetail').val('0');
-    updateRetail(true, true, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1);
+    updateRetail(true, true, <? echo $package['Package']['numNights']; ?>, '<?php echo $ratePeriods[0]['currencyCode']; ?>', isMultiClientPackage, 1, pricePointName);
 });
 
 </script>

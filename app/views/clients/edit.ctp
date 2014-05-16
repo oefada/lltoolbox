@@ -106,7 +106,6 @@
     jQuery(function($){
     //resize field
         $(document).ready(function() {
-            alert('ready for focus');
             jQuery('#ClientSiteExtended<?=$client['ClientSiteExtended'][0]['clientSiteExtendedId'];?>LongDesc_ifr').css('height','250px');
             $("#ClientSiteExtended<?=$client['ClientSiteExtended'][0]['clientSiteExtendedId'];?>LongDesc_ifr" +
               ",#ClientSiteExtended<?=$client['ClientSiteExtended'][0]['clientSiteExtendedId'];?>Blurb_ifr" +
