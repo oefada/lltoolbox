@@ -65,7 +65,7 @@ if (Configure::read() === 0) {
 	// Disable the default handling and include logger
 	define('DISABLE_DEFAULT_ERROR_HANDLING', 1);
 	uses('cake_log');
-	error_reporting(E_ALL);
+	error_reporting(E_ALL & ~E_DEPRECATED);
 
 	/**
 	* A function to directly log errors
