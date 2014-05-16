@@ -955,6 +955,33 @@ class Ticket extends AppModel
         return $data;
     }
 
+    function getBarterOrRemit($ticketId)
+    {
+        $r = $this->query(
+            "
+            SELECT t.ticketId, tr.expirationCriteriaId
+            FROM ticket t
+            INNER JOIN offer o USING(offerId)
+            INNER JOIN schedulingInstance i USING(schedulingInstanceId)
+            INNER JOIN schedulingMaster m USING(schedulingMasterId)
+            INNER JOIN schedulingMasterTrackRel r USING (schedulingMasterId)
+            INNER JOIN track AS tr USING (trackId)
+            WHERE t.ticketId = {$ticketId}
+            "
+        );
+        if (empty($r) || !is_array($r)) {
+            return false;
+        }
+        $exp = $r[0]['tr']['expirationCriteriaId'];
+        if ($exp == 2 || $exp == 3) {
+            return 'Remit';
+        }
+        if ($exp == 1 || $exp == 4 || $exp == 5 || $exp == 6) {
+            return 'Barter';
+        }
+        return false;
+    }
+
     function __runTakeDown($sm_ids_imp)
     {
         if (empty($sm_ids_imp) || !$sm_ids_imp) {

@@ -1300,6 +1300,8 @@ class WebServiceTicketsController extends WebServicesController
                 )
             );
 
+            $barterOrRemit = $this->Ticket->getBarterOrRemit($ticketId);
+
         } else {
             if ($username) {
                 $this->User->UserSiteExtended->recursive = 0;
