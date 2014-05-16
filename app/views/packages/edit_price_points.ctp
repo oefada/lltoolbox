@@ -55,7 +55,6 @@
         
         <!-- NAME -->
         <dl><dt>Name:</dt><dd><input type="text" id="name-rate-period" name="data[PricePoint][name]" value="<? if (isset($pricePoint['name'])) { echo $pricePoint['name']; } ?>" style="width:600px;" /></dd></dl><br />
-                Note:
         <!-- RATE PERIODS -->
         <table cellpadding="0" cellspacing="0">
             <tr>

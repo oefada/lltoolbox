@@ -4,7 +4,7 @@ App::import('Vendor', 'nusoap/web_services_controller');
 App::import("Vendor", "Base", array('file' => "appshared" . DS . "framework" . DS . "Base.php"));
 require_once(APP . '/vendors/pp/Processor.class.php');
 
-error_reporting(E_ALL);
+error_reporting(E_ALL & ~E_DEPRECATED);
 set_error_handler("wstErrorHandler");
 register_shutdown_function('wstErrorShutdown');
 
