@@ -66,7 +66,6 @@ if (!empty($results) && isset($serializedFormInput)):
 		<thead class='fixedHeader'>
 		<tr>
 		<th><?=$utilities->sortLink('Ticket.siteId', 'Site',$this, $html,$url)?></th>
-        <th><?=$utilities->sortLink('Ticket.tldId', 'Locale', $this, $html, $url)?></th>
 		<th><?=$utilities->sortLink('Offer.offerId', 'Booking Date',$this, $html,$url)?></th>
 		<th><?=$utilities->sortLink('Client.name', 'Payment Date',$this, $html,$url)?></th>
 		<th><?=$utilities->sortLink('Track.applyToMembershipBal', 'Ticket ID',$this, $html,$url)?></th>

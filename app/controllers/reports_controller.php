@@ -1864,6 +1864,10 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey]['isPegasus'] = 1;
                     $transformedPegasusArray[$pgKey]['Ticket']['isFamily'] = false;
                     $transformedPegasusArray[$pgKey]['Ticket']['siteId'] = 1;
+                    if($pgValue['PgBooking']['tldId'] == 1){
+                        //TICKET 4527- don't ask why
+                        $transformedPegasusArray[$pgKey]['Ticket']['siteId'] = 'UK';
+                    }
                     //en_us?
                     $transformedPegasusArray[$pgKey]['Locale']['code'] = $this->LltgServiceHelper->getServiceBuilderFromTldId($pgValue['PgBooking']['tldId'])->getContext()->getLocaleCode();
                     $transformedPegasusArray[$pgKey][0]['endDate'] = $pgValue['PgBooking']['dateCreated'];

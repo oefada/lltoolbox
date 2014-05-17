@@ -63,7 +63,6 @@ foreach ($results as $r):
 	
 	$line = array(
 	$siteIds[$r['Ticket']['siteId']],
-    $r['Locale']['code'],
 	'"' . date('M d, Y h:m:s', strtotime($r[0]['endDate'])) . '"',
 	'"' . date('M d, Y', strtotime($r['PaymentDetailFull'][0]['pd']['ppResponseDate'])) . '"',
 	$r['Ticket']['ticketId'],
