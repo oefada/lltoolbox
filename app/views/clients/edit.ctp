@@ -55,49 +55,77 @@
 </script>
 <script type="text/javascript" src="/js/tiny_mce/tiny_mce.js"></script>
 <script type="text/javascript">
-   // alert('tinyMCE');
     tinyMCE.init({
         //mode : "specific_textareas",
         // editor_selector : "ClientSiteExtended<?=$clientId;?>LongDesc",
         mode : "exact",
         elements : "ClientSiteExtended<?=$client['ClientSiteExtended'][0]['clientSiteExtendedId'];?>LongDesc\
-        ,ClientSiteExtended<?=$client['ClientSiteExtended'][0]['clientSiteExtendedId'];?>Blurb\
         ,ClientInterview0Article",
         theme : "advanced",
-        theme_advanced_buttons1 : "mybutton,bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright, justifyfull,bullist,numlist,undo,redo,link,unlink,code,iframe",
+        theme_advanced_buttons1 : "mybutton,bold,italic,underline,blockquote,separator,strikethrough,justifyleft,justifycenter,justifyright, justifyfull,bullist,numlist,undo,redo,link,unlink,code,iframe,cleanup,paste",
         theme_advanced_buttons2 : "",
         theme_advanced_buttons3 : "",
         theme_advanced_toolbar_location : "top",
         theme_advanced_toolbar_align : "left",
         theme_advanced_statusbar_location : "bottom",
+        plugins: "paste",
         force_p_newlines : false,
         force_br_newlines : true,/** make new lines use br **/
         forced_root_block : '',
+
         setup : function(ed) {
-            ed.onInit.add(function(ed) {
-                var dom = ed.dom,
-                    doc = ed.getDoc(),
-                    el = doc.content_editable ? ed.getBody() : (tinymce.isGecko ? doc : ed.getWin());
-                tinymce.dom.Event.add(el, 'focus', function(e) {
-//                    console.log('focus');
-                    $currentSelector = '#'+ed.id+'_ifr';
-
-                    $initialEditorHeight = jQuery($currentSelector).height();
-                    //expand size of tinyMCE
-                    jQuery($currentSelector).css('height','150px');
-
-                })
-                tinymce.dom.Event.add(el, 'blur', function(e) {
-//                    console.log('blur');
-//                    console.log(ed.id);
-                    jQuery('#'+ed.id+'_ifr').css('height',$initialEditorHeight+'px');
-                })
-
-            });
+            tinyMCEfocusGrow(ed);
         }
         // init_instance_callback : 'resizeEditorBox',
         //auto_resize : true
     });
+    tinyMCE.init({
+        //mode : "specific_textareas",
+        // editor_selector : "ClientSiteExtended<?=$clientId;?>LongDesc",
+        mode : "exact",
+        elements : "ClientSiteExtended<?=$client['ClientSiteExtended'][0]['clientSiteExtendedId'];?>Blurb",
+        theme : "advanced",
+        theme_advanced_buttons1 : "mybutton,bold,italic,underline,blockquote,separator,strikethrough,justifyleft,justifycenter,justifyright, justifyfull,undo,redo,link,unlink,code,iframe,cleanup,paste",
+        theme_advanced_buttons2 : "",
+        theme_advanced_buttons3 : "",
+        theme_advanced_toolbar_location : "top",
+        theme_advanced_toolbar_align : "left",
+        theme_advanced_statusbar_location : "bottom",
+        plugins: "paste",
+        force_p_newlines : false,
+        force_br_newlines : true,/** make new lines use br **/
+        forced_root_block : '',
+        setup : function(ed) {
+            tinyMCEfocusGrow(ed);
+        }
+        // init_instance_callback : 'resizeEditorBox',
+        //auto_resize : true
+    });
+
+    function tinyMCEfocusGrow(ed){
+        ed.onInit.add(function(ed) {
+            //paste as plaintext by default
+            ed.pasteAsPlainText = true;
+            var dom = ed.dom,
+                doc = ed.getDoc(),
+                el = doc.content_editable ? ed.getBody() : (tinymce.isGecko ? doc : ed.getWin());
+            tinymce.dom.Event.add(el, 'focus', function(e) {
+//                    console.log('focus');
+                $currentSelector = '#'+ed.id+'_ifr';
+
+                $initialEditorHeight = jQuery($currentSelector).height();
+                //expand size of tinyMCE
+                jQuery($currentSelector).css('height','150px');
+
+            })
+            tinymce.dom.Event.add(el, 'blur', function(e) {
+//                    console.log('blur');
+//                    console.log(ed.id);
+                jQuery('#'+ed.id+'_ifr').css('height',$initialEditorHeight+'px');
+            })
+
+        });
+    }
 
 </script>
 <script type="text/javascript">
