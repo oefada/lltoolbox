@@ -629,9 +629,9 @@ function updateRetail(autoFillPercentRetail, autoFillSuggestedFlexPrice, numNigh
             }
         }
 		checkedIds += ',' + $(this).val();
-        nameRatePeriod = ratePeriodDates[$(this).val()] + ';';
+        nameRatePeriod += ratePeriodDates[$(this).val()] + ';';
     });
-    $('#name-rate-period').val($('#name-rate-period').val() + nameRatePeriod);;
+    $('#name-rate-period').val(nameRatePeriod);
     $('#retail').html(highestRetail);
     if (isFlexPackage) {
         var pricePerNight = 0;
