@@ -28,10 +28,10 @@ class PAYPAL_i18n extends PaymentModuleAbstract implements PaymentModuleInterfac
         }
 
         $this->postData = array(
-            'USER' => 'luxurylink',
+            'USER' => 'lltgwebmerchant',
             'VENDOR' => 'luxurylink',
             'PARTNER' => 'PayPal',
-            'PWD' => 'luxurylink01',
+            'PWD' => 'JreqZ2oe6KUZyCfrsa',
             'TENDER' => 'C',
             'TRXTYPE' => 'S',
             'CUSTIP' => $_SERVER['REMOTE_ADDR'],
