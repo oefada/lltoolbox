@@ -322,6 +322,8 @@ class LoaDocumentsController extends AppController
             );
             //die(var_dump($loa['howText']));
 
+            $loa['Loa']['appliesToNonBarter'] = '(applies only to non-barter package sales transacted by Luxury Link)';
+
             $loa = $doc + $loa + $checkboxValuesSelectedArr;
 
             $view = new View($this, false);

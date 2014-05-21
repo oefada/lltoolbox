@@ -42,13 +42,10 @@ Configure::write('debug', 0);
             prominent links to <?=$loa['Client']['name'];?> website and booking engine to promote <strong>direct bookings.</strong> Landing pages will appear in all
             appropriate keyword searches on Luxury Link.</p>
     </li>
-    <li><p><strong>Call forwarding service - </strong>a unique, toll-free telephone number will be assigned to <?=$loa['Client']['name'];?>; consumer calls will be forwarded to your reservations desk for            <strong>direct booking</strong>.<strong> </strong>
-        </p>
-    </li>
     <li><p><strong>Unlimited reservation referrals</strong>, clicks, and calls (commission-free)
         </p>
     </li>
-    <li><p><strong>Unlimited promotional package sales</strong>
+    <li><p><strong>Unlimited promotional package sales - </strong> via the LL “On Request” and “Auction” platforms  plus real time availability and seasonally priced offers bookable through your CRS.
         </p>
     </li>
     <li><p><strong>Customer Data – </strong>
@@ -78,7 +75,7 @@ Configure::write('debug', 0);
             </li>
             <li>General Manager interview posted on your property Showcase Page
             </li>
-            <li>2 additional posts on Facebook
+            <li>1 additional posts on Facebook
             </li>
             <li>5 property-exclusive Twitter posts
             </li>
@@ -86,9 +83,7 @@ Configure::write('debug', 0);
             </li>
             <li>Video featured on Luxury Link's YouTube channel
             </li>
-            <li>Potential inclusion in LLTG social media features (e.g. destination/lifestyle- specific posts) and within Luxury Lounge community
-            </li>
-            <li>Additional exposure via Vacationist social media channel, if applicable
+            <li>Potential inclusion in LLTG social media features (e.g. destination/lifestyle- specific/Vacationist posts) and within Luxury Lounge community
             </li>
         </ul>
         <? }else{?>
@@ -103,9 +98,8 @@ Configure::write('debug', 0);
                 </li>
                 <li>2 property-exclusive Twitter posts
                 </li>
-                <li>Potential inclusion in LLTG social media features (e.g. destination/lifestyle- specific posts) and within Luxury Lounge community
-                </li>
-                <li>Additional exposure via Vacationist social media channel, if applicable
+                <li>Potential inclusion in LLTG social media features (e.g. destination/lifestyle- specific/Vacationist posts) and within
+                    Luxury Lounge community
                 </li>
             </ul>
 
@@ -144,7 +138,7 @@ Configure::write('debug', 0);
     </li><?}?>
 
 </ol>
-<p><u><strong>Fees</strong></u>
+<p><u><strong>Fees  for the Luxury Link Signature Program</strong></u>
 </p>
 <? if (!empty($loa['Loa']['membershipFee'])) { ?>
     <? if ($loa['Loa']['membershipFee'] > 11999 && ($loa['Loa']['buynowCommissionPerc'] >= 20)) { ?>
@@ -158,11 +152,18 @@ Configure::write('debug', 0);
     }
 } ?>
 <table>
+    <?if($loa['Loa']['loaMembershipTypeId'] == '7'){?>
+        <tr>
+            <td width="50%"><strong>Membership<br/></strong></td>
+            <td><?=$loa['Loa']['membershipTotalNights'];?> room nights plus mutually agreed upon package inclusions</td>
+        </tr>
+    <? }else {?>
     <?if (!empty($loa['Loa']['membershipFee'])){ ?>
     <tr>
         <td width="50%"><strong>Membership<br/></strong></td>
         <td>$<?=number_format($loa['Loa']['membershipFee'],0,'.',',');?> <?if($loa['Loa']['loaMembershipTypeId'] == 1){?><em>(Payable in Barter)</em><?}?></td>
     </tr>
+    <? }?>
     <? }?>
     <?if (!empty($loa['Loa']['membershipTotalPackages'])){ ?>
         <tr>
@@ -170,7 +171,7 @@ Configure::write('debug', 0);
             <td><?=$loa['Loa']['membershipTotalPackages'];?> <em><strong></strong></em></td>
         </tr>
     <? }?>
-    <?if (!empty($loa['Loa']['membershipTotalNights'])){ ?>
+    <?if (!empty($loa['Loa']['membershipTotalNights']) && ($loa['Loa']['loaMembershipTypeId'] !== '7')){ ?>
         <tr>
             <td width="50%"><strong>Total Nights<br/></strong></td>
             <td><?=$loa['Loa']['membershipTotalNights'];?> <em><strong></strong></em></td>
@@ -181,18 +182,18 @@ Configure::write('debug', 0);
         ?>
         <? if ($loa['Loa']['auctionCommissionPerc'] == $loa['Loa']['buynowCommissionPerc']) { ?>
             <tr>
-                <td><strong>Promotional Packages Commission Fee</strong></td>
+                <td><strong>Promotional Packages Sales Commission</strong></td>
                 <td><? if (!empty($loa['Loa']['buynowCommissionPerc'])) { ?><?= $loa['Loa']['buynowCommissionPerc']; ?>%
-                        <br/><? } ?>
+                        <small><?=$$loa['Loa']['appliesToNonBarter'];?></small><br/><? } ?>
                 </td>
             </tr>
 
         <? } else { ?>
             <tr>
-                <td><strong>Promotional Packages Commission Fee</strong></td>
+                <td><strong>Promotional Packages Sales Commission</strong></td>
                 <td><? if (!empty($loa['Loa']['auctionCommissionPerc'])) { ?>Auctions: <?= $loa['Loa']['auctionCommissionPerc']; ?>%<? } ?>
                     <? if (!empty($loa['Loa']['buynowCommissionPerc'])) { ?>
-                        <br/>Buy Now: <?= $loa['Loa']['buynowCommissionPerc']; ?>%<br/><? } ?>
+                        <br/>Buy Now: <?= $loa['Loa']['buynowCommissionPerc']; ?>%<small><?=$$loa['Loa']['appliesToNonBarter'];?></small><br/><? } ?>
                 </td>
             </tr>
         <? } ?>
@@ -201,9 +202,9 @@ Configure::write('debug', 0);
         //e.g. sugar
         ?>
         <tr>
-            <td><strong>Promotional Packages Commission Fee</strong></td>
+            <td><strong>Promotional Packages Sales Commission</strong></td>
             <td><? if (!empty($loa['Loa']['buynowCommissionPerc'])) { ?><?= $loa['Loa']['buynowCommissionPerc']; ?>%
-                    <br/><? } ?>
+                    <small><?=$loa['Loa']['appliesToNonBarter'];?></small><br/><? } ?>
             </td>
         </tr>
     <?
