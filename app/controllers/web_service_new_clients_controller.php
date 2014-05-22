@@ -79,9 +79,15 @@ class WebServiceNewClientsController extends WebServicesController
 		$client_data_save['teamName']			= $decoded_request['client']['team_name'];
         $client_data_save['segment']			= $decoded_request['client']['segment'];
 
-        $client_data_save['address1']			= $decoded_request['client']['address1'];
-        $client_data_save['address2']			= $decoded_request['client']['address2'];
-        $client_data_save['postalCode']			= $decoded_request['client']['postalCode'];
+        if(empty($client_data_save['address1'])){
+            $client_data_save['address1']			= $decoded_request['client']['address1'];
+        }
+        if(empty($client_data_save['address1'])){
+            $client_data_save['address1']			= $decoded_request['client']['address1'];
+        }
+        if(empty($client_data_save['postalCode'])){
+            $client_data_save['postalCode']			= $decoded_request['client']['postalCode'];
+        }
 
         $client_data_save['modified']			= $date_now;
         $client_data_save['seoName']			= $this->Client->convertToSeoName($client_data_save['name']);
