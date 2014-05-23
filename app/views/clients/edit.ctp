@@ -68,6 +68,7 @@
         theme_advanced_toolbar_location : "top",
         theme_advanced_toolbar_align : "left",
         theme_advanced_statusbar_location : "bottom",
+        entity_encoding : "raw",
         plugins: "paste",
         force_p_newlines : false,
         force_br_newlines : true,/** make new lines use br **/
