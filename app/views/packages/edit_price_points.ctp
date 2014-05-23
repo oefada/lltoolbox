@@ -54,7 +54,9 @@
         <? endif; ?>
         
         <!-- NAME -->
-        <dl><dt>Name:</dt><dd><input type="text" id="name-rate-period" name="data[PricePoint][name]" value="<? if (isset($pricePoint['name'])) { echo $pricePoint['name']; } ?>" style="width:600px;" /></dd></dl><br />
+        <dl><dt>Name:</dt><dd><input type="text" id="name-rate-period" name="data[PricePoint][name]" value="<? if (isset($pricePoint['name'])) { echo $pricePoint['name']; } ?>" style="width:600px;" />
+                        <?=$html->image('reset.png', array('onClick' => 'resetPPName();', 'style' => 'width: 40px;height: 40px; vertical-align: middle; padding-bottom: 5px;'))?>
+         </dd></dl><br />
         <!-- RATE PERIODS -->
         <table cellpadding="0" cellspacing="0">
             <tr>
@@ -411,6 +413,12 @@ $('.check-rate-period').change(function() {
 		var target = $('#'+destination);
 		target.val( requestedPrice*100/$('#retail').text() );
 		target.change();
+	}
+
+	function resetPPName() {
+
+        $('#name-rate-period').val(' ');
+
 	}
 
 	$('a#restrictions_pp').tooltip({track:true, bodyHandler: function() { return restrictionText(); } });
