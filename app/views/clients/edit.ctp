@@ -69,6 +69,7 @@
         theme_advanced_toolbar_align : "left",
         theme_advanced_statusbar_location : "bottom",
         entity_encoding : "raw",
+        extended_valid_elements : "iframe[src|title|width|height|allowfullscreen|frameborder],img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name]",
         plugins: "paste",
         force_p_newlines : false,
         force_br_newlines : true,/** make new lines use br **/
@@ -92,6 +93,7 @@
         theme_advanced_toolbar_location : "top",
         theme_advanced_toolbar_align : "left",
         theme_advanced_statusbar_location : "bottom",
+        extended_valid_elements : "iframe[src|title|width|height|allowfullscreen|frameborder],img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name]",
         plugins: "paste",
         force_p_newlines : false,
         force_br_newlines : true,/** make new lines use br **/
