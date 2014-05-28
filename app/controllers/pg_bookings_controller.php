@@ -269,7 +269,6 @@ class PgBookingsController extends AppController
         if ($booking['PgBooking']['promoCodeId']) {
            $booking['Promo'] = $this->PgBooking->getTicketPromoData($booking['PgBooking']['promoCodeId']);
         }
-        $booking['Notes'] = $this->Notes->getNotesByPgBooking($booking['PgBooking']['pgBookingId']);
         $booking['PgBooking']['validCard'] = $this->getValidCcOnFile($booking['PgBooking']['userId']);
         $this->set('booking', $booking);
         $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
@@ -283,9 +282,17 @@ class PgBookingsController extends AppController
             $this->Session->setFlash(__('Invalid Ticket.', true), 'default', array(), 'error');
             $this->redirect(array('action' => 'index'));
         }
-        if (!empty($this->data) && !empty($this->data['Booking']['pgBicketId'])) {
-            if ($this->pgBooking->save($this->data)) {
-                $this->Session->setFlash(__('The ticket note has been saved.', true), 'default', array(), 'success');
+        if (!empty($this->data) && !empty($this->data['PgBooking']['pgBookingId'])) {
+            if ($this->PgBooking->save($this->data)) {
+                $bookingId = $this->data['PgBooking']['pgBookingId'];
+                $result = $this->Notes->getNotesByPgBooking($bookingId);
+                if ($result) {
+                    $this->Notes->updateNote($this->data['Notes']['0']['note'], $bookingId);
+                    $this->Session->setFlash(__('The ticket note has been updated.', true), 'default', array(), 'success');
+                } else {
+                    $this->Notes->addNote($this->data['Notes']['0']['note'], $bookingId);
+                    $this->Session->setFlash(__('The ticket note has been added.', true), 'default', array(), 'success');
+                }
                 $this->redirect(array('action' => 'view', 'id' => $id));
             } else {
                 $this->Session->setFlash(
@@ -297,7 +304,7 @@ class PgBookingsController extends AppController
             }
         }
         if (empty($this->data)) {
-            $this->data = $this->pgBooking->read(null, $id);
+            $this->data = $this->PgBooking->read(null, $id);
         }
         if (isset($_SESSION['Auth']['AdminUser']['mailnickname'])) {
             $initials_user = $_SESSION['Auth']['AdminUser']['mailnickname'];
@@ -308,9 +315,8 @@ class PgBookingsController extends AppController
         $allow_status_edit = true;
 
         $this->set('allow_status_edit', $allow_status_edit);
-        $ticketStatusIds = $this->Ticket->TicketStatus->find('list');
-        unset($ticketStatusIds[6]);
-        $this->set('ticketStatusIds', $ticketStatusIds);
+        $pgBookingStatusIds = array(1 => "Booked", 50 => "Canceled");
+        $this->set('pgBookingStatusIds', $pgBookingStatusIds);
     }
 
     public function cancel($id = null)

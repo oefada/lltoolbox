@@ -187,13 +187,8 @@
 
             <?php endforeach; ?>
         <?php endif; ?>
-        <?php if (!empty($booking['Notes'])) : ?>
-            <?php foreach ($booking['Notes'] as $t_note) : ?>
-                <?= $t_note['notes']['note']; ?>
-                (by <?= $t_note['notes']['userId']; ?>,
-                <?= $t_note['notes']['dateCreated']; ?>)</br>
-            <?php endforeach; ?>
-        <?php endif; ?>
+        <?php echo $booking['Notes']['0']['note']; ?></td>
+
     </td>
 </tr>
 </table>

@@ -24,6 +24,10 @@ class PgBooking extends AppModel
         'PpvNotice' => array(
             'foreignKey' => 'pgBookingId',
             'dependent' => true
+        ),
+        'Notes' => array(
+            'foreignKey' => 'pgBookingId',
+            'dependent' => true
         )
     );
 
