@@ -75,7 +75,7 @@ Configure::write('debug', 0);
             </li>
             <li>General Manager interview posted on your property Showcase Page
             </li>
-            <li>1 additional posts on Facebook
+            <li>1 additional post on Facebook
             </li>
             <li>5 property-exclusive Twitter posts
             </li>
@@ -184,7 +184,7 @@ Configure::write('debug', 0);
             <tr>
                 <td><strong>Promotional Packages Sales Commission</strong></td>
                 <td><? if (!empty($loa['Loa']['buynowCommissionPerc'])) { ?><?= $loa['Loa']['buynowCommissionPerc']; ?>%
-                        <small><?=$$loa['Loa']['appliesToNonBarter'];?></small><br/><? } ?>
+                        <small><?=$loa['Loa']['appliesToNonBarter'];?></small><br/><? } ?>
                 </td>
             </tr>
 
@@ -193,7 +193,7 @@ Configure::write('debug', 0);
                 <td><strong>Promotional Packages Sales Commission</strong></td>
                 <td><? if (!empty($loa['Loa']['auctionCommissionPerc'])) { ?>Auctions: <?= $loa['Loa']['auctionCommissionPerc']; ?>%<? } ?>
                     <? if (!empty($loa['Loa']['buynowCommissionPerc'])) { ?>
-                        <br/>Buy Now: <?= $loa['Loa']['buynowCommissionPerc']; ?>%<small><?=$$loa['Loa']['appliesToNonBarter'];?></small><br/><? } ?>
+                        <br/>Buy Now: <?= $loa['Loa']['buynowCommissionPerc']; ?>%<small><?=$loa['Loa']['appliesToNonBarter'];?></small><br/><? } ?>
                 </td>
             </tr>
         <? } ?>
