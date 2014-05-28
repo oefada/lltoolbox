@@ -1,18 +1,18 @@
 <?php
 $booking = $this->data;
-$this->pageTitle = $this->data['Package']['packageName'].$html2->c($this->data['Booking']['pgBookingId'], 'Ticket Id:');
+//$this->pageTitle = $this->data['Package']['packageName'].$html2->c($this->data['Booking']['pgBookingId'], 'Ticket Id:');
 ?>
 <div class="tickets form">
-<?php echo $form->create('Ticket', array('disabled' => 'disabled'));?>
+<?php echo $form->create('PgBooking', array('disabled' => 'disabled'));?>
 	<fieldset>
 	<?php
-		echo $form->input('ticketId', array('type' => 'hidden'));
+		echo $form->input('pgBookingId', array('type' => 'hidden'));
 		if ($allow_status_edit) {
-			echo $form->input('ticketStatusId');
+			echo $form->input('pgBookingStatusId', array('label' => 'Ticket Status Id'));
 		} 
-		echo $form->input('ticketNotes', array('cols'=> '80', 'rows' => '15'));
-		/*
+   	    echo $form->input('Notes.0.note', array('cols'=> '80', 'rows' => '15', 'label' => 'Ticket Notes' ) );
 		// just tickets for nowz
+		/*
 		echo $form->input('ticketStatusId', array('disabled' => 'disabled'));
 		echo $form->input('packageId', array('disabled' => 'disabled'));
 		echo $form->input('offerId', array('disabled' => 'disabled'));

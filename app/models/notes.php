@@ -6,25 +6,36 @@ class Notes extends AppModel {
 	var $primaryKey = 'notesId';
 	var $displayField = 'notes';
 
-	function beforeSave() {
-		// check to make sure the promoCode does not already exist
-		$this->data['PromoCode']['promoCode'] = strtoupper($this->data['PromoCode']['promoCode']);
-		$result = $this->query('SELECT * FROM promoCode WHERE promoCode = "' . $this->data['PromoCode']['promoCode'] . '"');
-		if (empty($result)) {
-			return true;
-		}
-	}
-
     public function getNotesByPgBooking($pgBookingId)
     {
         $sql = "SELECT * FROM notes ";
-        $sql .= " where pgBookingId = ".$pgBookingId;
+        $sql .= " where pgBookingId = ".$pgBookingId . " and noteId = 1";
+
+        $result = $this->query($sql);
+
+        return $result;
+    }
+    public function updateNote($note, $pgBookingId)
+    {
+        $sql = "UPDATE notes ";
+        $sql .= " set note = '" . $note . "'";
+        $sql .= " where noteId = 1 and pgBookingId = ". $pgBookingId;
 
         $result = $this->query($sql);
 
         return $result;
     }
 
+    public function addNote($note, $pgBookingId)
+    {
+        $sql = "INSERT INTO notes ";
+        $sql .= " (noteId, note, userId, ticketId, pgBookingId, dateCreated) ";
+        $sql .= " values (1, '". $note . "','',''," .$pgBookingId . ', now())';
+
+        $result = $this->query($sql);
+
+        return $result;
+    }
 
 
     protected static function getEntityColumnsMap()
