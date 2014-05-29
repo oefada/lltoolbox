@@ -85,6 +85,7 @@ class PgBookingsController extends AppController
         }
 
         $allowed_query_keys = array(
+            's_booking_status_id',
             's_quick_link',
             's_tld_id'
         );
@@ -168,7 +169,6 @@ class PgBookingsController extends AppController
 
         if (!$single_search) {
             $s_ticket_id = null;
-            $s_booking_status_id = null;
         } else {
             if (!$single_search_override) {
                 $s_tld_id = null;
@@ -185,6 +185,7 @@ class PgBookingsController extends AppController
         $this->set('s_package_id', $s_package_id);
         $this->set('s_promo_code', $s_promo_code);
         $this->set('s_tld_id', $s_tld_id);
+        $this->set('s_booking_status_id', $s_booking_status_id);
         $this->set('s_start_y', $s_start_y);
         $this->set('s_start_m', $s_start_m);
         $this->set('s_start_d', $s_start_d);
@@ -196,7 +197,7 @@ class PgBookingsController extends AppController
 
         if ($s_booking_id) {
             if (sizeof($bookings_index) == 1) {
-                header("location: /pg_bookings/view/" . $bookings_index[0]['PgBooking']['bookingId']);
+                header("location: /pg_bookings/view/" . $bookings_index[0]['PgBooking']['pgBookingId']);
                 exit;
             }
         }
@@ -219,6 +220,8 @@ class PgBookingsController extends AppController
         $this->set('csv_link_string', $csv_link_string);
         $this->set('bookings', $bookings_index);
         $this->set('bookingStatusDisplay', $this->PgBooking->getStatusDisplay());
+        $pgBookingStatusIds = array(1 => "Booked", 50 => "Canceled");
+        $this->set('pgBookingStatus', $pgBookingStatusIds);
     }
 
     public function getValidCcOnFile($userId)

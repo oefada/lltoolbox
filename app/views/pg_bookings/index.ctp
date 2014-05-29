@@ -105,8 +105,12 @@ $this->set('hideSidebar', true);
 				<td>
 					<select name="s_booking_status_id">
 						<option value="0">All</option>
-                        <option value="1" <? if ($s_tld_id == 1) { echo 'selected="selected"'; } ?>>Booked</option>
-                        <option value="2" <? if ($s_tld_id == 2) { echo 'selected="selected"'; } ?>>Canceled</option>
+						<?php echo "status id: ".$s_booking_status_id;
+						foreach ($pgBookingStatus as $k=>$v) {
+							$selected = ($k == $s_booking_status_id) ? 'selected="selected"' : '';
+							echo "<option value=\"$k\" $selected>$v</option>\n";
+						}
+						?>
 					</select>
 				</td>
 			</tr>
