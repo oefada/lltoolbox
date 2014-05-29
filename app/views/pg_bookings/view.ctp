@@ -187,8 +187,9 @@
 
             <?php endforeach; ?>
         <?php endif; ?>
-        <?php echo $booking['Notes']['0']['note']; ?></td>
-
+        <?php if (!empty($booking['Notes']['0']['note'])) : ?>
+                <?php echo $booking['Notes']['0']['note']; ?></td>
+        <?php endif; ?>
     </td>
 </tr>
 </table>
