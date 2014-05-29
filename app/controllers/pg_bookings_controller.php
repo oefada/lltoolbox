@@ -61,6 +61,7 @@ class PgBookingsController extends AppController
         $s_quick_link = isset($form['s_quick_link']) ? $form['s_quick_link'] : '';
         $s_package_id = isset($form['s_package_id']) ? $form['s_package_id'] : '';
         $s_promo_code = isset($form['s_promo_code']) ? $form['s_promo_code'] : '';
+        $s_confirmation_number = isset($form['s_confirmation_number']) ? $form['s_confirmation_number'] : '';
         $s_has_promo = isset($form['s_has_promo']) ? $form['s_has_promo'] : '';
         $s_start_y = isset($form['s_start_y']) ? $form['s_start_y'] : date('Y');
         $s_start_m = isset($form['s_start_m']) ? $form['s_start_m'] : date('m');
@@ -75,6 +76,10 @@ class PgBookingsController extends AppController
 
         if (isset($_GET['searchUserId'])) {
             $s_user_id = $_GET['searchUserId'];
+        }
+
+        if (isset($_GET['searchConfirmationNnumber'])) {
+            $s_confirmation_number = $_GET['searchConfirmationNumber'];
         }
 
         if (isset($_GET['query'])) {
@@ -111,6 +116,7 @@ class PgBookingsController extends AppController
                 'PgBooking.dateIn',
                 'PgBooking.dateOut',
                 'PgBooking.pgBookingStatusId',
+                'PgBooking.confirmationNumber',
                 'PgBooking.promoCodeId',
                 'PgBooking.travelerFirstName',
                 'PgBooking.travelerLastName',
@@ -147,6 +153,8 @@ class PgBookingsController extends AppController
             $promoCodeResult = $this->PromoCode->findBypromoCode($s_promo_code);
             $s_promo_code_id = $promoCodeResult['PromoCode']['promoCodeId'];
             $this->paginate['conditions']['PgBooking.promoCodeId'] = $s_promo_code_id;
+        } elseif ($s_confirmation_number) {
+            $this->paginate['conditions']['PgBooking.confirmationNumber'] = $s_confirmation_number;
         } else {
             $single_search = false;
             $this->paginate['conditions']['PgBooking.dateCreated BETWEEN ? AND ?'] = array($s_start_date, $s_end_date);
@@ -160,7 +168,7 @@ class PgBookingsController extends AppController
         }
 
         // allow package/client/user/pricePoint to use date and status
-        if ($s_package_id || $s_client_id || $s_user_id) {
+        if ($s_package_id || $s_client_id || $s_user_id || $s_confirmation_number) {
             $single_search = false;
             if ($s_tld_id) {
                 $this->paginate['conditions']['PgBooking.tldId'] = $s_tld_id;
@@ -186,6 +194,7 @@ class PgBookingsController extends AppController
         $this->set('s_promo_code', $s_promo_code);
         $this->set('s_tld_id', $s_tld_id);
         $this->set('s_booking_status_id', $s_booking_status_id);
+        $this->set('s_confirmation_number', $s_confirmation_number);
         $this->set('s_start_y', $s_start_y);
         $this->set('s_start_m', $s_start_m);
         $this->set('s_start_d', $s_start_d);
