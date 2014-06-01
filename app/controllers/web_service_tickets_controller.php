@@ -2503,6 +2503,14 @@ class WebServiceTicketsController extends WebServicesController
                 $emailFrom = "$siteDisplay <reservations@$siteEmail>";
                 $emailReplyTo = "reservations@$siteEmail";
                 break;
+            case 62:
+                include('../vendors/email_msgs/notifications/62_pegasus_confirmation_client.html');
+                $emailFrom = "$siteDisplay <reservations@$siteEmail>";
+                $emailReplyTo = "reservations@$siteEmail";
+                $emailSubject = "Luxury Link Travel Booking";
+                $userEmail = $clientPrimaryEmail;
+                $emailCc = $clientCcEmail;
+                break;
 
             default:
                 break;
