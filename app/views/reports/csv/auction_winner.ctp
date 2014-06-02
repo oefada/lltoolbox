@@ -1,11 +1,11 @@
 <?php
-/**
+
 error_reporting(0);
 @ini_set('display_errors', 0);
-**/
+
 ini_set('default_charset', 'utf-8');
 Configure::write('debug', 0);
-echo "Site,Locale,Payment Date, Booking Date,Booking,Vendor ID,Accounting Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Promo Description,Currency,Local Billing Price\n";
+echo "Site,Payment Date, Booking Date,Booking,Vendor ID,Accounting Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Promo Description,Currency,Local Billing Price\n";
 foreach ($results as $r):
 	switch($r['OfferType']['offerTypeName']) {
 		case 'Standard Auction':
@@ -62,10 +62,9 @@ foreach ($results as $r):
 	}
 	
 	$line = array(
-	$siteIds[$r['Ticket']['siteId']],
-    $r['Locale']['code'],
-	'"' . date('M d, Y h:m:s', strtotime($r[0]['endDate'])) . '"',
+        ($r['Locale']['code'] !== 'en_US')?'UK':$siteIds[$r['Ticket']['siteId']],
 	'"' . date('M d, Y', strtotime($r['PaymentDetailFull'][0]['pd']['ppResponseDate'])) . '"',
+    '"' . date('M d, Y h:m:s', strtotime($r['dateFirstSuccessfulCharge'])) . '"',
 	$r['Ticket']['ticketId'],
 	$r[0]['clientIds'],
 	$r[0]['accountingIds'],
@@ -86,7 +85,8 @@ foreach ($results as $r):
 	$r['PaymentDetailFull'][0]['pd']['ppExpMonth'].'/'.$r['PaymentDetailFull'][0]['pd']['ppExpYear'],
 	'N/A',
 	'N/A',
-	$r[0]['revenue'],
+	//$r[0]['revenue'],
+    $r['ticketSummary']['totalRevenue'],
 	'N/A',
 	'N/A',
 	'N/A',

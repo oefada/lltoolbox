@@ -1,4 +1,5 @@
 <?php
+include(APP . 'vendors/accounting/ticket.accounting.php');
 class ReportsController extends AppController
 {
     public $name = 'Reports';
@@ -1697,6 +1698,7 @@ class ReportsController extends AppController
                 Ticket.numNights,
                 r.arrivalDate,
                 Ticket.siteId,
+                Ticket.tldId,
                 PaymentDetail.ccType,
                 PaymentDetail.ppCardNumLastFour,
                 PaymentDetail.ppExpMonth,
@@ -1714,6 +1716,7 @@ class ReportsController extends AppController
                 SchedulingMaster.pricePointId,
                 SchedulingMaster.packageId,
                 Promo.amountOff,
+                Promo.percentOff,
                 PromoCode.promoCode,
                 Package.numNights,
                 Package.numRooms,
@@ -1751,7 +1754,7 @@ class ReportsController extends AppController
               LEFT JOIN offerFamily USING(offerId)
               LEFT JOIN countryNew AS Country ON (PaymentDetail.ppBillingCountry = Country.countryId)
               LEFT JOIN currency AS Currency ON (Package.currencyId = Currency.currencyId)
-              WHERE $conditions
+              WHERE $conditions and Ticket.ticketId = 235570
               AND ticketStatusId NOT IN (7,8,17,18)
               GROUP BY Ticket.ticketId
               ORDER BY $order
@@ -1776,8 +1779,20 @@ class ReportsController extends AppController
                     '
                     SELECT pd.*, pt.paymentTypeName FROM paymentDetail AS pd
                     INNER JOIN paymentType AS pt ON pt.paymentTypeId = pd.paymentTypeId
-                    WHERE ticketId = ' . $v['Ticket']['ticketId'] . ' ORDER BY pd.paymentTypeId'
+                    WHERE ticketId = ' . $v['Ticket']['ticketId'] . ' ORDER BY pd.ppResponseDate ASC, pd.paymentTypeId ASC'
                 );
+               // var_dump($paymentDetail);
+                //Can't beat 'em..
+                $firstSuccessfulPaymentDate = null;
+                foreach ($paymentDetail as $key => $payment) {
+                    if (($firstSuccessfulPaymentDate == null) &&
+                        ($payment['pd']['isSuccessfulCharge'] == '1')
+                    ) {
+                        //determine first successfulPayment Date.
+                        $results[$k]['dateFirstSuccessfulCharge'] = $payment['pd']['ppResponseDate'];
+                    }
+                }
+
                 $results[$k]['PaymentDetailFull'] = $paymentDetail;
                 
                 $billingPriceLocal = null;
@@ -1786,6 +1801,12 @@ class ReportsController extends AppController
                 	$billingPriceLocal = round($v['Ticket']['billingPrice'] * $exchangeRate);
                 }
                 $results[$k]['Ticket']['billingPriceLocal'] = $billingPriceLocal;
+
+                //Ticket4527
+                if($v['Ticket']['tldId'] == 2 ){
+                    $results[$k]['PaymentProcessor']['paymentProcessorName'] = 'PayPal - UK';
+                }
+
                 
             }
             // This extracts pricePointId and PackageId from the result set and queries
@@ -1823,7 +1844,7 @@ class ReportsController extends AppController
                 $guar_results = $this->OfferType->query($q);
                 $results[$key]['OfferLookup']['reserveAmt'] = $guar_results[0][$guaranteeTable]['reserveAmt'];
             }
-
+            $ticketAccountingHelper = new TicketAccounting();
             // populate guarantee amount
             foreach ($results as $key => $arr) {
                 $guaranteeAmount = 0;
@@ -1894,6 +1915,10 @@ class ReportsController extends AppController
 
                     if (is_array($pgValue['PgPayment'])){
                         foreach ($pgValue['PgPayment'] as $key => $val){
+                            if(!isset($transformedPegasusArray[$pgKey]['dateFirstSuccessfulCharge'])){
+                                $transformedPegasusArray[$pgKey]['dateFirstSuccessfulCharge']  =$pgValue['PgPayment'][$key]['paymentUSD'];
+                            }
+
                             $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingAddress1'] = $pgValue['PgBooking']['billingAddress'];
                             $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingCity'] = $pgValue['PgBooking']['billingCity'];
                             $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingState'] = $pgValue['PgBooking']['billingState'];
@@ -1937,7 +1962,7 @@ class ReportsController extends AppController
 
                     $transformedPegasusArray[$pgKey]['r']['arrivalDate']= $pgValue['PgBooking']['dateIn'];
                     $transformedPegasusArray[$pgKey]['Package']['numRooms'] = 1;
-                    $transformedPegasusArray[$pgKey]['OfferType']['offerTypeName'] = 'Instant Conf.';
+                    $transformedPegasusArray[$pgKey]['OfferType']['offerTypeName'] = 'Instant Conf';
                     $transformedPegasusArray[$pgKey][0]['percentOfRetail'] = '';
                     $transformedPegasusArray[$pgKey]['ExpirationCriteria']['expirationCriteriaId'] = 3; //Remit
                     $transformedPegasusArray[$pgKey]['PricePoint']['validityStart'] = $pgValue['PgBooking']['dateIn'];
@@ -1951,7 +1976,7 @@ class ReportsController extends AppController
                         $transformedPegasusArray[$pgKey]['PaymentProcessor']['paymentProcessorName'] = 'NOVA';
                     }
                     if ($pgValue['PgBooking']['tldId'] == 2){
-                        $transformedPegasusArray[$pgKey]['PaymentProcessor']['paymentProcessorName']= 'PAYPAL_i18n';
+                        $transformedPegasusArray[$pgKey]['PaymentProcessor']['paymentProcessorName']= 'PayPal - UK';
                     }
                     $transformedPegasusArray[$pgKey]['Promo']['amountOff'] = ' ';
                     $transformedPegasusArray[$pgKey]['PromoCode']['promoCode'] = $pgValue['PromoCode']['promoCode'];
@@ -1969,6 +1994,21 @@ class ReportsController extends AppController
                     //end foreach
                  }
             }//End if PG
+            //@TODO, consolidate loops.
+            foreach ($results as $key => $arr) {
+                $ticketAccountingHelper->setTicketAmount($results[$key][0]['revenue']);
+                $ticketAccountingHelper->processPaymentDetails($results[$key]['PaymentDetailFull']);
+                $ticketAccountingHelper->processPromoDetails($arr['Promo']);
+                $results[$key]['ticketSummary'] = $ticketAccountingHelper->ticketAccountingSummary();
+                /**
+                if ('235570' == $arr['Ticket']['ticketId']) {
+                    var_dump($arr['Ticket']['ticketId']);
+                    var_dump($results[$key][0]['revenue']);
+                    var_dump($results[$key]['OfferLookup']['guaranteeAmount']);
+                    var_dump($ticketAccountingHelper->ticketAccountingSummary());
+                }
+                **/
+            }
 
             //merge number of records with mapped Pegasus results
             $results = array_merge($transformedPegasusArray, $results);

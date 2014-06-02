@@ -66,9 +66,8 @@ if (!empty($results) && isset($serializedFormInput)):
 		<thead class='fixedHeader'>
 		<tr>
 		<th><?=$utilities->sortLink('Ticket.siteId', 'Site',$this, $html,$url)?></th>
-        <th><?=$utilities->sortLink('Ticket.tldId', 'Locale', $this, $html, $url)?></th>
 		<th><?=$utilities->sortLink('Offer.offerId', 'Booking Date',$this, $html,$url)?></th>
-		<th><?=$utilities->sortLink('Client.name', 'Payment Date',$this, $html,$url)?></th>
+		<th>Payment Date</th>
 		<th><?=$utilities->sortLink('Track.applyToMembershipBal', 'Ticket ID',$this, $html,$url)?></th>
 		<th><?=$utilities->sortLink('Offer.offerTypeName', 'Vendor ID',$this, $html,$url)?></th>
 		<th><?=$utilities->sortLink('country', 'Vendor',$this, $html,$url)?></th>
@@ -99,10 +98,16 @@ if (!empty($results) && isset($serializedFormInput)):
 $class = ($k % 2) ? ' class="altrow"' : '';
 ?>
 	<tr<?=$class?>>
-		<td><?=$siteIds[$r['Ticket']['siteId']]?></td>
-        <td><?=$r['Locale']['code']?></td>
+		<td><? //Ticket 4527- what they want. Dont' ask.
+            if ($r['Locale']['code'] !== 'en_US') {
+                echo 'UK';
+            } else {
+                echo $siteIds[$r['Ticket']['siteId']];
+            }
+            ?>
+           </td>
         <td><?=date('M d, Y h:m:s', strtotime($r[0]['endDate']))?></td>
-        <td><?=date('M d, Y', strtotime($r['PaymentDetailFull'][0]['pd']['ppResponseDate']))?></td>
+        <td><?=date('M d, Y', strtotime($r['dateFirstSuccessfulCharge']))?></td>
 		<td>
             <?php
             if (
