@@ -146,7 +146,7 @@
                         <input type="radio" name="data[Package][pegasusDisplay]" value="0" <?=($isPegasus == 0) ? 'checked' : ''; ?> /> No
                         
                         &nbsp;&nbsp;&nbsp;
-                        <? echo $form->input('Package.pegasusPackageCodeRatePlan', array('default'=>$pgsRatePlan, 'label'=>'Rate Plan ', 'div'=>false, 'options'=>array('', 'LX1'=>'LX1', 'LX2'=>'LX2', 'LX3'=>'LX3', 'LX4'=>'LX4', 'LX5'=>'LX5', 'PR0'=>'PR0'))); ?>
+                        <? echo $form->input('Package.pegasusPackageCodeRatePlan', array('default'=>$pgsRatePlan, 'label'=>'Rate Plan ', 'div'=>false)); ?>
                         
                         &nbsp;&nbsp;&nbsp;
                         <? echo $form->input('Package.pegasusPackageCodeRoomGrade', array('default'=>$pgsRoomGrade, 'label'=>'Room Grade ', 'div'=>false, 'style'=>'width:50px;')); ?>

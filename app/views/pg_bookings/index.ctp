@@ -155,6 +155,7 @@ $this->set('hideSidebar', true);
 					&nbsp;<a href="javascript:void(0);" onclick="document.getElementById('s_package_id').value = '';">Clear</a>
 				</td>
 			</tr>
+
 			<tr>
 				<td width="120">
 					Promo Code
@@ -162,6 +163,16 @@ $this->set('hideSidebar', true);
 				<td>
 					<input style="width:150px;" type="text" id="s_promo_code" name="s_promo_code" value="<?php echo $s_promo_code;?>" />
 					&nbsp;<a href="javascript:void(0);" onclick="document.getElementById('s_promo_code').value = '';">Clear</a>
+				</td>
+			</tr>
+			<tr>
+				<td width="120">
+					Hotel Confirmation Number
+				</td>
+				<td>
+					<input style="width:150px;" type="text" id="s_confirmation_number" name="s_confirmation_number" value="<?php echo $s_confirmation_number;?>" />
+
+					&nbsp;<a href="javascript:void(0);" onclick="document.getElementById('s_confirmation_number').value = '';">Clear</a>
 				</td>
 			</tr>
 			</table>
@@ -217,6 +228,7 @@ $this->set('hideSidebar', true);
     <th width="220"  style="color:#FFF;">Check-In</th>
     <th width="220"  style="color:#FFF;">CC</th>
     <th width="220"  style="color:#FFF;">Status</th>
+    <th width="220"  style="color:#FFF;">Hotel Confirm. #</th>
 	<th width="220" style="color:#FFF;">Notes</th>
 	<th width="220" style="color:#FFF;">Promo</th>
 	<th class="actions" style="color:#FFF;"><?php __('Actions');?></th>
@@ -256,6 +268,13 @@ foreach ($bookings as $booking):
             <?php
                 if (isset($bookingStatusDisplay[$booking['PgBooking']['pgBookingStatusId']])) {
                     echo $bookingStatusDisplay[$booking['PgBooking']['pgBookingStatusId']];
+                }
+            ?>
+        </td>
+        <td>
+            <?php
+                if (!empty($booking['PgBooking']['confirmationNumber'])) {
+                    echo $booking['PgBooking']['confirmationNumber'];
                 }
             ?>
         </td>
