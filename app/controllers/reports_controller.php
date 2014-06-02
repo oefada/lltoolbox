@@ -1916,7 +1916,7 @@ class ReportsController extends AppController
                     if (is_array($pgValue['PgPayment'])){
                         foreach ($pgValue['PgPayment'] as $key => $val){
                             if(!isset($transformedPegasusArray[$pgKey]['dateFirstSuccessfulCharge'])){
-                                $transformedPegasusArray[$pgKey]['dateFirstSuccessfulCharge']  =$pgValue['PgPayment'][$key]['paymentUSD'];
+                                $transformedPegasusArray[$pgKey]['dateFirstSuccessfulCharge']  =$pgValue['PgBooking']['dateCreated'];
                             }
 
                             $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingAddress1'] = $pgValue['PgBooking']['billingAddress'];
