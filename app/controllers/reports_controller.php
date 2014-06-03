@@ -1790,6 +1790,7 @@ class ReportsController extends AppController
                     ) {
                         //determine first successfulPayment Date.
                         $results[$k]['dateFirstSuccessfulCharge'] = $payment['pd']['ppResponseDate'];
+                        break;
                     }
                 }
 
