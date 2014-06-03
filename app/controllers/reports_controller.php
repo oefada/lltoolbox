@@ -1899,6 +1899,7 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey][0]['accountingIds'] = $pgValue['Client']['accountingId'];
 
 
+
                     $transformedPegasusArray[$pgKey][0]['clientNames'] = $pgValue['Client']['name'];
 
                     $transformedPegasusArray[$pgKey]['Ticket']['userId'] = $pgValue['PgBooking']['userId'];
@@ -1915,10 +1916,11 @@ class ReportsController extends AppController
 
                     if (is_array($pgValue['PgPayment'])){
                         foreach ($pgValue['PgPayment'] as $key => $val){
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['isSuccessfulCharge'] = '1';
                             if(!isset($transformedPegasusArray[$pgKey]['dateFirstSuccessfulCharge'])){
                                 $transformedPegasusArray[$pgKey]['dateFirstSuccessfulCharge']  =$pgValue['PgBooking']['dateCreated'];
                             }
-
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ticketId'] = $pgValue['PgBooking']['pgBookingId'];
                             $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingAddress1'] = $pgValue['PgBooking']['billingAddress'];
                             $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingCity'] = $pgValue['PgBooking']['billingCity'];
                             $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingState'] = $pgValue['PgBooking']['billingState'];
@@ -1953,7 +1955,7 @@ class ReportsController extends AppController
 
 
                     //TOTAL CHARGED ON THE CREDIT CARD ONLY
-                    $transformedPegasusArray[$pgKey][0]['revenue'] = $pgValue['PgPayment'][0]['paymentUSD'];
+                    $transformedPegasusArray[$pgKey][0]['revenue'] = $pgValue['PgBooking']['subTotalUSD'];
 
                     $transformedPegasusArray[$pgKey]['Ticket']['numNights'] = $this->PgBooking->dateDiff(
                         $pgValue['PgBooking']['dateIn'],
@@ -1994,39 +1996,26 @@ class ReportsController extends AppController
                     //end foreach
                  }
             }//End if PG
-            //@TODO, consolidate loops.
-            foreach ($results as $key => $arr) {
-                $ticketAccountingHelper->setTicketAmount($results[$key][0]['revenue']);
-                $ticketAccountingHelper->processPaymentDetails($results[$key]['PaymentDetailFull']);
-                $ticketAccountingHelper->processPromoDetails($arr['Promo']);
-                $results[$key]['ticketSummary'] = $ticketAccountingHelper->ticketAccountingSummary();
-                /**
-                if ('235570' == $arr['Ticket']['ticketId']) {
-                    var_dump($arr['Ticket']['ticketId']);
-                    var_dump($results[$key][0]['revenue']);
-                    var_dump($results[$key]['OfferLookup']['guaranteeAmount']);
-                    var_dump($ticketAccountingHelper->ticketAccountingSummary());
-                }
-                **/
-            }
-
             //merge number of records with mapped Pegasus results
             $results = array_merge($transformedPegasusArray, $results);
+
+            //@TODO, consolidate loops.
+            foreach ($results as $key => $arr) {
+                    $ticketAccountingHelper->setTicketAmount($results[$key][0]['revenue']);
+                    $ticketAccountingHelper->processPaymentDetails($results[$key]['PaymentDetailFull']);
+
+                    if($arr['Promo']){
+                        $ticketAccountingHelper->processPromoDetails($arr['Promo']);
+                    }
+                    $results[$key]['ticketSummary'] = $ticketAccountingHelper->ticketAccountingSummary();
+                /****/
+            }
 
             //increase number of records with pegasus records for paging
             $numRecords =  $pegasusCount + $numRecords;
             $numPages = ceil($numRecords / $this->perPage);
 
-            /*
-             * If downloading as a CSV, append records from the event registry transactions to the daily sales (formerly auction winner) report
-             */
-            if (@$this->data['download']['csv'] == 1) {
-                $eventRegistryData = $this->EventRegistry->getAuctionWinnerReport(
-                    $this->data['condition1']['value']['between'][0],
-                    $this->data['condition1']['value']['between'][1]
-                );
-                $this->set('eventRegistryData', $eventRegistryData);
-            }
+            //@$this->data['download']['csv'] == 1)
 
             $this->set('currentPage', $this->page);
             $this->set('numRecords', $numRecords);
