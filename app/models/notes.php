@@ -17,8 +17,10 @@ class Notes extends AppModel {
     }
     public function updateNote($note, $pgBookingId)
     {
+        $ticketNotes = Sanitize::Escape($note);
         $sql = "UPDATE notes ";
-        $sql .= " set note = '" . $note . "'";
+
+        $sql .= " set note = '" . $ticketNotes . "'";
         $sql .= " where noteId = 1 and pgBookingId = ". $pgBookingId;
 
         $result = $this->query($sql);
