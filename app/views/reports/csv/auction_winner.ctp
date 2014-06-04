@@ -98,7 +98,7 @@ foreach ($results as $r):
 	$r[0]['percentOfRetail'],
 	$r['PaymentProcessor']['paymentProcessorName'],
 	$remit,
-	$r['Promo']['amountOff'],
+        $r['ticketSummary']['adjustments'],
         $r['PricePoint']['validityStart']?date('M d Y h:i:s A', strtotime($r['PricePoint']['validityStart'])):' ',
         $r['PricePoint']['validityEnd']?date('M d Y h:i:s A', strtotime($r['PricePoint']['validityEnd'])):' ',
 	$promoCode,

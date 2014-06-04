@@ -157,7 +157,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
 		<td><?=$r['PaymentDetailFull'][0]['pd']['ccType']?></td>
 		<td>xxxx<?=$r['PaymentDetailFull'][0]['pd']['ppCardNumLastFour']?></td>
 		<td><?=$r['PaymentDetailFull'][0]['pd']['ppExpMonth'].'/'.$r['PaymentDetailFull'][0]['pd']['ppExpYear']?></td>
-		<td><?=$r[0]['revenue']?></td>
+		<td><?=$r['ticketSummary']['totalRevenue']?></td>
 		<td><?=($r['Ticket']['numNights'] * $r['Package']['numRooms'])?></td>
 		<td><?=$r['OfferType']['offerTypeName']?></td>
 		<td><?switch($r['OfferType']['offerTypeName']) {
