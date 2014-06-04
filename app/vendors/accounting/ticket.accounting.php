@@ -5,7 +5,7 @@
  * Date: 5/21/14
  * Time: 8:53 PM
  */
-//Configure::write('debug', 0);
+Configure::write('debug', 0);
 class TicketAccounting
 {
     private $ticketAmount, $dateFirstSuccessfulPayment;
@@ -43,6 +43,8 @@ class TicketAccounting
                 if ($payment['pd']['paymentTypeId'] == '3' && $payment['pd']['paymentAmount'] > 0) {
                     //if COF, add to total COF
                     $this->addCOF($payment['pd']['paymentAmount']);
+//                    var_dump($this->ticketAmount);
+//                    var_dump(($payment['pd']['paymentAmount']));
                     if (($payment['pd']['paymentAmount'] == $this->ticketAmount) ||
                         $payment['pd']['paymentAmount'] > $this->ticketAmount
                         ) {
@@ -83,8 +85,16 @@ class TicketAccounting
         $results['totalCOF'] = $this->getTotalCOFAmount();
         $results['totalPromos'] = $this->getTotalPromos();
 
+        $this->resetValues();
+
         return $results;
 
+    }
+    public function resetValues()
+    {
+        $this->adjustAmount = 0;
+        $this->ticketAmount = 0;
+        $this->totalRevenue= 0;
     }
 
     /**
@@ -92,6 +102,7 @@ class TicketAccounting
      */
     public function addTicketRevenue($amount)
     {
+        $amount = floatval($amount);
         if (isset($amount)) {
             $this->totalRevenue = $this->totalRevenue + $amount;
         }
@@ -99,6 +110,7 @@ class TicketAccounting
 
     public function addTicketAdjustment($amount)
     {
+        $amount = floatval($amount);
         if (isset($amount)) {
             $this->adjustAmount = $this->adjustAmount + $amount;
         }
@@ -106,6 +118,7 @@ class TicketAccounting
 
     public function addCOF($amount)
     {
+        $amount = floatval($amount);
         if (isset($amount)) {
             $this->totalCOF = $this->totalCOF + $amount;
         }
@@ -113,6 +126,7 @@ class TicketAccounting
 
     public function addPromoAmount($amount)
     {
+        $amount = floatval($amount);
         if (isset($amount)) {
             $this->totalPromos = $this->totalPromos + $amount;
         }
