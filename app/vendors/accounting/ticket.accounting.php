@@ -17,7 +17,7 @@ class TicketAccounting
 
     public function __construct()
     {
-        $this->ticketAmount = ($this->ticketAmount - $this->handlingFee);
+        //$this->ticketAmount = ($this->ticketAmount - $this->handlingFee);
     }
 
     public function processPaymentDetails($arrPaymentDetails)
