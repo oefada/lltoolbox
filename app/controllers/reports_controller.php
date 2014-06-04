@@ -2002,12 +2002,15 @@ class ReportsController extends AppController
 
             //@TODO, consolidate loops.
             foreach ($results as $key => $arr) {
+                //if($arr['Ticket']['ticketId'] == '239938'){
                    // $ticketAccountingHelper->setTicketAmount($results[$key][0]['revenue']);
-                    $ticketAccountingHelper->setTicketAmount($results[$key]['Ticket']['billingPrice']);
+                    $ticketAccountingHelper->setTicketAmount(floatval($results[$key]['Ticket']['billingPrice']));
                     $ticketAccountingHelper->processPaymentDetails($results[$key]['PaymentDetailFull']);
                     $ticketAccountingHelper->processPromoDetails($results[$key]['Promo']);
 
                     $results[$key]['ticketSummary'] = $ticketAccountingHelper->ticketAccountingSummary();
+               // var_dump($ticketAccountingHelper->ticketAccountingSummary());
+               // }
                 /****/
             }
 
