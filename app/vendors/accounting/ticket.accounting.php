@@ -13,10 +13,11 @@ class TicketAccounting
     private $totalRevenue = 0;
     private $adjustAmount = 0;
     private $totalPromos;
+    private $handlingFee = 40;
 
-    function __construct()
+    public function __construct()
     {
-
+        $this->ticketAmount = ($this->ticketAmount - $this->handlingFee);
     }
 
     public function processPaymentDetails($arrPaymentDetails)
@@ -42,7 +43,9 @@ class TicketAccounting
                 if ($payment['pd']['paymentTypeId'] == '3' && $payment['pd']['paymentAmount'] > 0) {
                     //if COF, add to total COF
                     $this->addCOF($payment['pd']['paymentAmount']);
-                    if ($payment['pd']['paymentAmount'] == $this->ticketAmount) {
+                    if (($payment['pd']['paymentAmount'] == $this->ticketAmount) ||
+                        $payment['pd']['paymentAmount'] > $this->ticketAmount
+                        ) {
                         //TICKET4527: Item 4- f a Ticket was paid for in full with a CoF, the Revenue column should be '0' and the Adjustment column should be equal to the CoF value
                         $this->totalRevenue = 0;
                         $this->adjustAmount = $payment['pd']['paymentAmount'];
@@ -55,18 +58,21 @@ class TicketAccounting
 
     public function processPromoDetails($arrPromos)
     {
-        if (!isset($arrPromos, $arraPromoCodes)) {
+        if (!isset($arrPromos)) {
             return false;
         }
         if (!empty($arrPromos['amountOff'])) {
             $this->addTicketAdjustment($arrPromos['amountOff']);
             $this->addPromoAmount($arrPromos['amountOff']);
+            return true;
         }
         if (!empty($arrPromos['percentOff'])) {
 
             $amountOff = $this->ticketAmount * ($arrPromos['percentOff'] / 100);
+
             $this->addTicketAdjustment($amountOff);
             $this->addPromoAmount($amountOff);
+            return true;
         }
     }
 
