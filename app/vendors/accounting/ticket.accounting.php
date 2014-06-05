@@ -5,7 +5,7 @@
  * Date: 5/21/14
  * Time: 8:53 PM
  */
-Configure::write('debug', 0);
+//Configure::write('debug', 0);
 class TicketAccounting
 {
     private $ticketAmount, $dateFirstSuccessfulPayment;
@@ -84,6 +84,7 @@ class TicketAccounting
         $results['adjustments'] = $this->getTotalAdjustments();
         $results['totalCOF'] = $this->getTotalCOFAmount();
         $results['totalPromos'] = $this->getTotalPromos();
+        $results['billingAmount'] = $this->getTicketAmount();
 
         $this->resetValues();
 
@@ -95,6 +96,9 @@ class TicketAccounting
         $this->adjustAmount = 0;
         $this->ticketAmount = 0;
         $this->totalRevenue= 0;
+
+        $this->totalCOF = 0;
+        $this->totalPromos = 0;
     }
 
     /**
@@ -161,6 +165,11 @@ class TicketAccounting
     public function getTotalPromos()
     {
         return $this->totalPromos;
+    }
+
+    public function getTicketAmount()
+    {
+        return $this->ticketAmount;
     }
 
 }

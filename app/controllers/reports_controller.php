@@ -1907,11 +1907,13 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey]['Ticket']['userFirstName'] = $pgValue['User']['firstName'];
                     $transformedPegasusArray[$pgKey]['Ticket']['userLastName'] = $pgValue['User']['lastName'];
 
+
                     $transformedPegasusArray[$pgKey]['Ticket']['userHomePhone'] = $pgValue['User']['homePhone'];
                     $transformedPegasusArray[$pgKey]['Ticket']['userEmail1'] = $pgValue['User']['email'];
                     
                     $transformedPegasusArray[$pgKey]['Currency']['currencyCode'] = null;
                     $transformedPegasusArray[$pgKey]['Ticket']['billingPriceLocal'] = null;
+                    $transformedPegasusArray[$pgKey]['Ticket']['billingPrice'] = $pgValue['PgBooking']['subTotalUSD'];
 
                     $transformedPegasusArray[$pgKey]['Country']['countryName'] = $pgValue['Country']['countryName'];
 
@@ -1990,7 +1992,12 @@ class ReportsController extends AppController
                                 'conditions' => array('promoCodeId'=>$pgValue['PromoCode']['promoCodeId'])
                             )
                         );
-                        $transformedPegasusArray[$pgKey]['Promo']['amountOff'] = $promoCodeData[0]['Promo']['amountOff'];
+                        if(isset($promoCodeData[0]['Promo']['amountOff'])){
+                            $transformedPegasusArray[$pgKey]['Promo']['amountOff'] = $promoCodeData[0]['Promo']['amountOff'];
+                        }
+                        if(isset($promoCodeData[0]['Promo']['percentOff'])){
+                            $transformedPegasusArray[$pgKey]['Promo']['percentOff'] = $promoCodeData[0]['Promo']['percentOff'];
+                        }
                     }
 
                  $pegasusCount++;
