@@ -55,6 +55,13 @@ class PaymentDetailsController extends AppController
             $this->Session->setFlash(__('Invalid Payment Detail Id.', true), 'default', array(), 'error');
         }
         $arr = $this->PaymentDetail->readPaymentDetail($id);
+
+        if ($arr[0]['PaymentDetail']['paymentTypeId'] == 2 && !empty($arr[0]['PaymentDetail']['ppTransactionId'])) {
+            // Gift Card
+            $promoCode = $this->PromoCode->findBypromoCodeId($arr[0]['PaymentDetail']['ppTransactionId']);
+            $arr[0]['giftCertificate']['promoCode'] = $promoCode['PromoCode']['promoCode'];
+        }
+
         $this->set('paymentDetail', $arr[0]);
 
     }

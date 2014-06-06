@@ -485,6 +485,11 @@ class TicketsController extends AppController
         foreach ($ticket['PaymentDetail'] as $k => $v) {
             $paymentType = $this->PaymentType->read(null, $v['paymentTypeId']);
             $ticket['PaymentDetail'][$k]['paymentTypeName'] = $paymentType['PaymentType']['paymentTypeName'];
+            if ($v['paymentTypeId'] == 2 && !empty($v['ppTransactionId'])) {
+                // Gift Card
+                $promoCode = $this->PromoCode->findBypromoCodeId($v['ppTransactionId']);
+                $ticket['PaymentDetail'][$k]['PaymentProcessor']['paymentProcessorName'] = $promoCode['PromoCode']['promoCode'];
+            }
         }
 
         $ticket['Client'] = $this->Ticket->getClientsFromPackageId($ticket['Ticket']['packageId']);
