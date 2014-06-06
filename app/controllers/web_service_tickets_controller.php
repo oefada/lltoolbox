@@ -3333,6 +3333,10 @@ class WebServiceTicketsController extends WebServicesController
                 $paymentDetail['ppBillingState'] = $longWord;
                 $paymentDetail['ppBillingZip'] = $longWord;
                 $paymentDetail['ppBillingCountry'] = $longWord;
+                if ($longWord == "GIFT CERT" && isset($code['PromoCode']['promoCodeId'])) {
+                    // Ticket 4865 - GC promoCodeId isn't being saved on Payment; save it in ppTransactionId
+                    $paymentDetail['ppTransactionId'] = $code['PromoCode']['promoCodeId'];
+                }
             }
         }
 

@@ -56,8 +56,8 @@ class PaymentDetail extends AppModel {
 					$rows[0]['promo']['promoName']=$arr[0]['promo']['promoName'];
 					$rows[0]['promo']['promoId']=$arr[0]['promo']['promoId'];
 				}
-			}elseif($paymentTypeId==2){//Gift Cert
-				$q="SELECT pc.promoCode FROM giftCertBalance AS gcb ";
+			}  elseif($paymentTypeId==2){//Gift Cert
+				$q="SELECT * FROM giftCertBalance AS gcb ";
 				$q.="INNER JOIN promoTicketRel as ptr ON (ptr.promoCodeId=gcb.promoCodeId) ";
 				$q.="INNER JOIN promoCode as pc ON (pc.promoCodeId=ptr.promoCodeId) ";
 				$q.="WHERE ptr.ticketId=$ticketId GROUP BY ticketId";
