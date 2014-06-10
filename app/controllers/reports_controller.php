@@ -1752,7 +1752,7 @@ class ReportsController extends AppController
               LEFT JOIN promo Promo ON pcr.promoId = Promo.promoId
               LEFT JOIN offerLuxuryLink USING(offerId)
               LEFT JOIN offerFamily USING(offerId)
-              LEFT JOIN countryNew AS Country ON (PaymentDetail.ppBillingCountry = Country.countryId)
+              LEFT JOIN country AS Country ON (PaymentDetail.ppBillingCountry = Country.countryId)
               LEFT JOIN currency AS Currency ON (Package.currencyId = Currency.currencyId)
               WHERE $conditions 
               AND ticketStatusId NOT IN (7,8,17,18)
