@@ -3024,6 +3024,24 @@ class PackagesController extends AppController
             die('ERROR(S) HAVE BEEN DETECTED.<br /><br />' . $newPackageId);
         }
     }
+    public function excelnew($clientId, $packageId)
+    {
+        // Setup PackageExcel
+        $this->_generateExportData($clientId, $packageId);
+        if (!isset($_GET['debug'])) {
+            // Output Spreadsheet
+            Configure::write('debug', 1);
+            App::import(
+                'Vendor',
+                'PackageExcel',
+                array('file' => 'PackageExcel' . DS . 'PackageExcelNew.php')
+            );
+            $pe = new PackageExcel($this->viewVars);
+            $pe->modifySheet();
+            $pe->dump('Package-' . $packageId);
+            die();
+        }
+    }
 
     function excel($clientId, $packageId)
     {
