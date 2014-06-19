@@ -1685,7 +1685,7 @@ class ReportsController extends AppController
                 Ticket.userId,
                 Ticket.userFirstName,
                 Ticket.userLastName,
-                PaymentDetail.ppBillingAddress1,
+                MAX(PaymentDetail.ppBillingAddress1),
                 PaymentDetail.ppBillingCity,
                 PaymentDetail.ppBillingState,
                 PaymentDetail.ppBillingCountry,
