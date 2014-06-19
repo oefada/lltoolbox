@@ -91,7 +91,7 @@ if ($_SERVER['ENV'] == "staging") {
         <?=
         $html->link(
             '<span>Excel</span>',
-            "/clients/{$client['Client']['clientId']}/packages/excel/{$package['Package']['packageId']}",
+            "/clients/{$client['Client']['clientId']}/packages/excelnew/{$package['Package']['packageId']}",
             array('class' => 'button'),
             null,
             false
