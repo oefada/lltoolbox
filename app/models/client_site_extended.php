@@ -18,7 +18,7 @@ class ClientSiteExtended extends AppModel {
                     $useFields = $this->llFieldlist;
                     break;
                 case 2:
-                    $useFields = $this->familyFieldlist;
+                    //$useFields = $this->familyFieldlist;
                     break;
                 default:
                     return;
