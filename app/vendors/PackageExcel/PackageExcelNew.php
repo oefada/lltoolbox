@@ -25,7 +25,7 @@ class PackageExcel
     private $xls;
     public $sheet;
     private $viewVars;
-    public $defaultRowOffset= 24;
+    public $defaultRowOffset= 25;
     public $current_row_offset = 0;
     private $validityPeriodArray = array();
     private $cellTotalInclusions, $rowTotalinclusions;
@@ -71,20 +71,20 @@ class PackageExcel
 
 
         $as->getCell('B19')->setValue($package['numNights']);
-//        if ($package['isFlexPackage'] == 1) {
-//            $as->getCell('B12')->setValue($package['flexNumNightsMin'] . ' / ' . $package['flexNumNightsMax']);
-//        } else {
-//            $as->getCell('B12')->setValue('');
-//        }
-        $as->getCell('B20')->setValue($package['numGuests']);
-        $as->getCell('B21')->setValue($package['minGuests']);
-        $as->getCell('B22')->setValue($package['maxAdults']);
+        if ($package['isFlexPackage'] == 1) {
+            $as->getCell('B20')->setValue($package['flexNumNightsMin'] . ' / ' . $package['flexNumNightsMax']);
+        } else {
+            $as->getCell('B20')->setValue('');
+        }
+        $as->getCell('B21')->setValue($package['numGuests']);
+        $as->getCell('B22')->setValue($package['minGuests']);
+        $as->getCell('B23')->setValue($package['maxAdults']);
         if ($this->viewVars['package']['PackageAgeRange']['rangeLow']) {
-            $as->getCell('B23')->setValue(
+            $as->getCell('B24')->setValue(
                 $this->viewVars['package']['PackageAgeRange']['rangeLow'] . ' - ' . $this->viewVars['package']['PackageAgeRange']['rangeHigh']
             );
         } else {
-            $as->getCell('B23')->setValue('');
+            $as->getCell('B24')->setValue('');
         }
 
         // Validity Periods
@@ -240,15 +240,27 @@ class PackageExcel
                             $rowDynamicFee = ($lp_row_offset + $feeCounter);
                             $cellDynamicFeeValue = $feeColumn . $rowDynamicFee;
                             $as->getCell($labelColumn . $rowDynamicFee)->setValue(ucwords($feeData['Fee']['feeName']). $feeTypeTxt);
-                            $as->getCell($cellDynamicFeeValue)->setValue($feeData['Fee']['feePercent']);
+
+                            $feeAmount = floatval($feeData['Fee']['feePercent']);
+                            $as->getCell($cellDynamicFeeValue)->setValue($feeAmount);
 
                             //calculate totals
-                            if($feeData['Fee']['feeTypeId']== '1'){
+                            if ($feeData['Fee']['feeTypeId'] == '1') {
                                 //percentage
-                                $as->getCell($totalsColumn . ($lp_row_offset + $feeCounter))->setValue('=PRODUCT(('.$feeColumn . $lp_row_offset.'*B19),('.$cellDynamicFeeValue.'/100))');
-                            }else{
+                                if (!empty($feeAmount)) {
+                                    //make sure fee is not blank, sometimes data is bad.
+                                    $as->getCell($totalsColumn . ($lp_row_offset + $feeCounter))->setValue(
+                                        '=PRODUCT((' . $feeColumn . $lp_row_offset . '*B19),(' . $cellDynamicFeeValue . '/100))'
+                                    );
+                                }else{
+                                    $as->getCell($totalsColumn . ($lp_row_offset + $feeCounter))->setValue('');
+                                }
+
+                            } else {
                                 //value
-                               $as->getCell($totalsColumn . ($lp_row_offset + $feeCounter))->setValue('=(PRODUCT('.$cellDynamicFeeValue.',B19))');
+                                $as->getCell($totalsColumn . ($lp_row_offset + $feeCounter))->setValue(
+                                    '=(PRODUCT(' . $cellDynamicFeeValue . ',B19))'
+                                );
                             }
                             //align fees labels right
                             $as->getStyle($labelColumn . ($rowDynamicFee))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
