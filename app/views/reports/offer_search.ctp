@@ -46,7 +46,7 @@
 					<?echo $form->text('condition2.field', array('value' => 'ExpirationCriteria.expirationCriteriaId', 'type' => 'hidden'))?>
 					<div class="range">
 						<?php
-							echo $form->select('condition2.value', array('keep' => 'Keep', 2 => 'Remit', 3 => 'Commision/Upgrade'), null, array('multiple' => 'checkbox'))
+							echo $form->select('condition2.value', array('keep' => 'Keep', 2 => 'Remit', 3 => 'Commission/Upgrade'), null, array('multiple' => 'checkbox'))
 						?>
 					</div>
 				</div>
@@ -165,7 +165,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
                     break;
 
             case 3:
-                    echo 'Commision/Upgrade';
+                    echo 'Commission/Upgrade';
                     break;
 			default:
 					echo '';

@@ -117,7 +117,7 @@ $class = ($k % 2) ? ' class="altrow"' : '';
                     break;
 
             case 3:
-                    echo 'Commision/Upgrade';
+                    echo 'Commission/Upgrade';
                     break;
 			default:
 					echo '';
