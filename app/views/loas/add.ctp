@@ -78,9 +78,7 @@ $this->set('clientId', $this->data['Loa']['clientId']);
 <div class="loas form">
     <?php echo $form->create('Loa'); ?>
     <fieldset>
-        <div class="controlset4">
-            <?php echo $multisite->checkbox('Loa'); ?>
-        </div>
+
         <?php
         echo $form->input('accountTypeId', array('label' => 'Account Type'));
         echo $form->input('loaLevelId', array('label' => 'LOA Level'));
@@ -248,14 +246,6 @@ $this->set('clientId', $this->data['Loa']['clientId']);
         var $ = jQuery,
             loaPaymentTermsElement = $("#LoaLoaPaymentTermId"),
             loaRevenueSplitPercentageElement = $("#LoaRevenueSplitPercentage");
-        $("#LoaAddForm").submit(function () {
-            if ($("#LoaSitesLuxuryLink").attr('checked') == false && $("#LoaSitesFamily").attr('checked') == false) {
-                alert("You must check off which site(s) this is for.");
-                return false;
-            } else {
-                return true;
-            }
-        });
 
         if (loaPaymentTermsElement.find("option:selected").text() !== 'Revenue Split') {
             loaRevenueSplitPercentageElement.parent().hide();

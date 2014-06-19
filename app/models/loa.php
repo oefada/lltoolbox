@@ -39,12 +39,6 @@ class Loa extends AppModel
             'rule' => array('comparison', '>', 0),
             'message' => 'Please select an LOA membership type'
         ),
-        'sites' => array(
-            'rule' => array('multiple', array('min' => 1)),
-            'required' => true,
-            'allowEmpty' => false,
-            'message' => 'You must select a site.'
-        ),
         'revenueSplitPercentage' => array(
             'numeric' => array(
                 'rule' => 'numeric',
@@ -78,6 +72,7 @@ class Loa extends AppModel
     public function beforeSave($options)
     {
         $this->data['Loa']['modified'] = date('Y-m-d h:i:s');
+        $this->data['Loa']['sites'] =  array('luxurylink');
         if (isset($this->data['Loa']['loaId'])) {
             $this->saveLoaStatuses('PublishingStatusLL', 'LoaPublishingStatusRelLL', 'luxurylink');
             $this->saveLoaStatuses('PublishingStatusFG', 'LoaPublishingStatusRelFG', 'family');
