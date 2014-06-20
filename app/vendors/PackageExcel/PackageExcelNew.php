@@ -325,38 +325,42 @@ class PackageExcel
         $inclusions = $this->viewVars['package']['ClientLoaPackageRel'][0]['Inclusions'];
         $numberInclusions = count($inclusions);
 
+        $as->getCell($labelColumn . ($inclusions_row_offset))->setValue('Inclusions');
+        $as->getStyle($labelColumn . ($inclusions_row_offset))->applyFromArray($ratePerNightStyle);
 
-        foreach ($inclusions as $key=>$inclusion) {
-//            var_dump($key);
-            //echo $labelColumn . ($inclusions_row_offset + $key);
-            if($key == 0){
-                $as->getCell($labelColumn . ($inclusions_row_offset + $key))->setValue('Inclusions');
-                $as->getStyle($labelColumn . ($inclusions_row_offset + $key))->applyFromArray($ratePerNightStyle);
+        if(!empty($inclusions)){
+            //There are inclusions
+            foreach ($inclusions as $key=>$inclusion) {
+    //            var_dump($key);
+                //echo $labelColumn . ($inclusions_row_offset + $key);
+                $as->getCell($descriptionColumn . ($inclusions_row_offset + $key))->setValue($inclusion['LoaItem']['itemName']);
+                $as->getCell($feeColumn . ($inclusions_row_offset + $key))->setValue($inclusion['LoaItem']['itemBasePrice']);
+                $as->getCell($totalsColumn. ($inclusions_row_offset + $key))->setValue(
+                    '='.$feeColumn. ($inclusions_row_offset + $key) . '*' . $inclusion['PackageLoaItemRel']['quantity']
+                );
+                $inclusionsQty  =  floatval($inclusion['PackageLoaItemRel']['quantity']);
+                if($inclusionsQty > 1){
+                    $this->addMultiDayInclusionSingleDayPrice($inclusion['LoaItem']['itemBasePrice']);
+                }
+                if(($key+1)==$numberInclusions){
+                    //this is the last inclusion
+                    $lastInclusionIndex = $key+1;
+                }
             }
-            $as->getCell($descriptionColumn . ($inclusions_row_offset + $key))->setValue($inclusion['LoaItem']['itemName']);
-            $as->getCell($feeColumn . ($inclusions_row_offset + $key))->setValue($inclusion['LoaItem']['itemBasePrice']);
-            $as->getCell($totalsColumn. ($inclusions_row_offset + $key))->setValue(
-                '='.$feeColumn. ($inclusions_row_offset + $key) . '*' . $inclusion['PackageLoaItemRel']['quantity']
-            );
-            $inclusionsQty  =  floatval($inclusion['PackageLoaItemRel']['quantity']);
-            if($inclusionsQty > 1){
-                $this->addMultiDayInclusionSingleDayPrice($inclusion['LoaItem']['itemBasePrice']);
-            }
-            if(($key+1)==$numberInclusions){
-                //this is the last inclusion
-                $lastInclusionIndex = $key+1;
-
-                $as->getCell($feeColumn . ($inclusions_row_offset + $lastInclusionIndex))->setValue('Total Inclusions:');
-                $as->getStyle($feeColumn . ($inclusions_row_offset + $lastInclusionIndex))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                /***/
-                $as->getCell($totalsColumn . ($inclusions_row_offset + $lastInclusionIndex))->setValue('=ROUND(SUM('.$totalsColumn.$inclusions_row_offset.':'.$totalsColumn.(($inclusions_row_offset + $lastInclusionIndex)-1).'),2)');
-                $as->getStyle($totalsColumn . ($inclusions_row_offset + $lastInclusionIndex))->applyFromArray($currencyStyle);
-
-                $as->getStyle($totalsColumn . ($inclusions_row_offset + $lastInclusionIndex))->applyFromArray($boldStyleArray);
-                $this->rowTotalinclusions = $inclusions_row_offset + $lastInclusionIndex;
-                $this->cellTotalInclusions = $totalsColumn . ($inclusions_row_offset + $lastInclusionIndex);
-            }
+        }else{
+            //there are no inclusions
+            $lastInclusionIndex =  1;
         }
+                    $as->getCell($feeColumn . ($inclusions_row_offset + $lastInclusionIndex))->setValue('Total Inclusions:');
+                    $as->getStyle($feeColumn . ($inclusions_row_offset + $lastInclusionIndex))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                    /***/
+                    $as->getCell($totalsColumn . ($inclusions_row_offset + $lastInclusionIndex))->setValue('=ROUND(SUM('.$totalsColumn.$inclusions_row_offset.':'.$totalsColumn.(($inclusions_row_offset + $lastInclusionIndex)-1).'),2)');
+                    $as->getStyle($totalsColumn . ($inclusions_row_offset + $lastInclusionIndex))->applyFromArray($currencyStyle);
+
+                    $as->getStyle($totalsColumn . ($inclusions_row_offset + $lastInclusionIndex))->applyFromArray($boldStyleArray);
+                    $this->rowTotalinclusions = $inclusions_row_offset + $lastInclusionIndex;
+                    $this->cellTotalInclusions = $totalsColumn . ($inclusions_row_offset + $lastInclusionIndex);
+
         //Valid for Travel
         $validForTravel_row_offset = $this->rowTotalinclusions + 1;
         $as->getCell($labelColumn . $validForTravel_row_offset)->setValue('Valid for Travel');
