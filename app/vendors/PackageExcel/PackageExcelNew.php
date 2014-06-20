@@ -230,6 +230,10 @@ class PackageExcel
                         $as->getCell($totalsColumn . $lp_row_offset)->setValue('=PRODUCT('.$feeColumn . $lp_row_offset.',B19)');
 
                         $feeCounter = 0;
+
+                        if(!empty($roomNightData[$thisRatePeriodIdKey]['Fees'] )){
+                            //there are fees
+
                         foreach ($roomNightData[$thisRatePeriodIdKey]['Fees'] as $feeKey=>$feeData){
                             $feeCounter++;
                             //list all fees
@@ -271,6 +275,11 @@ class PackageExcel
                                 $lastLineIndex = ($rowDynamicFee);
                                 $this->setLastLineData($i,($lastLineIndex+1));
                             }
+                        }
+                        }else{
+                            //there are no fees
+                            $lastLineIndex = $lp_row_offset;
+                            $this->setLastLineData($i,($lastLineIndex+1));
                         }
                         //TOTAL Accommodations Label Cell
                         $rowTotalAccom = $lastLineIndex+1;
