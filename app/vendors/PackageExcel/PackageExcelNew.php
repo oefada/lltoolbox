@@ -221,6 +221,8 @@ class PackageExcel
                         $as->getCell($labelColumn . $lp_row_offset)->setValue('Rate Per Night');
                         //$this->cellColor($labelColumn . $lp_row_offset, 'FFFDA9');
                         $as->getStyle($labelColumn . $lp_row_offset)->applyFromArray($ratePerNightStyle);
+                        //wrap fee label
+                        $as->getStyle($labelColumn. $lp_row_offset)->getAlignment()->setWrapText(true);
 
                         $as->getCell($feeColumn . $lp_row_offset)->setValue($lp['LoaItemRate']['price']);
 
