@@ -365,7 +365,19 @@ class PackageExcel
         $validForTravel_row_offset = $this->rowTotalinclusions + 1;
         $as->getCell($labelColumn . $validForTravel_row_offset)->setValue('Valid for Travel');
         $as->getStyle($labelColumn . ($validForTravel_row_offset))->applyFromArray($ratePerNightStyle);
-        $as->getCell($descriptionColumn . $validForTravel_row_offset)->setValue('-dates-');
+
+        if(!empty($this->viewVars['validity'])){
+            $numberValidityDates = count($this->viewVars['validity']);
+            $strValidity = '';
+            foreach($this->viewVars['validity'] as $keyValidity=> $validityDate){
+                $strValidity .= $validityDate."\n";
+            }
+            $as->getCell($descriptionColumn . $validForTravel_row_offset)->setValue($strValidity);
+            $as->getStyle($descriptionColumn . $validForTravel_row_offset)
+                ->getAlignment()->setWrapText(true);
+            $as->getRowDimension($validForTravel_row_offset)->setRowHeight($numberValidityDates * 24);
+        }
+
 
         $blackoutWeekdays_row_offset = $validForTravel_row_offset+ 2;
         $as->getCell($labelColumn . ($blackoutWeekdays_row_offset))->setValue('Blackout Weekdays');
