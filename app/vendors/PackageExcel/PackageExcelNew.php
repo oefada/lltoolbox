@@ -212,6 +212,7 @@ class PackageExcel
                         $dateLineCount = substr_count($lp['dateRanges'], '|') + 1;
                         $as->getRowDimension($lp_row_offset)->setRowHeight($dateLineCount * 24);
                         $as->getCell($datesColumn . $lp_row_offset)->setValue(str_replace('|', "\n", $lp['dateRanges']));
+                        $as->getStyle($datesColumn . $lp_row_offset)->getAlignment()->setWrapText(true);
                         $as->getStyle($datesColumn . $lp_row_offset)->applyFromArray($boldStyleArray);
 
                         //Rate per night
@@ -444,6 +445,7 @@ class PackageExcel
              $as->getRowDimension($lp_row_offset)->setRowHeight($dateLineCount * 24);
              $as->getCell('C' . $lp_row_offset)->setValue(str_replace('|', "\n", $lp['dateRanges']));
              $as->getStyle('C' . $lp_row_offset)->applyFromArray($boldStyleArray);
+             $as->getStyle('C' . $lp_row_offset)->getAlignment()->setWrapText(true);
 
              $retailValue = floatval($lp['retailValue']);
              $validityTotalCell = 'D'.$this->getValidityTotalRowByKey($i);
