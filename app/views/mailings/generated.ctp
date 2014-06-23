@@ -653,72 +653,68 @@
 
     <!-- FOOTER -->
     <table id="footer" align="center" width="800" height="61" border="0" cellpadding="0" cellspacing="0" bgcolor="#ffffff">
-
+        <!--start footer-->
         <tr>
-            <td align="center"  valign="top" style="padding:10px 0px 0px 0px;">
-                <table align="center"><tr>
-                    <td align="right" style="padding: 12px 10px 0px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-2.jpg" width="231" height="6" /></td>
-                    <td align="center" valign="top" style="padding:20px 0px 10px 0px"><a name="share" target="_blank"><img border="0" width="261" height="33" src="http://www.luxurylink.com/images/email/new/LLsocial-3.jpg" alt="LL Social" usemap="#social" /></a>
-                    </td>
-                    <td align="left" style="padding: 12px 0px 0px 10px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-2.jpg" width="231" height="6" /></td></tr>
+            <td align="center"  valign="top" style="padding:2px 0px 0px 0px;">
+                <table class="container" align="center"><tr>
+                        <td class="deskt" align="right" style="padding: 12px 10px 0px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-2.jpg" width="140" height="6" /></td>
+                        <td align="center" valign="top" style="padding:10px 0px 10px 0px"><a name="share" target="_blank" ><img border="0" width="261" height="33" src="http://www.luxurylink.com/images/email/new/LLsocial-3.jpg" alt="LL Social" usemap="#social" /></a>
+                        </td>
+                        <td class="deskt" align="left" style="padding: 12px 0px 0px 10px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-2.jpg" width="140" height="6" /></td></tr>
                 </table>
             </td>
         </tr>
         <tr>
-            <td align="center"  valign="top" style="padding:15px 13px 0px 13px;" bgcolor="#ffffff">
+            <td align="center" class="remove"  valign="top" style="padding:10px 7px 0px 7px;" bgcolor="#ffffff">
 
-                <table width="760" align="center" cellspacing="4" cellpadding="0">
+                <table class="container" width="620" align="center" cellspacing="4" cellpadding="0">
                     <tr>
-                        <td align="center" width="135" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
+                        <td class="smalltd" align="center" width="150" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
                             <a style="color:#444;text-decoration:none;" target="_blank" href="http://echo3.bluehornet.com/phase2/survey1/survey.htm?cid=mumogm&action=update&eemail=%%urlencoded_to_email%%&_mh=%%mhash%%">Unsubscribe</a></td>
 
-                        <td align="center" width="135" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
+                        <td class="smalltd" align="center" width="150" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
                             <a style="color:#444;text-decoration:none;" target="_blank" href="http://www.luxurylink.com/LL/preference_center.php">Email Preferences</a></td>
 
-                        <td align="center" width="135" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
-                            <a style="color:#444;text-decoration:none;" name="priv-policy" target="_blank" href="http://www.luxurylink.com/about/index.php/privacy-policy?utm_medium=news&utm_source=insider&utm_campaign=insider_140116b&utm_content=footer&utm_term=privacy-policy">Privacy Policy</a></td>
+                        <td class="smalltd" align="center" width="150" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
+                            <a style="color:#444;text-decoration:none;" name="priv-policy" target="_blank" href="http://www.luxurylink.com/about/index.php/privacy-policy?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140529a&utm_content=priv-policy">Privacy Policy</a></td>
 
-                        <td align="center" bgcolor="#f2f2f2" width="135" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
-                            <a style="color:#444;text-decoration:none;" target="_blank" href="http://www.luxurylink.com/about?utm_medium=news&utm_source=insider&utm_campaign=insider_140116b&utm_content=footer&utm_term=about-us">About Us</a></td>
+                        <td class="smalltd" align="center" bgcolor="#f2f2f2" width="150" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:10px;">
+                            <strong>$<a style="color:#444;text-decoration:none;" name="credit-on-file" target="_blank" href="https://www.luxurylink.com/my/my_activity.php">%%cf_creditonfile%%</a></strong> Credit</td>
                     </tr>
                 </table>
 
             </td>
         </tr>
         <tr>
-            <td align="center" valign="top" style="padding:0px 20px 0px 20px;">
-                <table width="752" align="center" cellspacing="0" cellpadding="0" bgcolor="#f2f2f2" >
+            <td align="center" class="remove" valign="top" style="padding:0px 3px 0px 3px;">
+                <table class="table310" width="612" align="center" cellspacing="0" cellpadding="0" bgcolor="#f2f2f2" style="padding:0px 20px 0px 20px;">
                     <tr>
-                        <td align="center"style="padding:10px 10px 10px 10px"><a name="save-50" target="_blank" href="http://www.luxurylink.com/refer-friend/?utm_medium=news&utm_source=insider&utm_campaign=insider_140116b&utm_content=footer&utm_term=raf"><img border="0" width="180" height="100" src="http://www.luxurylink.com/images/email/new/AH_Save50.jpg" style="display:block;" border="0" alt="Save $50 on your next vacation -Click Here" /></a>
+                        <td align="center"style="padding:10px 10px 10px 10px"><a name="save-50" target="_blank" href="http://www.luxurylink.com/refer-friend/?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140529a&utm_content=raf"><img border="0" width="180" height="100" src="http://www.luxurylink.com/images/email/new/AH_Save50.jpg" style="display:block;" border="0" alt="Save $50 on your next vacation -Click Here" class="img2" /></a>
                         </td>
-                        <td align="left" style="padding: 12px 20px 10px 10px;"><img border="0" name="line" src="http://www.luxurylink.com/images/email/new/vert-on-grey.jpg" width="8" height="109" style="display:block;" />
+                        <td class="deskt" align="left" style="padding: 12px 20px 10px 10px;"><img border="0" name="line" src="http://www.luxurylink.com/images/email/new/vert-on-grey.jpg" width="8" height="109" style="display:block;" />
                         </td>
-                        <td align="center" height="80" style="padding: 15px 20px 15px 10px;"><img border="0" name="line" src="http://www.luxurylink.com/images/email/new/ph-icon_49x49.jpg" width="49" height="49" style="display:block;" /><br />
-                            <span style="font-family:Times, Serif;font-size:15px;color:#333;line-height:21px;">CONCIERGE: (888) 297-3299</span><br />
-                            <span style="font-family:Arial, sans-serif;font-size:11px;color:#555;">24 Hours / 7 Days a Week</span>
+                        <td align="center" style="padding: 10px 20px 7px 10px;">
+                            <table align="center" cellspacing="0" cellpadding="0" border="0">
+                                <tr>
+                                    <td align="center"><img width="49" height="49" border="0" class="img3" style="display:block;" src="http://www.luxurylink.com/images/email/new/ph-icon_49x49.jpg" name="line"></td>
+                                </tr>
+                                <tr><td align="center" height="60" style="font-family:Times, Serif;font-size:15px; color:#333;line-height:18px; letter-spacing:0.5px;" class="font-sm">Talk to Our Travel Experts!<br>CALL NOW: <a href="tel:8882973299">(888) 297-3299</a></span><br />
+                                        <span style="font-family:Arial, Verdana, sans-serif; font-size:11px;color:#333;line-height:13px;" >24 Hours / 7 Days a Week</span> </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
         <tr>
-            <td align="center" style="padding: 10px 0px 0px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-line.jpg" width="752" height="1" /></td>
+            <td class="deskt" align="center" style="padding: 10px 0px 0px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-line.jpg" width="550" height="1" /></td>
         </tr>
         <tr>
-            <td valign="top" align="center" style="padding: 6px 60px 10px 60px; line-height:14px; font-family:Arial, sans-serif;color:#888; font-size:8.5pt;">Luxury Link Travel Group, 5510 Lincoln Boulevard, Los Angeles, CA 90094 </td>
+            <td class="container" valign="top" align="center" style="padding: 6px 60px 10px 60px; line-height:14px; font-family:Arial, sans-serif;color:#888; font-size:8.5px;">Luxury Link Travel Group, 5510 Lincoln Boulevard, Los Angeles, CA 90094 </td>
         </tr>
 
     </table>
-    <map name="social">
-        <area shape="rect" coords="0, 0, 40, 33" href="http://www.facebook.com/LuxuryLink" alt="Facebook" target="_blank">
-        <area shape="rect" coords="50, 0, 90, 33" href="http://www.twitter.com/LuxuryLink" alt="Twitter" target="_blank">
-        <area shape="rect" coords="110, 0, 150, 33" href="http://www.instagram.com/luxurylink" alt="Instagram" target="_blank">
-        <area shape="rect" coords="165, 0, 205, 33" href="http://www.pinterest.com/luxurylink" alt="Pinterest" target="_blank">
-        <area shape="rect" coords="225, 0, 262, 33" href="http://www.luxurylinklounge.com" alt="LuxuryLinkLounge" target="_blank" >
-    </map>
-
-
-</td></tr></table>
 <img src="https://bounceexchange.com/tag/em/883.gif" width="1" height="1" border="0" />
 </body>
 </html>
