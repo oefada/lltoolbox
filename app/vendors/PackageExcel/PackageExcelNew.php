@@ -389,13 +389,15 @@ class PackageExcel
 
         // Blackout Dates
         $blackout_row_offset = $blackoutWeekdays_row_offset+ 2;
-        $numBlackOutDates = count($this->viewVars['blackout']);
+
+        $as->getCell($labelColumn . ($blackout_row_offset))->setValue('Blackout Dates');
+        $as->getStyle($labelColumn . ($blackout_row_offset))->applyFromArray($ratePerNightStyle);
+        $numBlackOutDates = null;
+        if(!empty($this->viewVars['blackout'])){
+            $numBlackOutDates = count($this->viewVars['blackout']);
         foreach ($this->viewVars['blackout'] as $bodKey => $bod) {
-            if($bodKey == 0){
-                $as->getCell($labelColumn . ($blackout_row_offset + $bodKey))->setValue('Blackout Dates');
-                $as->getStyle($labelColumn . ($blackout_row_offset + $bodKey))->applyFromArray($ratePerNightStyle);
-            }
             $as->getCell($descriptionColumn . ($blackout_row_offset + $bodKey))->setValue($bod.$bodKey);
+        }
         }
 
         //Restrictions
