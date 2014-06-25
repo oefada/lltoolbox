@@ -502,7 +502,7 @@ foreach($rows as $key=>$row){
 <!--horizontal ad end -->
 <!--start footer-->
 <tr>
-    <td align="center"  valign="top" style="padding:2px 10px 0px 0px;">
+    <td align="center"  valign="top" style="padding:2px 0px 0px 0px;">
         <table class="container" align="center"><tr>
                 <td class="deskt" align="right" style="padding: 12px 10px 0px 0px;"><img border="0" alt="" name="line" src="http://www.luxurylink.com/images/email/new/horiz-2.jpg" width="140" height="6" /></td>
                 <td align="center" valign="top" style="padding:10px 0px 10px 0px"><a name="share" target="_blank" ><img border="0" width="261" height="33" src="http://www.luxurylink.com/images/email/new/LLsocial-3.jpg" alt="LL Social" usemap="#social" /></a>
@@ -512,34 +512,43 @@ foreach($rows as $key=>$row){
     </td>
 </tr>
 <tr>
-    <td align="center" class="remove"  valign="top" style="padding:10px 17px 0px 7px;" bgcolor="#ffffff">
+    <td align="center" class="remove"  valign="top" style="padding:10px 7px 0px 7px;" bgcolor="#ffffff">
 
-        <table class="container" width="590" align="center" cellspacing="4" cellpadding="0">
+        <table class="container" width="620" align="center" cellspacing="4" cellpadding="0">
             <tr>
-                <td class="smalltd" align="center" width="140" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
+                <td class="smalltd" align="center" width="150" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
                     <a style="color:#444;text-decoration:none;" target="_blank" href="http://echo3.bluehornet.com/phase2/survey1/survey.htm?cid=mumogm&action=update&eemail=%%urlencoded_to_email%%&_mh=%%mhash%%">Unsubscribe</a></td>
 
-                <td class="smalltd" align="center" width="140" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
+                <td class="smalltd" align="center" width="150" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
                     <a style="color:#444;text-decoration:none;" target="_blank" href="http://www.luxurylink.com/LL/preference_center.php">Email Preferences</a></td>
 
-                <td class="smalltd" align="center" width="140" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
-                    <a style="color:#444;text-decoration:none;" name="priv-policy" target="_blank" href="http://www.luxurylink.com/about/index.php/privacy-policy?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=priv-policy">Privacy Policy</a></td>
+                <td class="smalltd" align="center" width="150" bgcolor="#f2f2f2" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:11px;">
+                    <a style="color:#444;text-decoration:none;" name="priv-policy" target="_blank" href="http://www.luxurylink.com/about/index.php/privacy-policy?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140529a&utm_content=priv-policy">Privacy Policy</a></td>
+
+                <td class="smalltd" align="center" bgcolor="#f2f2f2" width="150" style="padding: 10px 0px 10px 0px;font-family:Helvetica,maradival,Sans-Serif;font-size:10px;">
+                    <strong>$<a style="color:#444;text-decoration:none;" name="credit-on-file" target="_blank" href="https://www.luxurylink.com/my/my_activity.php">%%cf_creditonfile%%</a></strong> Credit</td>
             </tr>
         </table>
 
     </td>
 </tr>
 <tr>
-    <td align="center" class="remove" valign="top" style="padding:0px 13px 0px 3px;">
-        <table class="table310" width="582" align="center" cellspacing="0" cellpadding="0" bgcolor="#f2f2f2" style="padding:0px 20px 0px 20px;">
+    <td align="center" class="remove" valign="top" style="padding:0px 3px 0px 3px;">
+        <table class="table310" width="612" align="center" cellspacing="0" cellpadding="0" bgcolor="#f2f2f2" style="padding:0px 20px 0px 20px;">
             <tr>
-                <td align="center"style="padding:10px 10px 10px 10px"><a name="save-50" target="_blank" href="http://www.luxurylink.com/refer-friend/?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=<?=$mailing->utmArr['utm_campaign'];?>&utm_content=raf"><img border="0" width="180" height="100" src="http://www.luxurylink.com/images/email/new/AH_Save50.jpg" style="display:block;" border="0" alt="Save $50 on your next vacation -Click Here" class="img2" /></a>
+                <td align="center"style="padding:10px 10px 10px 10px"><a name="save-50" target="_blank" href="http://www.luxurylink.com/refer-friend/?showLeader=1&utm_medium=news&utm_source=inspiration&utm_campaign=inspiration_140529a&utm_content=raf"><img border="0" width="180" height="100" src="http://www.luxurylink.com/images/email/new/AH_Save50.jpg" style="display:block;" border="0" alt="Save $50 on your next vacation -Click Here" class="img2" /></a>
                 </td>
                 <td class="deskt" align="left" style="padding: 12px 20px 10px 10px;"><img border="0" name="line" src="http://www.luxurylink.com/images/email/new/vert-on-grey.jpg" width="8" height="109" style="display:block;" />
                 </td>
-                <td height="80" align="center" style="padding: 15px 20px 10px 10px;">
-                    <img width="49" height="49" border="0" class="img3" style="display:block;" src="http://www.luxurylink.com/images/email/new/ph-icon_49x49.jpg" name="line"><br>
-                    <span style="font-family:Times, Serif;font-size:15px;color:#333;line-height:17px;letter-spacing:0.5px;vertical-align:top;" class="font-sm">Talk to Our Travel Experts!<br>CALL NOW: <a href="tel:8773725877">(888) 297-3299</a></span><br>
+                <td align="center" style="padding: 10px 20px 7px 10px;">
+                    <table align="center" cellspacing="0" cellpadding="0" border="0">
+                        <tr>
+                            <td align="center"><img width="49" height="49" border="0" class="img3" style="display:block;" src="http://www.luxurylink.com/images/email/new/ph-icon_49x49.jpg" name="line"></td>
+                        </tr>
+                        <tr><td align="center" height="60" style="font-family:Times, Serif;font-size:15px; color:#333;line-height:18px; letter-spacing:0.5px;" class="font-sm">Talk to Our Travel Experts!<br>CALL NOW: <a href="tel:8882973299">(888) 297-3299</a></span><br />
+                                <span style="font-family:Arial, Verdana, sans-serif; font-size:11px;color:#333;line-height:13px;" >24 Hours / 7 Days a Week</span> </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
         </table>

@@ -45,7 +45,7 @@ Configure::write('debug', 0);
     <li><p><strong>Unlimited reservation referrals</strong>, clicks, and calls (commission-free)
         </p>
     </li>
-    <li><p><strong>Unlimited promotional package sales - </strong> via the LL “On Request” and “Auction” platforms  plus real time availability and seasonally priced offers bookable through your CRS.
+    <li><p><strong>Unlimited promotional package sales - </strong> via the LL “Buy Now” and “Auction” platforms  plus real time availability and seasonally priced offers bookable through your CRS.
         </p>
     </li>
     <li><p><strong>Customer Data – </strong>

@@ -12,7 +12,7 @@ switch($r['Track']['expirationCriteriaId']) {
             break;
 
     case 3:
-            $remit = 'Commision/Upgrade';
+            $remit = 'Commission/Upgrade';
             break;
 	default:
 			$remit = '';

@@ -414,11 +414,9 @@ class LoasController extends AppController
 
             $this->data['Loa']['modifiedBy'] = $this->user['LdapUser']['username'];
 
-            if (empty($this->data['Loa']['sites'])) {
-            $loa = $this->Loa->find($this->data['Loa']['loaId']);
-            $this->data['Client'] = $loa['Client'];
-                $this->Session->setFlash(__('You must select at least one site to save this LOA.', true));
-            }elseif ($this->Loa->save($this->data)){
+            $this->data['Loa']['sites'] =  array('luxurylink');
+
+            if($this->Loa->save($this->data)){
                 if ($this->data['Loa']['loaLevelId_prev'] !== $this->data['Loa']['loaLevelId']){
                     //LOA level has changed
                     if(4 == $this->data['Loa']['loaLevelId']){
@@ -429,7 +427,7 @@ class LoasController extends AppController
                 }
                 $this->Session->setFlash(__('The Loa has been saved', true));
                 $this->redirect(array('action' => 'edit', $this->data['Loa']['loaId']));
-            } else {
+            } else{
                 $loa = $this->Loa->find($this->data['Loa']['loaId']);
                 $this->data['Client'] = $loa['Client'];
                 $this->Session->setFlash(__('The Loa could not be saved. Please, try again.', true));

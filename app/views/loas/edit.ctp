@@ -193,7 +193,7 @@ $disable_mp = (in_array($uname, $userPermArr) ||
 <div style="clear:both;"></div>
 
 <?php
-echo '<div class="controlset4">' . $multisite->checkbox('Loa') . '</div>';
+echo $form->hidden('sites', array('value'=>'luxurylink'));
 echo $form->input('accountTypeId', array('label' => 'Account Type'));
 echo $form->input('loaLevelId', array('disabled' => $disabled, 'label' => 'LOA Level'));
 echo $form->hidden('loaLevelId_prev', array('value'=>$form->value('loaLevelId')));
@@ -612,12 +612,12 @@ if (isset($loa['Loa']['modified'])) {
                 }
             }
             <? }?>
-            if ($("#LoaSitesLuxuryLink").attr('checked') == false && $("#LoaSitesFamily").attr('checked') == false) {
-                alert("You must check off which site(s) this is for.");
-                return false;
-            } else {
-                return true;
-            }
+//            if ($("#LoaSitesLuxuryLink").attr('checked') == false && $("#LoaSitesFamily").attr('checked') == false) {
+//                alert("You must check off which site(s) this is for.");
+//                return false;
+//            } else {
+//                return true;
+//            }
         });
 
         function copyField(sourceSelector, targetSelector) {

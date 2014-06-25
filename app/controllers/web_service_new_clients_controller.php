@@ -241,7 +241,7 @@ class WebServiceNewClientsController extends WebServicesController
 		    	$newClientContact['clientId']				= $client_id;
 		    	$newClientContact['primaryContact']			= $contact['primary_c'];
 		    	$newClientContact['name']					= $contact['contact_name'];
-		    	$newClientContact['emailAddress']			= $contact['email_address'];
+		    	$newClientContact['emailAddress']			= trim($contact['email_address']);
 		    	$newClientContact['phone']					= $contact['phone_work'];
                 $newClientContact['title']					= $contact['title'];
                 $newClientContact['fax']					= $contact['phone_fax'];

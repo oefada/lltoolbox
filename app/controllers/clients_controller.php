@@ -271,7 +271,8 @@ class ClientsController extends AppController {
 					array(
 						'ClientSiteExtended' => array(
 							'conditions' => array(
-								'ClientSiteExtended.clientId' => $id 
+								'ClientSiteExtended.clientId' => $id,
+                                'ClientSiteExtended.siteId' => 1
 							)
 						),
 						'ClientDestinationRel',
