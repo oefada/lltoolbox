@@ -76,12 +76,29 @@ class PaymentDetail extends AppModel {
 		$paymentDetail = array();
 		$paymentDetail['paymentTypeId'] 		= 2;
 		$paymentDetail['paymentAmount'] 		= $gcData['totalAmountOff'];
-		$paymentDetail['ticketId']				= $ticketId;
+        $paymentDetail['paymentProcessorId']    = 6;
+        $paymentDetail['ccType']                = "GC";
+        $paymentDetail['ticketId']				= $ticketId;
 		$paymentDetail['userId']				= $userId;
 		$paymentDetail['autoProcessed']			= $auto;
 		$paymentDetail['isSuccessfulCharge']	= 1;
 		$paymentDetail['initials']				= $initials;
-		$paymentDetail['ppResponseDate']		= date('Y-m-d H:i:s');
+        $paymentDetail['ppFirstName']           = "";
+        $paymentDetail['ppLastName']            = "";
+        $paymentDetail['ppResponseDate']		= date('Y-m-d H:i:s');
+        $paymentDetail['ppCardNumLastFour']     = "GIFT";
+        $paymentDetail['ppExpMonth']            = "GC";
+        $paymentDetail['ppExpYear']             = "GIFT";
+        $paymentDetail['ppBillingAddress1']     = "GIFT CERT";
+        $paymentDetail['ppBillingCity']         = "GIFT CERT";
+        $paymentDetail['ppBillingState']        = "GIFT CERT";
+        $paymentDetail['ppBillingZip']          = "GIFT CERT";
+        $paymentDetail['ppBillingCountry']      = "GIFT CERT";
+
+        // Ticket 4865 - GC promoCodeId isn't being saved on Payment; save it in ppTransactionId
+        if (isset($gcData['promoCodeId'])) {
+            $paymentDetail['ppTransactionId'] = $gcData['promoCodeId'];
+        }
 
 		if (!$dontSavePayment) {
 			$this->create();
