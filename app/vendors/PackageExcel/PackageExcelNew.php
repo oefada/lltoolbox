@@ -79,7 +79,7 @@ class PackageExcel
         $as->getCell('B21')->setValue($package['numGuests']);
         $as->getCell('B22')->setValue($package['minGuests']);
         $as->getCell('B23')->setValue($package['maxAdults']);
-        if ($this->viewVars['package']['PackageAgeRange']['rangeLow']) {
+        if (isset($this->viewVars['package']['PackageAgeRange']['rangeLow'])) {
             $as->getCell('B24')->setValue(
                 $this->viewVars['package']['PackageAgeRange']['rangeLow'] . ' - ' . $this->viewVars['package']['PackageAgeRange']['rangeHigh']
             );
@@ -180,9 +180,14 @@ class PackageExcel
         $percentageStyle =  array(
             'code' => PHPExcel_Style_NumberFormat::FORMAT_PERCENTAGE_00
         );
-
-        $currencyStyle = array('numberformat' => array('code' => PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE));
-        $currencyStyleNoCents = array('numberformat' => array('code' => PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD));
+        if (isset($this->viewVars['cc']) && $this->viewVars['cc'] == 'USD') {
+            //only format as dollars if Currency Code is USD
+            $currencyStyle = array('numberformat' => array('code' => PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD_SIMPLE));
+            $currencyStyleNoCents = array('numberformat' => array('code' => PHPExcel_Style_NumberFormat::FORMAT_CURRENCY_USD));
+        } else {
+            $currencyStyle = array();
+            $currencyStyleNoCents = array();
+        }
 
         $as->getStyle('A1:G100')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
 
