@@ -401,7 +401,7 @@ class PackageExcel
         if(!empty($this->viewVars['blackout'])){
             $numBlackOutDates = count($this->viewVars['blackout']);
         foreach ($this->viewVars['blackout'] as $bodKey => $bod) {
-            $as->getCell($descriptionColumn . ($blackout_row_offset + $bodKey))->setValue($bod.$bodKey);
+            $as->getCell($descriptionColumn . ($blackout_row_offset + $bodKey))->setValue($bod);
         }
         }
 
