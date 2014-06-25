@@ -242,7 +242,8 @@ foreach ($clients as $cn=>$c):
 			<tr><td
 				style="<?=$fontStyle?>line-height:16px;padding: 0px 0px 2px 0px;"
 				colspan="2"
-			>Phone Number: <?= $c->estaraPhoneIntl ?>
+			>Phone Number:
+                <?= ($c->contactLL == 1 && is_object($lltgComponentService)) ? $lltgComponentService->getTollfreeNumberFormatted() : $c->estaraPhoneIntl ?>
 			</td></tr>
 		<?php endif; ?>
 
