@@ -67,7 +67,7 @@ class PackageExcel
         $as->getCell('B14')->setValue($package['packageName']);
         $as->getCell('B15')->setValue($package['roomGrade']);
 
-        $as->getCell('B18')->setValue($package['rateDisclaimer']);
+        $as->getCell('A18')->setValue($package['rateDisclaimer']);
         $as->getCell('B19')->setValue($package['numNights']);
         $as->getCell('B20')->setValue($package['numRooms']);
         if ($package['isFlexPackage'] == 1) {
