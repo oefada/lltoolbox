@@ -1,6 +1,5 @@
 <?php
 /**
- * Created by PhpStorm.
  * User: oefada
  * Date: 6/13/14
  * Time: 1:01 PM
@@ -21,7 +20,6 @@ ini_set('memory_limit', '-1');
 //Configure::write('debug', 0);
 class PackageExcel
 {
-
     private $xls;
     public $sheet;
     private $viewVars;
@@ -69,22 +67,23 @@ class PackageExcel
         $as->getCell('B14')->setValue($package['packageName']);
         $as->getCell('B15')->setValue($package['roomGrade']);
 
-
+        $as->getCell('B18')->setValue($package['rateDisclaimer']);
         $as->getCell('B19')->setValue($package['numNights']);
+        $as->getCell('B20')->setValue($package['numRooms']);
         if ($package['isFlexPackage'] == 1) {
-            $as->getCell('B20')->setValue($package['flexNumNightsMin'] . ' / ' . $package['flexNumNightsMax']);
+            $as->getCell('B21')->setValue($package['flexNumNightsMin'] . ' / ' . $package['flexNumNightsMax']);
         } else {
-            $as->getCell('B20')->setValue('');
+            $as->getCell('B21')->setValue('');
         }
-        $as->getCell('B21')->setValue($package['numGuests']);
-        $as->getCell('B22')->setValue($package['minGuests']);
-        $as->getCell('B23')->setValue($package['maxAdults']);
+        $as->getCell('B22')->setValue($package['numGuests']);
+        $as->getCell('B23')->setValue($package['minGuests']);
+        $as->getCell('B24')->setValue($package['maxAdults']);
         if (isset($this->viewVars['package']['PackageAgeRange']['rangeLow'])) {
-            $as->getCell('B24')->setValue(
+            $as->getCell('B25')->setValue(
                 $this->viewVars['package']['PackageAgeRange']['rangeLow'] . ' - ' . $this->viewVars['package']['PackageAgeRange']['rangeHigh']
             );
         } else {
-            $as->getCell('B24')->setValue('');
+            $as->getCell('B25')->setValue('');
         }
 
         // Validity Periods
