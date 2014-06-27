@@ -295,7 +295,7 @@ class PackageExcel
                         $as->getStyle($cellTotalAccoLabel)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
                         //TOTAL Accommodations Formula
-                        $as->getCell('D'.$rowTotalAccom)->setValue('=ROUND(SUM(D'.$lp_row_offset.':D'.($lastLineIndex).'),2)');
+                        $as->getCell('D'.$rowTotalAccom)->setValue('=ROUND(SUM(D'.$lp_row_offset.':D'.($lastLineIndex).'),3)');
                         $as->getStyle('D'.$lp_row_offset.':D'.($lastLineIndex))->applyFromArray($invisibleFontStyleArray);
                         $as->getStyle('D'.$rowTotalAccom)->applyFromArray($boldStyleArray);
 
@@ -361,7 +361,7 @@ class PackageExcel
                     $as->getCell($feeColumn . ($inclusions_row_offset + $lastInclusionIndex))->setValue('Total Inclusions:');
                     $as->getStyle($feeColumn . ($inclusions_row_offset + $lastInclusionIndex))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                     /***/
-                    $as->getCell($totalsColumn . ($inclusions_row_offset + $lastInclusionIndex))->setValue('=ROUND(SUM('.$totalsColumn.$inclusions_row_offset.':'.$totalsColumn.(($inclusions_row_offset + $lastInclusionIndex)-1).'),2)');
+                    $as->getCell($totalsColumn . ($inclusions_row_offset + $lastInclusionIndex))->setValue('=ROUND(SUM('.$totalsColumn.$inclusions_row_offset.':'.$totalsColumn.(($inclusions_row_offset + $lastInclusionIndex)-1).'),3)');
                     $as->getStyle($totalsColumn . ($inclusions_row_offset + $lastInclusionIndex))->applyFromArray($currencyStyle);
 
                     $as->getStyle($totalsColumn . ($inclusions_row_offset + $lastInclusionIndex))->applyFromArray($boldStyleArray);
