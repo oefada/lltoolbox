@@ -1347,7 +1347,7 @@ class WebServiceTicketsController extends WebServicesController
                 $headerLogo = 'http://www.luxurylink.com/images/email/LL_logo-V3.jpg';
                 $append = "LL";
                 $prefixUrl = Configure::read("UrlS.LL");
-                $optoutLink = 'http://echo3.bluehornet.com/phase2/survey1/change.htm?cid=mumogm&1362532207';
+                $optoutLink = 'http://echo3.bluehornet.com/phase2/survey1/survey.htm?cid=mumogm&action=update&eemail=';
                 if (isset($ticketData)) {
                     $tldId = (isset($ticketData['tldId']) && intval($ticketData['tldId']) > 0) ? $ticketData['tldId'] : 1;
                 } elseif ($bookingData) {
