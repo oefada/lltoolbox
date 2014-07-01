@@ -96,6 +96,7 @@ if (!empty($results) && isset($serializedFormInput)):
 		</thead>
 <?php foreach ($results as $k => $r):
 $class = ($k % 2) ? ' class="altrow"' : '';
+
 ?>
 	<tr<?=$class?>>
 		<td><? //Ticket 4527- what they want. Dont' ask.
@@ -106,8 +107,8 @@ $class = ($k % 2) ? ' class="altrow"' : '';
             }
             ?>
            </td>
-        <td><?=date('M d, Y h:m:s', strtotime($r[0]['endDate']))?></td>
-        <td><?=date('M d, Y', strtotime($r['dateFirstSuccessfulCharge']))?></td>
+        <td><?=date('M d, Y h:m:s', strtotime($r['dateFirstSuccessfulCharge']))?></td>
+        <td><?=date('M d, Y', strtotime($r[0]['endDate']))?></td>
 		<td>
             <?php
             if (
@@ -154,9 +155,9 @@ $class = ($k % 2) ? ' class="altrow"' : '';
            ?></td>
 		<td><?=$r['Ticket']['userHomePhone']?></td>
 		<td><?=$r['Ticket']['userEmail1']?></td>
-		<td><?=$r['PaymentDetailFull'][0]['pd']['ccType']?></td>
-		<td>xxxx<?=$r['PaymentDetailFull'][0]['pd']['ppCardNumLastFour']?></td>
-		<td><?=$r['PaymentDetailFull'][0]['pd']['ppExpMonth'].'/'.$r['PaymentDetailFull'][0]['pd']['ppExpYear']?></td>
+		<td><?=$r['ccType'];?></td>
+		<td><?=$r['ccNumberHash'];?></td>
+		<td><?=$r['ccExpiration'];?></td>
 		<td><?=$r['ticketSummary']['totalRevenue']?></td>
 		<td><?=($r['Ticket']['numNights'] * $r['Package']['numRooms'])?></td>
 		<td><?=$r['OfferType']['offerTypeName']?></td>

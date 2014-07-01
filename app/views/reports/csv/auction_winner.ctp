@@ -5,7 +5,7 @@ error_reporting(0);
 
 ini_set('default_charset', 'utf-8');
 Configure::write('debug', 0);
-echo "Site,Payment Date, Booking Date,Booking,Vendor ID,Accounting Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Promo Description,Currency,Local Billing Price\n";
+echo "Site,Booking Date,Payment Date,Booking,Vendor ID,Accounting Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Promo Description,Currency,Local Billing Price\n";
 foreach ($results as $r):
 	switch($r['OfferType']['offerTypeName']) {
 		case 'Standard Auction':
@@ -33,7 +33,10 @@ foreach ($results as $r):
 				$remit = '';
 				break;
 	}
-	
+	if(substr($r[0]['accountingIds'],-1)=='P'){
+        //TICKET4931- more hacking
+        $remit = 'Remit';
+    }
 	// normalize names for Kat
 	$normalFirst = $r['Ticket']['userFirstName'];
 	if (strtoupper($normalFirst) == $normalFirst) {
@@ -63,8 +66,8 @@ foreach ($results as $r):
 	
 	$line = array(
         ($r['Locale']['code'] !== 'en_US')?'UK':$siteIds[$r['Ticket']['siteId']],
-	'"' . date('M d, Y', strtotime($r['PaymentDetailFull'][0]['pd']['ppResponseDate'])) . '"',
     '"' . date('M d, Y h:m:s', strtotime($r['dateFirstSuccessfulCharge'])) . '"',
+	'"' . date('M d, Y', strtotime($r[0]['endDate'])) . '"',
 	$r['Ticket']['ticketId'],
 	$r[0]['clientIds'],
 	$r[0]['accountingIds'],
@@ -80,9 +83,9 @@ foreach ($results as $r):
 	(!empty($r['Country']['countryName']))?$r['Country']['countryName']:$r['PaymentDetailFull'][0]['pd']['ppBillingCountry'],
 	$r['Ticket']['userHomePhone'],
 	$r['Ticket']['userEmail1'],
-	$r['PaymentDetailFull'][0]['pd']['ccType'],
-	'xxxx'.$r['PaymentDetailFull'][0]['pd']['ppCardNumLastFour'],
-	$r['PaymentDetailFull'][0]['pd']['ppExpMonth'].'/'.$r['PaymentDetailFull'][0]['pd']['ppExpYear'],
+	$r['ccType'],
+	$r['ccNumberHash'],
+    $r['ccExpiration'],
 	'N/A',
 	'N/A',
 	//$r[0]['revenue'],

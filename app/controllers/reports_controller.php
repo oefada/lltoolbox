@@ -1666,6 +1666,7 @@ class ReportsController extends AppController
                           LEFT JOIN offerFamily USING(offerId)
                         WHERE $conditions
                         AND ticketStatusId NOT IN (7,8,17,18)
+                        AND Client.clientId  = 8455
                         ";
 
             $results = $this->OfferType->query($sql);
@@ -1756,6 +1757,7 @@ class ReportsController extends AppController
               LEFT JOIN currency AS Currency ON (Package.currencyId = Currency.currencyId)
               WHERE $conditions 
               AND ticketStatusId NOT IN (7,8,17,18)
+              AND Client.clientId  = 8455
               GROUP BY Ticket.ticketId
               ORDER BY $order
               LIMIT $this->limit";
@@ -1779,20 +1781,22 @@ class ReportsController extends AppController
                     '
                     SELECT pd.*, pt.paymentTypeName FROM paymentDetail AS pd
                     INNER JOIN paymentType AS pt ON pt.paymentTypeId = pd.paymentTypeId
-                    WHERE ticketId = ' . $v['Ticket']['ticketId'] . ' ORDER BY pd.ppResponseDate ASC, pd.paymentTypeId ASC'
+                    WHERE ticketId = ' . $v['Ticket']['ticketId'] . ' AND isSuccessfulCharge = 1 ORDER BY pd.ppResponseDate ASC, pd.paymentTypeId ASC'
                 );
                // var_dump($paymentDetail);
                 //Can't beat 'em..
                 $firstSuccessfulPaymentDate = null;
                 foreach ($paymentDetail as $key => $payment) {
                     if (($firstSuccessfulPaymentDate == null) &&
-                        ($payment['pd']['isSuccessfulCharge'] == '1')
+                        ($payment['pd']['isSuccessfulCharge'] == '1')  &&
+                        ($payment['pd']['isVoided'] != '1')
                     ) {
                         //determine first successfulPayment Date.
                         $results[$k]['dateFirstSuccessfulCharge'] = $payment['pd']['ppResponseDate'];
                         break;
                     }
                 }
+
 
                 $results[$k]['PaymentDetailFull'] = $paymentDetail;
                 
@@ -1808,7 +1812,8 @@ class ReportsController extends AppController
                     $results[$k]['PaymentProcessor']['paymentProcessorName'] = 'PayPal - UK';
                 }
 
-                
+
+
             }
             // This extracts pricePointId and PackageId from the result set and queries
             // pricePoint table to get the validity dates and then inserts them into the
@@ -2018,7 +2023,22 @@ class ReportsController extends AppController
                     $results[$key]['ticketSummary'] = $ticketAccountingHelper->ticketAccountingSummary();
                // var_dump($ticketAccountingHelper->ticketAccountingSummary());
                // }
-                /****/
+                //Ticket 4931
+                $results[$key]['ccType'] = $arr['PaymentDetailFull'][0]['pd']['ccType'];
+                $results[$key]['ccNumber'] = 'xxxx'.$arr['PaymentDetailFull'][0]['pd']['ppCardNumLastFour'];
+                $results[$key]['ccExpiration'] = $arr['PaymentDetailFull'][0]['pd']['ppExpMonth'].'/'.$arr['PaymentDetailFull'][0]['pd']['ppExpYear'];
+
+                if ($arr['ticketSummary']['paidInFullWithCOF'] == 1){
+                    $results[$key]['ccType']= 'Other';
+                    $results[$key]['ccNumberHash'] = " ";
+                    $results[$key]['ccExpiration']  = " ";
+
+                    if($arr['Ticket']['tldId'] == 1 ){
+                        $results[$key]['PaymentProcessor']['paymentProcessorName'] = 'NOVA';
+                    }else{
+                        $results[$key]['PaymentProcessor']['paymentProcessorName'] = 'Paypal - UK';
+                    }
+                }
             }
 
             //increase number of records with pegasus records for paging

@@ -14,6 +14,7 @@ class TicketAccounting
     private $adjustAmount = 0;
     private $totalPromos;
     private $handlingFee = 40;
+    private $paidInFullWithCOF = 0;
 
     public function __construct()
     {
@@ -51,6 +52,7 @@ class TicketAccounting
                         //TICKET4527: Item 4- f a Ticket was paid for in full with a CoF, the Revenue column should be '0' and the Adjustment column should be equal to the CoF value
                         $this->totalRevenue = 0;
                         $this->adjustAmount = $payment['pd']['paymentAmount'];
+                        $this->paidInFullWithCOF = 1;
                         break;
                     }
                 }
@@ -85,6 +87,7 @@ class TicketAccounting
         $results['totalCOF'] = $this->getTotalCOFAmount();
         $results['totalPromos'] = $this->getTotalPromos();
         $results['billingAmount'] = $this->getTicketAmount();
+        $results['paidInFullWithCOF'] = $this->paidInFullWithCOF;
 
         $this->resetValues();
 
@@ -99,6 +102,7 @@ class TicketAccounting
 
         $this->totalCOF = 0;
         $this->totalPromos = 0;
+        $this->paidInFullWithCOF = 0;
     }
 
     /**
