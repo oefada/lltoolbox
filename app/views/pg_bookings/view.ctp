@@ -96,6 +96,19 @@
          } ?>
     </td>
 </tr>
+
+    <?
+    if ($booking['PgBooking']['tldId'] != 1):
+    ?>
+    <tr>
+        <td width="200"><strong>TLD SubTotal</strong></td>
+        <td><?php echo $booking['PgBooking']['subTotalAmountTld']; ?></td>
+    </tr>
+    <tr>
+        <td width="200"><strong>TLD Processing Fee</strong></td>
+        <td><?php echo $booking['PgBooking']['handlingAmountTld']; ?></td>
+    </tr>
+    <? endif; ?>
 <tr>    <td width="200"><strong>User Id</strong></td>
 
 		<td>
