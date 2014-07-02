@@ -107,8 +107,22 @@ $class = ($k % 2) ? ' class="altrow"' : '';
             }
             ?>
            </td>
-        <td><?=date('M d, Y h:m:s', strtotime($r['dateFirstSuccessfulCharge']))?></td>
-        <td><?=date('M d, Y', strtotime($r[0]['endDate']))?></td>
+        <td><?
+            if(isset($r['dateFirstSuccessfulCharge'])){
+                $date = new DateTime($r['dateFirstSuccessfulCharge']);
+                $formatted = $date->format('M, d Y h:i:s');
+                echo $formatted;
+                unset($date);
+                unset($formatted);
+            }
+            ?>
+            </td>
+        <td><?
+            $paymentDateFormatted = '';
+            $date = new DateTime($r[0]['endDate']);
+            $paymentDateFormatted = $date->format('M, d Y');
+            unset($date);
+            echo $paymentDateFormatted;?></td>
 		<td>
             <?php
             if (

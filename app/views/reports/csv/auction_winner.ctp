@@ -5,6 +5,23 @@ error_reporting(0);
 
 ini_set('default_charset', 'utf-8');
 Configure::write('debug', 0);
+//unfortunately we need a function here to meet the requiremetns.
+//Consider refactoring into a
+function multid_sort($arr, $index) {
+    $b = array();
+    $c = array();
+    foreach ($arr as $key => $value) {
+        $b[$key] = $value[$index];
+    }
+
+    asort($b);
+
+    foreach ($b as $key => $value) {
+        $c[] = $arr[$key];
+    }
+
+    return $c;
+}
 echo "Site,Booking Date,Payment Date,Booking,Vendor ID,Accounting Id,Vendor,Guest First Name,Guest Last Name,Address1,Address2,City,State,Zip,Country,Phone,Email,CC Type,CC Number,CC Exp,Type,Product Type,Revenue,Tax,COG,Profit,Room Nights,Confirmation Number,Arrival Date,Auction Type,Handling Fee,Percent,CC Processor,Remit Type,Adjust Amount,Validity Start Date,Validity End Date,Promo Description,Currency,Local Billing Price\n";
 foreach ($results as $r):
 	switch($r['OfferType']['offerTypeName']) {
@@ -50,24 +67,56 @@ foreach ($results as $r):
 	}
 	$normalLast = ucwords($normalLast);
 	// end normalize names
-	
+    if(isset($promoCode)){
+        unset($promoCode);
+    }
+
 	$promoCode = $r['PromoCode']['promoCode'];
 	if ($r['OfferLookup']['guaranteeAmount'] > 0) { $promoCode = 'Guarantee ' . $promoCode; }
-	
+
+    $paymentDetails = array();
+
+
 	foreach($r['PaymentDetailFull'] as $k => $v) {
-		if($v['pt']['paymentTypeName'] != 'Charge') {
-			if(empty($promoCode)) {
-				$promoCode = $v['pt']['paymentTypeName'] . ' of $' . $v['pd']['paymentAmount'];
-			} else {
-				$promoCode .= ' - ' . $v['pt']['paymentTypeName'] . ' of $' . $v['pd']['paymentAmount'];
-			}
-		}
+        if ($v['pt']['paymentTypeName'] != 'Charge') {
+		$paymentDetails[$k]['paymentTypeName'] = $v['pt']['paymentTypeName'];
+        $paymentDetails[$k]['paymentAmount'] = $v['pd']['paymentAmount'];
+        }
 	}
-	
+    //sort alphabetically so COF is listed first.
+    $paymentDetails =  multid_sort($paymentDetails, 'paymentTypeName');
+
+
+    $promoDescriptionText = '';
+    foreach($paymentDetails as $key => $val) {
+
+        if($val['paymentTypeName'] != 'Charge') {
+            if(empty($promoCode)) {
+                $promoDescriptionText = $val['paymentTypeName'] . ' of $' . $val['paymentAmount'];
+            } else {
+                $promoDescriptionText .= $val['paymentTypeName'] . ' of $' . $val['paymentAmount']. ' - ';
+            }
+        }
+    }
+    //if COF exist it will be listed first. Last thing is actual promoCode
+    $promoCode = $promoDescriptionText . $promoCode;
+
+    $bookingDateFormatted = '';
+    if(isset($r['dateFirstSuccessfulCharge'])){
+        $date = new DateTime($r['dateFirstSuccessfulCharge']);
+        $bookingDateFormatted = $date->format('M, d Y h:i:s');
+        unset($date);
+    }
+
+    $paymentDateFormatted = '';
+    $date = new DateTime($r[0]['endDate']);
+    $paymentDateFormatted = $date->format('M, d Y');
+    unset($date);
+
 	$line = array(
         ($r['Locale']['code'] !== 'en_US')?'UK':$siteIds[$r['Ticket']['siteId']],
-    '"' . date('M d, Y h:m:s', strtotime($r['dateFirstSuccessfulCharge'])) . '"',
-	'"' . date('M d, Y', strtotime($r[0]['endDate'])) . '"',
+    '"' . $bookingDateFormatted . '"',
+	'"' . $paymentDateFormatted. '"',
 	$r['Ticket']['ticketId'],
 	$r[0]['clientIds'],
 	$r[0]['accountingIds'],

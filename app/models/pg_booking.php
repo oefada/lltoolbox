@@ -13,7 +13,14 @@ class PgBooking extends AppModel
         'Country' => array(
             'foreignKey' => false,
             'conditions' => array("PgBooking.billingCountry = Country.countryId")
-        )
+        ),
+        'Tld' =>array(
+            'foreignKey' => 'tldId'
+        ),
+        'Currency' => array(
+            'foreignKey' => false,
+            'conditions' => array("Tld.currencyId= Currency.currencyId")
+        ),
     );
 
     public $hasMany = array(

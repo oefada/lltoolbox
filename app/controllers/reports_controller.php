@@ -32,6 +32,13 @@ class ReportsController extends AppController
     public $limit;
     public $perPage = 20;
 
+    public $paymentTypeNames = array(
+        1=>'Charge',
+        2=>'Gift Certificate',
+        3=>'Credit On File',
+        4=>'Promo',
+    );
+
     function beforeFilter()
     {
 
@@ -1877,7 +1884,8 @@ class ReportsController extends AppController
                                     $this->data['condition1']['value']['between'][0]
                                 ,
                                     $this->data['condition1']['value']['between'][1]
-                                )
+                                ),
+                            'PgBooking.pgBookingStatusId !='=>'50'
                         )
                 )
             );
@@ -1905,13 +1913,11 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey][0]['accountingIds'] = $pgValue['Client']['accountingId'];
 
 
-
                     $transformedPegasusArray[$pgKey][0]['clientNames'] = $pgValue['Client']['name'];
 
                     $transformedPegasusArray[$pgKey]['Ticket']['userId'] = $pgValue['PgBooking']['userId'];
                     $transformedPegasusArray[$pgKey]['Ticket']['userFirstName'] = $pgValue['User']['firstName'];
                     $transformedPegasusArray[$pgKey]['Ticket']['userLastName'] = $pgValue['User']['lastName'];
-
 
                     $transformedPegasusArray[$pgKey]['Ticket']['userHomePhone'] = $pgValue['User']['homePhone'];
                     $transformedPegasusArray[$pgKey]['Ticket']['userEmail1'] = $pgValue['User']['email'];
@@ -1921,13 +1927,12 @@ class ReportsController extends AppController
                     $transformedPegasusArray[$pgKey]['Ticket']['billingPrice'] = $pgValue['PgBooking']['subTotalUSD'];
 
                     $transformedPegasusArray[$pgKey]['Country']['countryName'] = $pgValue['Country']['countryName'];
+                    $transformedPegasusArray[$pgKey]['dateFirstSuccessfulCharge']  =$pgValue['PgBooking']['dateCreated'];
+                    $transformedPegasusArray[$pgKey]['Currency']['currencyCode'] = $pgValue['Currency']['currencyCode'];
 
                     if (is_array($pgValue['PgPayment'])){
                         foreach ($pgValue['PgPayment'] as $key => $val){
                             $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['isSuccessfulCharge'] = '1';
-                            if(!isset($transformedPegasusArray[$pgKey]['dateFirstSuccessfulCharge'])){
-                                $transformedPegasusArray[$pgKey]['dateFirstSuccessfulCharge']  =$pgValue['PgBooking']['dateCreated'];
-                            }
                             $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ticketId'] = $pgValue['PgBooking']['pgBookingId'];
                             $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingAddress1'] = $pgValue['PgBooking']['billingAddress'];
                             $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['ppBillingCity'] = $pgValue['PgBooking']['billingCity'];
@@ -1942,20 +1947,8 @@ class ReportsController extends AppController
 
                             $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['paymentAmount'] = $pgValue['PgPayment'][$key]['paymentUSD'];
                             $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pd']['paymentTypeId'] = $pgValue['PgPayment'][$key]['paymentTypeId'];
-                            switch($pgValue['PgPayment'][$key]['paymentTypeId']){
-                                case '1':
-                                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pt']['paymentTypeName'] = 'Charge';
-                                break;
-                                case '2':
-                                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pt']['paymentTypeName'] = 'Gift Certificate';
-                                break;
-                                case '3':
-                                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pt']['paymentTypeName'] = 'Credit On File';
-                                break;
-                                case '4':
-                                    $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pt']['paymentTypeName'] = 'Promo';
-                                break;
-                            }
+
+                            $transformedPegasusArray[$pgKey]['PaymentDetailFull'][$key]['pt']['paymentTypeName'] = $this->paymentTypeNames[$pgValue['PgPayment'][$key]['paymentTypeId']];
                             //end foreach
                         }
                     //end is array
@@ -2025,10 +2018,10 @@ class ReportsController extends AppController
                // }
                 //Ticket 4931
                 $results[$key]['ccType'] = $arr['PaymentDetailFull'][0]['pd']['ccType'];
-                $results[$key]['ccNumber'] = 'xxxx'.$arr['PaymentDetailFull'][0]['pd']['ppCardNumLastFour'];
+                $results[$key]['ccNumberHash'] = 'xxxx'.$arr['PaymentDetailFull'][0]['pd']['ppCardNumLastFour'];
                 $results[$key]['ccExpiration'] = $arr['PaymentDetailFull'][0]['pd']['ppExpMonth'].'/'.$arr['PaymentDetailFull'][0]['pd']['ppExpYear'];
 
-                if ($arr['ticketSummary']['paidInFullWithCOF'] == 1){
+                if ($results[$key]['ticketSummary']['paidInFullWithCOF'] == 1){
                     $results[$key]['ccType']= 'Other';
                     $results[$key]['ccNumberHash'] = " ";
                     $results[$key]['ccExpiration']  = " ";

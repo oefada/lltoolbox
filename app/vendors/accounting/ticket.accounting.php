@@ -5,7 +5,7 @@
  * Date: 5/21/14
  * Time: 8:53 PM
  */
-//Configure::write('debug', 0);
+Configure::write('debug',0);
 class TicketAccounting
 {
     private $ticketAmount, $dateFirstSuccessfulPayment;
