@@ -1105,7 +1105,12 @@ class ConsolidatedReport extends AppModel
                 sites Site,
                 reservation Reservation,
                 `user` `User` )
-            LEFT JOIN paymentDetail PaymentDetail ON PaymentDetail.ticketID = Ticket.ticketId AND PaymentDetail.paymentTypeId = 1
+            LEFT JOIN
+              paymentDetail PaymentDetail
+              ON
+                PaymentDetail.ticketID = Ticket.ticketId
+                AND PaymentDetail.paymentTypeId = 1
+                AND PaymentDetail.isSuccessfulCharge = 1
             WHERE
                 Site.siteId = Ticket.siteId
                 AND Ticket.ticketStatusId IN (4,5,6)
