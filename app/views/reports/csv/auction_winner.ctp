@@ -4,7 +4,7 @@ error_reporting(0);
 @ini_set('display_errors', 0);
 
 ini_set('default_charset', 'utf-8');
-Configure::write('debug', 0);
+//Configure::write('debug', 0);
 //unfortunately we need a function here to meet the requiremetns.
 //Consider refactoring into a
 function multid_sort($arr, $index) {
@@ -72,6 +72,17 @@ foreach ($results as $r):
     }
 
 	$promoCode = $r['PromoCode']['promoCode'];
+    if(!empty($promoCode)){
+        if (!empty($r['Promo']['amountOff'])) {
+            $promoCode = $promoCode." ($".$r['Promo']['amountOff'].")";
+        }
+        if (!empty($r['Promo']['percentOff'])) {
+            $amountOff = round($r['Ticket']['billingPrice'] * ($r['Promo']['percentOff'] / 100),2);
+            $promoCode = $promoCode." ($".$amountOff.")";
+        }
+
+    }
+
 	if ($r['OfferLookup']['guaranteeAmount'] > 0) { $promoCode = 'Guarantee ' . $promoCode; }
 
     $paymentDetails = array();
