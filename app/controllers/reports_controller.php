@@ -1673,7 +1673,7 @@ class ReportsController extends AppController
                           LEFT JOIN offerFamily USING(offerId)
                         WHERE $conditions
                         AND ticketStatusId NOT IN (7,8,17,18)
-                        AND Client.clientId  = 8455
+                        AND Client.clientId  != 8455
                         ";
 
             $results = $this->OfferType->query($sql);
@@ -1686,10 +1686,10 @@ class ReportsController extends AppController
                 endDate,
                 PaymentDetail.ppResponseDate,
                 Ticket.ticketId,
-                GROUP_CONCAT(DISTINCT Client.clientId) as clientIds,
-                GROUP_CONCAT(DISTINCT Client.oldProductId) as oldProductIds,
-                GROUP_CONCAT(DISTINCT Client.accountingId) as accountingIds,
-                GROUP_CONCAT(DISTINCT Client.name) as clientNames,
+                GROUP_CONCAT(DISTINCT Client.clientId SEPARATOR '| ') as clientIds,
+                GROUP_CONCAT(DISTINCT Client.oldProductId SEPARATOR '| ') as oldProductIds,
+                GROUP_CONCAT(DISTINCT Client.accountingId  SEPARATOR '| ') as accountingIds,
+                GROUP_CONCAT(DISTINCT Client.name SEPARATOR '| ') as clientNames,
                 Ticket.userId,
                 Ticket.userFirstName,
                 Ticket.userLastName,
@@ -1764,7 +1764,7 @@ class ReportsController extends AppController
               LEFT JOIN currency AS Currency ON (Package.currencyId = Currency.currencyId)
               WHERE $conditions 
               AND ticketStatusId NOT IN (7,8,17,18)
-              AND Client.clientId  = 8455
+              AND Client.clientId  != 8455
               GROUP BY Ticket.ticketId
               ORDER BY $order
               LIMIT $this->limit";
@@ -1779,7 +1779,7 @@ class ReportsController extends AppController
                 if (!$ids) {
                     $ids = $v['Ticket']['ticketId'];
                 } else {
-                    $ids .= ',' . $v['Ticket']['ticketId'];
+                    $ids .= '|' . $v['Ticket']['ticketId'];
                 }
                 //Ticket 4440
                 $results[$k]['Ticket']['isFamily'] = $this->Package->isFamilyByPackageId($v['Ticket']['packageId']);
